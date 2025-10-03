@@ -42,6 +42,16 @@ class DUNE(torch.nn.Module):
         self.state_dim = self.G.shape[1]
 
         self.model = to_device(ObsPointNet(2, self.edge_dim))
+        # configuration flags (with safe defaults)
+        train_kwargs = train_kwargs or dict()
+        self.projection = train_kwargs.get('projection', 'hard')  # 'hard' | 'none' | 'learned'
+        self.monitor_dual_norm = train_kwargs.get('monitor_dual_norm', True)
+        self.unroll_J = int(train_kwargs.get('unroll_J', 0))  # PDHG steps (not enabled here)
+        self.se2_embed = bool(train_kwargs.get('se2_embed', False))  # not enabled here
+        self.dual_norm_violation_rate = None
+        self.dual_norm_p95 = None
+        self.dual_norm_max_excess_pre = None
+        self.dual_norm_max_excess_post = None
         self.load_model(checkpoint, train_kwargs)
 
         self.obstacle_points = None
@@ -66,6 +76,12 @@ class DUNE(torch.nn.Module):
             sort_point_list: list of point tensor, each element is a tensor of shape (state_dim, num_points); list length: T+1; 
         '''
 
+        # basic consistency checks
+        assert isinstance(point_flow, list) and isinstance(R_list, list), "point_flow and R_list must be lists"
+        assert len(R_list) == len(point_flow), f"R_list length {len(R_list)} != point_flow length {len(point_flow)}"
+        if isinstance(obs_points_list, list) and len(obs_points_list) > 0:
+            assert len(obs_points_list) == len(point_flow), f"obs_points_list length {len(obs_points_list)} != point_flow length {len(point_flow)}"
+
         mu_list, lam_list, sort_point_list = [], [], []
         self.obstacle_points = obs_points_list[0] # current obstacle points considered in the dune at time 0
 
@@ -74,6 +90,45 @@ class DUNE(torch.nn.Module):
         # map the point flow to the latent distance features mu
         with torch.no_grad():
             total_mu = self.model(total_points.T).T
+
+            # monitor and enforce dual feasibility: mu >= 0, ||G^T mu||_2 <= 1
+            if self.monitor_dual_norm or (self.projection == 'hard'):
+                v_pre = (self.G.T @ total_mu)
+                norms_pre = torch.norm(v_pre, dim=0)
+                if norms_pre.numel() > 0:
+                    try:
+                        p95 = torch.quantile(norms_pre, 0.95).item()
+                    except Exception:
+                        # fallback: take kth largest where k ~= 0.95*N
+                        k = max(1, int(0.95 * norms_pre.numel()))
+                        p95 = torch.topk(norms_pre, k, largest=True).values.min().item()
+                    self.dual_norm_violation_rate = (norms_pre > 1.0).float().mean().item()
+                    self.dual_norm_p95 = p95
+                    self.dual_norm_max_excess_pre = torch.clamp(norms_pre - 1.0, min=0.0).max().item()
+                else:
+                    self.dual_norm_violation_rate = 0.0
+                    self.dual_norm_p95 = 0.0
+                    self.dual_norm_max_excess_pre = 0.0
+
+            if self.projection == 'hard':
+                # clamp mu >= 0
+                total_mu.clamp_(min=0.0)
+                # project columns to satisfy ||G^T mu||_2 <= 1
+                v = (self.G.T @ total_mu)
+                v_norm = torch.norm(v, dim=0, keepdim=True)
+                mask = (v_norm > 1.0).float()
+                # avoid div by zero by clamping
+                denom = v_norm.clamp(min=1.0)
+                scale = mask / denom + (1.0 - mask)
+                total_mu = total_mu * scale
+
+            if self.monitor_dual_norm or (self.projection == 'hard'):
+                v_post = (self.G.T @ total_mu)
+                norms_post = torch.norm(v_post, dim=0)
+                if norms_post.numel() > 0:
+                    self.dual_norm_max_excess_post = torch.clamp(norms_post - 1.0, min=0.0).max().item()
+                else:
+                    self.dual_norm_max_excess_post = 0.0
         
         for index in range(self.T+1):
             num_points = point_flow[index].shape[1]
