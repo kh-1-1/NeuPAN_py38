@@ -22,6 +22,7 @@ along with NeuPAN planner. If not, see <https://www.gnu.org/licenses/>.
 import torch
 from math import inf
 from neupan.blocks import ObsPointNet, DUNETrain
+from neupan.blocks.learned_prox import ProxHead
 from neupan.configuration import np_to_tensor, to_device
 from neupan.util import time_it, file_check, repeat_mk_dirs
 from typing import Optional
@@ -48,6 +49,15 @@ class DUNE(torch.nn.Module):
         self.monitor_dual_norm = train_kwargs.get('monitor_dual_norm', True)
         self.unroll_J = int(train_kwargs.get('unroll_J', 0))  # PDHG steps (not enabled here)
         self.se2_embed = bool(train_kwargs.get('se2_embed', False))  # not enabled here
+
+        # optional learned proximal head (for 'learned' projection)
+        self.prox_head = None
+        if self.projection == 'learned':
+            try:
+                self.prox_head = to_device(ProxHead(self.edge_dim, hidden=32))
+            except Exception:
+                self.prox_head = None
+
         self.dual_norm_violation_rate = None
         self.dual_norm_p95 = None
         self.dual_norm_max_excess_pre = None
@@ -89,10 +99,18 @@ class DUNE(torch.nn.Module):
         
         # map the point flow to the latent distance features mu
         with torch.no_grad():
-            total_mu = self.model(total_points.T).T
+            total_mu = self.model(total_points.T).T  # [E, N]
 
-            # monitor and enforce dual feasibility: mu >= 0, ||G^T mu||_2 <= 1
-            if self.monitor_dual_norm or (self.projection == 'hard'):
+            # Optional learned proximal refinement before hard projection
+            if self.projection == 'learned' and self.prox_head is not None:
+                try:
+                    total_mu = self.prox_head(total_mu, self.G)
+                except Exception:
+                    # fallback: skip prox if any shape/device issue
+                    pass
+
+            # monitor dual feasibility on pre-hard values (post-prox if learned)
+            if self.monitor_dual_norm or (self.projection in ('hard', 'learned')):
                 v_pre = (self.G.T @ total_mu)
                 norms_pre = torch.norm(v_pre, dim=0)
                 if norms_pre.numel() > 0:
@@ -110,7 +128,8 @@ class DUNE(torch.nn.Module):
                     self.dual_norm_p95 = 0.0
                     self.dual_norm_max_excess_pre = 0.0
 
-            if self.projection == 'hard':
+            # Apply hard projection for 'hard' and 'learned' modes
+            if self.projection in ('hard', 'learned'):
                 # clamp mu >= 0
                 total_mu.clamp_(min=0.0)
                 # project columns to satisfy ||G^T mu||_2 <= 1
@@ -122,7 +141,7 @@ class DUNE(torch.nn.Module):
                 scale = mask / denom + (1.0 - mask)
                 total_mu = total_mu * scale
 
-            if self.monitor_dual_norm or (self.projection == 'hard'):
+            if self.monitor_dual_norm or (self.projection in ('hard', 'learned')):
                 v_post = (self.G.T @ total_mu)
                 norms_post = torch.norm(v_post, dim=0)
                 if norms_post.numel() > 0:
@@ -188,31 +207,57 @@ class DUNE(torch.nn.Module):
                 raise FileNotFoundError
 
             self.abs_checkpoint_path = file_check(checkpoint)
-            self.model.load_state_dict(torch.load(self.abs_checkpoint_path, map_location=torch.device('cpu')))
+            state = torch.load(self.abs_checkpoint_path, map_location=torch.device('cpu'))
+            if isinstance(state, dict) and ('model' in state or 'prox_head' in state):
+                # composite checkpoint
+                self.model.load_state_dict(state['model'] if 'model' in state else state)
+                if self.projection == 'learned' and self.prox_head is not None and 'prox_head' in state:
+                    try:
+                        self.prox_head.load_state_dict(state['prox_head'])
+                    except Exception:
+                        pass
+            else:
+                # legacy: plain state_dict for model
+                self.model.load_state_dict(state)
             to_device(self.model)
             self.model.eval()
+            if self.projection == 'learned' and self.prox_head is not None:
+                to_device(self.prox_head)
+                self.prox_head.eval()
 
         except FileNotFoundError:
 
             if train_kwargs is None or len(train_kwargs) == 0:
                 print('No train kwargs provided. Default value will be used.')
                 train_kwargs = dict()
-            
+
             direct_train = train_kwargs.get('direct_train', False)
 
             if direct_train:
                 print('train or test the model directly.')
-                return 
+                return
 
             if self.ask_to_train():
                 self.train_dune(train_kwargs)
 
                 if self.ask_to_continue():
-                    self.model.load_state_dict(torch.load(self.full_model_name, map_location=torch.device('cpu')))
+                    state = torch.load(self.full_model_name, map_location=torch.device('cpu'))
+                    if isinstance(state, dict) and ('model' in state or 'prox_head' in state):
+                        self.model.load_state_dict(state['model'] if 'model' in state else state)
+                        if self.projection == 'learned' and self.prox_head is not None and 'prox_head' in state:
+                            try:
+                                self.prox_head.load_state_dict(state['prox_head'])
+                            except Exception:
+                                pass
+                    else:
+                        self.model.load_state_dict(state)
                     to_device(self.model)
                     self.model.eval()
+                    if self.projection == 'learned' and self.prox_head is not None:
+                        to_device(self.prox_head)
+                        self.prox_head.eval()
                 else:
-                    print('You can set the new model path to the DUNE class to use the trained model.') 
+                    print('You can set the new model path to the DUNE class to use the trained model.')
 
             else:
                 print('Can not find checkpoint. Please check the path or train first.')
@@ -226,7 +271,9 @@ class DUNE(torch.nn.Module):
         checkpoint_path = sys.path[0] + '/model' + '/' + model_name
         checkpoint_path = repeat_mk_dirs(checkpoint_path)
         
-        self.train_model = DUNETrain(self.model, self.G, self.h, checkpoint_path)
+        # pass optional prox_head to trainer when using learned projection
+        prox_head = self.prox_head if self.projection == 'learned' else None
+        self.train_model = DUNETrain(self.model, self.G, self.h, checkpoint_path, prox_head=prox_head)
         self.full_model_name = self.train_model.start(**train_kwargs)
         print('Complete Training. The model is saved in ' + self.full_model_name)
 

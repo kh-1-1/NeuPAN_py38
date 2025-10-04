@@ -60,18 +60,31 @@ class PointDataset(Dataset):
 
 
 class DUNETrain:
-    def __init__(self, model, robot_G, robot_h, checkpoint_path) -> None:
+    def __init__(self, model, robot_G, robot_h, checkpoint_path, prox_head=None) -> None:
 
         self.G = robot_G
         self.h = robot_h
         self.model = model
+        self.prox_head = prox_head  # optional learned proximal head
+
+        # training config defaults (can be overridden in start(**kwargs))
+        self.use_lconstr = True
+        self.w_constr = 0.1
+        self.use_kkt = False
+        self.w_kkt = 0.0
+        self.kkt_rho = 0.5
+        self.projection_mode = 'hard'
 
         self.construct_problem()
         self.checkpoint_path = checkpoint_path
 
         self.loss_fn = torch.nn.MSELoss()
 
-        self.optimizer = Adam(self.model.parameters(), lr=1e-4, weight_decay=1e-4)
+        # optimizer: include prox_head params if present
+        params = list(self.model.parameters())
+        if self.prox_head is not None:
+            params += list(self.prox_head.parameters())
+        self.optimizer = Adam(params, lr=1e-4, weight_decay=1e-4)
 
         # for rich progress
         self.console = Console()
@@ -154,6 +167,14 @@ class DUNETrain:
         **kwargs,
     ):
 
+        # override training config from kwargs (if provided)
+        self.use_lconstr = bool(kwargs.get('use_lconstr', self.use_lconstr))
+        self.w_constr = float(kwargs.get('w_constr', self.w_constr))
+        self.use_kkt = bool(kwargs.get('use_kkt', self.use_kkt))
+        self.w_kkt = float(kwargs.get('w_kkt', self.w_kkt))
+        self.kkt_rho = float(kwargs.get('kkt_rho', self.kkt_rho))
+        self.projection_mode = str(kwargs.get('projection', self.projection_mode))
+
         train_dict = {
             "data_size": data_size,
             "data_range": data_range,
@@ -167,6 +188,12 @@ class DUNETrain:
             "robot_G": self.G,
             "robot_h": self.h,
             "model": self.model,
+            "use_lconstr": self.use_lconstr,
+            "w_constr": self.w_constr,
+            "use_kkt": self.use_kkt,
+            "w_kkt": self.w_kkt,
+            "kkt_rho": self.kkt_rho,
+            "projection": self.projection_mode,
         }
 
         with open(self.checkpoint_path + "/train_dict.pkl", "wb") as f:
@@ -265,13 +292,16 @@ class DUNETrain:
 
                 if i % save_freq == 0:
                     print("save model at epoch {}".format(i))
-                    torch.save(
-                        self.model.state_dict(),
-                        self.checkpoint_path + "/" + "model_" + str(i) + ".pth",
-                    )
-                    ful_model_name = (
-                        self.checkpoint_path + "/" + "model_" + str(i) + ".pth"
-                    )
+                    # composite checkpoint when prox_head exists; otherwise plain state_dict for backward-compat
+                    if self.prox_head is not None:
+                        state = {
+                            'model': self.model.state_dict(),
+                            'prox_head': self.prox_head.state_dict(),
+                        }
+                    else:
+                        state = self.model.state_dict()
+                    ful_model_name = self.checkpoint_path + "/" + "model_" + str(i) + ".pth"
+                    torch.save(state, ful_model_name)
 
                 if (i + 1) % decay_freq == 0:
                     self.optimizer.param_groups[0]["lr"] = (
@@ -324,7 +354,50 @@ class DUNETrain:
             mse_distance = self.loss_fn(distance, label_distance)
             mse_fa, mse_fb = self.cal_loss_fab(output_mu, label_mu, input_point)
 
-            loss = mse_mu + mse_distance + mse_fa + mse_fb
+            # --- A-3: Dual constraint & optional KKT residual (on pre-hard mu) ---
+            # derive mu vector [E, 1] for regularization
+            mu_vec = output_mu.squeeze(-1)
+            if mu_vec.dim() == 1:
+                mu_vec = mu_vec.unsqueeze(1)  # [E,1]
+
+            # apply learned prox head (A-2) before computing constraints if enabled
+            mu_reg = mu_vec  # [B,E] for batch or [E] for single
+            if (self.prox_head is not None) and (self.projection_mode == 'learned'):
+                mu_reg = self.prox_head(mu_reg, self.G)   # preserves layout (row or column)
+
+            # unify shapes to [B,E,1] (batched) or [E,1] (single) for constraint calcs
+            E = self.G.shape[0]
+            if mu_reg.dim() == 1:                         # [E]
+                mu_reg_be1 = mu_reg.unsqueeze(1)          # [E,1]
+            elif mu_reg.dim() == 2:
+                if mu_reg.shape[1] == E:                  # [B,E]
+                    mu_reg_be1 = mu_reg.unsqueeze(-1)     # [B,E,1]
+                elif mu_reg.shape[0] == E:                # [E,N]
+                    mu_reg_be1 = mu_reg.t().unsqueeze(-1) # [N,E,1]
+                else:
+                    # fallback: treat last dim as E
+                    mu_reg_be1 = mu_reg.unsqueeze(-1)
+            else:                                         # already 3D
+                mu_reg_be1 = mu_reg
+
+            L_constr = torch.zeros((), device=mu_vec.device)
+            if self.use_lconstr:
+                v = (self.G.t() @ mu_reg_be1)             # [B,2,1] or [2,1]
+                nrm = torch.norm(v.squeeze(-1), dim=-1)   # [B] or scalar
+                viol = torch.clamp(nrm - 1.0, min=0.0)
+                L_constr = (viol ** 2).mean() + (mu_reg_be1.clamp_max(0.0) ** 2).mean()
+
+            L_kkt = torch.zeros((), device=mu_vec.device)
+            if self.use_kkt:
+                ip = input_point.unsqueeze(1)             # [B,2,1] or [2,1]
+                a = self.G @ ip - self.h                  # [B,E,1] or [E,1]
+                Gy = self.G @ (self.G.t() @ mu_reg_be1)   # [B,E,1] or [E,1]
+                s = torch.relu(-mu_reg_be1)               # [B,E,1] or [E,1]
+                r = -a + self.kkt_rho * Gy - s            # [B,E,1] or [E,1]
+                L_kkt = (r ** 2).mean()
+
+            loss = mse_mu + mse_distance + mse_fa + mse_fb \
+                   + self.w_constr * L_constr + self.w_kkt * L_kkt
 
             if not validate:
                 loss.backward()
