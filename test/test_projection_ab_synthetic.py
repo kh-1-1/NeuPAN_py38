@@ -14,8 +14,14 @@ def run_once(projection: str = 'hard', n_points: int = 512, seed: int = 0):
     # Construct a simple robot and PAN with given projection setting
     rob = Robot(kinematics='acker', length=4.6, width=1.6, wheelbase=3)
 
-    ckpt = 'example/model/acker_robot_default/model_5000.pth'
-    has_ckpt = os.path.exists(ckpt)
+    # Choose checkpoint per projection mode
+    ckpts = {
+        'hard':    'example/model/acker_robot_default/model_5000.pth',
+        'none':    'example/model/acker_robot_default/model_5000.pth',
+        'learned': 'example/dune_train/model/acker_learned_prox_robot/model_2500.pth',
+    }
+    ckpt = ckpts.get(projection)
+    has_ckpt = os.path.exists(ckpt) if ckpt is not None else False
 
     pan = PAN(
         receding=10,
@@ -44,6 +50,7 @@ def run_once(projection: str = 'hard', n_points: int = 512, seed: int = 0):
     mu_list, lam_list, _ = pan.dune_layer(pf, Rl, opl)
 
     dl = pan.dune_layer
+    print(f"  using ckpt='{ckpt}' (found={has_ckpt}), projection='{projection}', prox_head={'yes' if getattr(dl, 'prox_head', None) is not None else 'no'}")
     pre_violation = getattr(dl, 'dual_norm_violation_rate', None)
     pre_p95 = getattr(dl, 'dual_norm_p95', None)
     pre_excess = getattr(dl, 'dual_norm_max_excess_pre', None)
@@ -64,7 +71,7 @@ def main():
 
     num_trials = 5
 
-    for proj in ['hard', 'none']:
+    for proj in ['hard', 'learned', 'none']:
         records = []
         print(f'projection={proj}')
         for trial in range(num_trials):

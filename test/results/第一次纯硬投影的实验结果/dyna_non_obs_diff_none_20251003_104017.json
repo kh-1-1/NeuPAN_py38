@@ -1,0 +1,1091 @@
+{
+  "config": {
+    "example": "dyna_non_obs",
+    "kinematics": "diff",
+    "projection": "none",
+    "max_steps": 1000
+  },
+  "summary": {
+    "projection": "none",
+    "total_steps": 133,
+    "avg_pre_violation_rate": 0.41646112791366047,
+    "avg_pre_p95": 1.0092699716961573,
+    "avg_pre_excess": 0.01469179562159947,
+    "avg_post_excess": 0.01469179562159947,
+    "avg_post_max": 1.0125874438375797,
+    "max_post_max": 1.028893232345581,
+    "std_pre_violation_rate": 0.17712009857952513,
+    "std_post_max": 0.008625103684375959,
+    "steps_executed": 133,
+    "arrived": true,
+    "stopped": false,
+    "collided": false,
+    "success": true
+  },
+  "step_records": [
+    {
+      "step": 0,
+      "pre_violation_rate": null,
+      "pre_p95": null,
+      "pre_excess": null,
+      "post_excess": null,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 1,
+      "pre_violation_rate": null,
+      "pre_p95": null,
+      "pre_excess": null,
+      "post_excess": null,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 2,
+      "pre_violation_rate": null,
+      "pre_p95": null,
+      "pre_excess": null,
+      "post_excess": null,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 3,
+      "pre_violation_rate": null,
+      "pre_p95": null,
+      "pre_excess": null,
+      "post_excess": null,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 4,
+      "pre_violation_rate": null,
+      "pre_p95": null,
+      "pre_excess": null,
+      "post_excess": null,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 5,
+      "pre_violation_rate": null,
+      "pre_p95": null,
+      "pre_excess": null,
+      "post_excess": null,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 6,
+      "pre_violation_rate": null,
+      "pre_p95": null,
+      "pre_excess": null,
+      "post_excess": null,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 7,
+      "pre_violation_rate": 0.4545454680919647,
+      "pre_p95": 1.0001611709594727,
+      "pre_excess": 0.00017082691192626953,
+      "post_excess": 0.00017082691192626953,
+      "post_max_via_lam": 1.0001708269119263
+    },
+    {
+      "step": 8,
+      "pre_violation_rate": 0.46590909361839294,
+      "pre_p95": 1.0002301931381226,
+      "pre_excess": 0.0002410411834716797,
+      "post_excess": 0.0002410411834716797,
+      "post_max_via_lam": 1.0002410411834717
+    },
+    {
+      "step": 9,
+      "pre_violation_rate": 0.3471074402332306,
+      "pre_p95": 1.0002236366271973,
+      "pre_excess": 0.0002410411834716797,
+      "post_excess": 0.0002410411834716797,
+      "post_max_via_lam": 1.0002410411834717
+    },
+    {
+      "step": 10,
+      "pre_violation_rate": 0.3030303120613098,
+      "pre_p95": 1.0002230405807495,
+      "pre_excess": 0.00024247169494628906,
+      "post_excess": 0.00024247169494628906,
+      "post_max_via_lam": 1.0002424716949463
+    },
+    {
+      "step": 11,
+      "pre_violation_rate": 0.26446279883384705,
+      "pre_p95": 1.0002267360687256,
+      "pre_excess": 0.0002416372299194336,
+      "post_excess": 0.0002416372299194336,
+      "post_max_via_lam": 1.0002416372299194
+    },
+    {
+      "step": 12,
+      "pre_violation_rate": 0.2348484843969345,
+      "pre_p95": 1.0002094507217407,
+      "pre_excess": 0.0002429485321044922,
+      "post_excess": 0.0002429485321044922,
+      "post_max_via_lam": 1.0002429485321045
+    },
+    {
+      "step": 13,
+      "pre_violation_rate": 0.2097902148962021,
+      "pre_p95": 1.000198483467102,
+      "pre_excess": 0.0002410411834716797,
+      "post_excess": 0.0002410411834716797,
+      "post_max_via_lam": 1.0002410411834717
+    },
+    {
+      "step": 14,
+      "pre_violation_rate": 0.1678321659564972,
+      "pre_p95": 1.0001800060272217,
+      "pre_excess": 0.00024211406707763672,
+      "post_excess": 0.00024211406707763672,
+      "post_max_via_lam": 1.0002421140670776
+    },
+    {
+      "step": 15,
+      "pre_violation_rate": 0.14935064315795898,
+      "pre_p95": 1.0001691579818726,
+      "pre_excess": 0.0002396106719970703,
+      "post_excess": 0.0002396106719970703,
+      "post_max_via_lam": 1.000239610671997
+    },
+    {
+      "step": 16,
+      "pre_violation_rate": 0.10389610379934311,
+      "pre_p95": 1.0001418590545654,
+      "pre_excess": 0.00023162364959716797,
+      "post_excess": 0.00023162364959716797,
+      "post_max_via_lam": 1.0002316236495972
+    },
+    {
+      "step": 17,
+      "pre_violation_rate": 0.07792207598686218,
+      "pre_p95": 1.00007963180542,
+      "pre_excess": 0.0005936622619628906,
+      "post_excess": 0.0005936622619628906,
+      "post_max_via_lam": 1.000593662261963
+    },
+    {
+      "step": 18,
+      "pre_violation_rate": 0.08484848588705063,
+      "pre_p95": 1.0001204013824463,
+      "pre_excess": 0.0020002126693725586,
+      "post_excess": 0.0020002126693725586,
+      "post_max_via_lam": 1.0020002126693726
+    },
+    {
+      "step": 19,
+      "pre_violation_rate": 0.10795454680919647,
+      "pre_p95": 1.0002305507659912,
+      "pre_excess": 0.0032700300216674805,
+      "post_excess": 0.0032700300216674805,
+      "post_max_via_lam": 1.0032700300216675
+    },
+    {
+      "step": 20,
+      "pre_violation_rate": 0.11931817978620529,
+      "pre_p95": 1.0004409551620483,
+      "pre_excess": 0.0027407407760620117,
+      "post_excess": 0.0027407407760620117,
+      "post_max_via_lam": 1.002740740776062
+    },
+    {
+      "step": 21,
+      "pre_violation_rate": 0.12834224104881287,
+      "pre_p95": 1.0005121231079102,
+      "pre_excess": 0.002602219581604004,
+      "post_excess": 0.002602219581604004,
+      "post_max_via_lam": 1.002602219581604
+    },
+    {
+      "step": 22,
+      "pre_violation_rate": 0.13368983566761017,
+      "pre_p95": 1.0006355047225952,
+      "pre_excess": 0.0028535127639770508,
+      "post_excess": 0.0028535127639770508,
+      "post_max_via_lam": 1.002853512763977
+    },
+    {
+      "step": 23,
+      "pre_violation_rate": 0.1764705926179886,
+      "pre_p95": 1.000854253768921,
+      "pre_excess": 0.003530263900756836,
+      "post_excess": 0.003530263900756836,
+      "post_max_via_lam": 1.0035302639007568
+    },
+    {
+      "step": 24,
+      "pre_violation_rate": 0.2513369023799896,
+      "pre_p95": 1.0008705854415894,
+      "pre_excess": 0.0053997039794921875,
+      "post_excess": 0.0053997039794921875,
+      "post_max_via_lam": 1.0053997039794922
+    },
+    {
+      "step": 25,
+      "pre_violation_rate": 0.26737967133522034,
+      "pre_p95": 1.0023763179779053,
+      "pre_excess": 0.006726622581481934,
+      "post_excess": 0.006726622581481934,
+      "post_max_via_lam": 1.006726622581482
+    },
+    {
+      "step": 26,
+      "pre_violation_rate": 0.3068181872367859,
+      "pre_p95": 1.0021514892578125,
+      "pre_excess": 0.005633234977722168,
+      "post_excess": 0.005633234977722168,
+      "post_max_via_lam": 1.0056332349777222
+    },
+    {
+      "step": 27,
+      "pre_violation_rate": 0.31016042828559875,
+      "pre_p95": 1.0034178495407104,
+      "pre_excess": 0.007087588310241699,
+      "post_excess": 0.007087588310241699,
+      "post_max_via_lam": 1.0070875883102417
+    },
+    {
+      "step": 28,
+      "pre_violation_rate": 0.32085561752319336,
+      "pre_p95": 1.0039575099945068,
+      "pre_excess": 0.008860945701599121,
+      "post_excess": 0.008860945701599121,
+      "post_max_via_lam": 1.0088609457015991
+    },
+    {
+      "step": 29,
+      "pre_violation_rate": 0.32085561752319336,
+      "pre_p95": 1.0046931505203247,
+      "pre_excess": 0.00943303108215332,
+      "post_excess": 0.00943303108215332,
+      "post_max_via_lam": 1.0094330310821533
+    },
+    {
+      "step": 30,
+      "pre_violation_rate": 0.3295454680919647,
+      "pre_p95": 1.0056724548339844,
+      "pre_excess": 0.01171410083770752,
+      "post_excess": 0.01171410083770752,
+      "post_max_via_lam": 1.0117141008377075
+    },
+    {
+      "step": 31,
+      "pre_violation_rate": 0.30909091234207153,
+      "pre_p95": 1.0055739879608154,
+      "pre_excess": 0.011295318603515625,
+      "post_excess": 0.011295318603515625,
+      "post_max_via_lam": 1.0112953186035156
+    },
+    {
+      "step": 32,
+      "pre_violation_rate": 0.290909081697464,
+      "pre_p95": 1.0057710409164429,
+      "pre_excess": 0.011452078819274902,
+      "post_excess": 0.011452078819274902,
+      "post_max_via_lam": 1.011452078819275
+    },
+    {
+      "step": 33,
+      "pre_violation_rate": 0.27272728085517883,
+      "pre_p95": 1.0074714422225952,
+      "pre_excess": 0.01415407657623291,
+      "post_excess": 0.01415407657623291,
+      "post_max_via_lam": 1.014154076576233
+    },
+    {
+      "step": 34,
+      "pre_violation_rate": 0.23030303418636322,
+      "pre_p95": 1.004841685295105,
+      "pre_excess": 0.0107574462890625,
+      "post_excess": 0.0107574462890625,
+      "post_max_via_lam": 1.0107574462890625
+    },
+    {
+      "step": 35,
+      "pre_violation_rate": 0.2969697117805481,
+      "pre_p95": 1.0057532787322998,
+      "pre_excess": 0.014101028442382812,
+      "post_excess": 0.014101028442382812,
+      "post_max_via_lam": 1.0141010284423828
+    },
+    {
+      "step": 36,
+      "pre_violation_rate": 0.22727273404598236,
+      "pre_p95": 1.0025646686553955,
+      "pre_excess": 0.007282257080078125,
+      "post_excess": 0.007282257080078125,
+      "post_max_via_lam": 1.0072822570800781
+    },
+    {
+      "step": 37,
+      "pre_violation_rate": 0.1818181872367859,
+      "pre_p95": 1.0004807710647583,
+      "pre_excess": 0.003047347068786621,
+      "post_excess": 0.003047347068786621,
+      "post_max_via_lam": 1.0030473470687866
+    },
+    {
+      "step": 38,
+      "pre_violation_rate": 0.20909090340137482,
+      "pre_p95": 1.0003772974014282,
+      "pre_excess": 0.0008391141891479492,
+      "post_excess": 0.0008391141891479492,
+      "post_max_via_lam": 1.000839114189148
+    },
+    {
+      "step": 39,
+      "pre_violation_rate": 0.20454545319080353,
+      "pre_p95": 1.0001038312911987,
+      "pre_excess": 0.0005720853805541992,
+      "post_excess": 0.0005720853805541992,
+      "post_max_via_lam": 1.0005720853805542
+    },
+    {
+      "step": 40,
+      "pre_violation_rate": 0.12121212482452393,
+      "pre_p95": 1.0000513792037964,
+      "pre_excess": 9.59634780883789e-05,
+      "post_excess": 9.59634780883789e-05,
+      "post_max_via_lam": 1.0000959634780884
+    },
+    {
+      "step": 41,
+      "pre_violation_rate": 0.09090909361839294,
+      "pre_p95": 1.0000582933425903,
+      "pre_excess": 0.00011932849884033203,
+      "post_excess": 0.00011932849884033203,
+      "post_max_via_lam": 1.0001193284988403
+    },
+    {
+      "step": 42,
+      "pre_violation_rate": 0.1428571492433548,
+      "pre_p95": 1.0001444816589355,
+      "pre_excess": 0.002945542335510254,
+      "post_excess": 0.002945542335510254,
+      "post_max_via_lam": 1.0029455423355103
+    },
+    {
+      "step": 43,
+      "pre_violation_rate": 0.33766233921051025,
+      "pre_p95": 1.0099056959152222,
+      "pre_excess": 0.01750802993774414,
+      "post_excess": 0.01750802993774414,
+      "post_max_via_lam": 1.0175080299377441
+    },
+    {
+      "step": 44,
+      "pre_violation_rate": 0.2954545319080353,
+      "pre_p95": 1.0127215385437012,
+      "pre_excess": 0.02060401439666748,
+      "post_excess": 0.02060401439666748,
+      "post_max_via_lam": 1.0206040143966675
+    },
+    {
+      "step": 45,
+      "pre_violation_rate": 0.4040403962135315,
+      "pre_p95": 1.0118255615234375,
+      "pre_excess": 0.02023482322692871,
+      "post_excess": 0.02023482322692871,
+      "post_max_via_lam": 1.0202348232269287
+    },
+    {
+      "step": 46,
+      "pre_violation_rate": 0.49494948983192444,
+      "pre_p95": 1.0158072710037231,
+      "pre_excess": 0.01904296875,
+      "post_excess": 0.01904296875,
+      "post_max_via_lam": 1.01904296875
+    },
+    {
+      "step": 47,
+      "pre_violation_rate": 0.5757575631141663,
+      "pre_p95": 1.016047716140747,
+      "pre_excess": 0.021276235580444336,
+      "post_excess": 0.021276235580444336,
+      "post_max_via_lam": 1.0212762355804443
+    },
+    {
+      "step": 48,
+      "pre_violation_rate": 0.5950413346290588,
+      "pre_p95": 1.0174075365066528,
+      "pre_excess": 0.02196669578552246,
+      "post_excess": 0.02196669578552246,
+      "post_max_via_lam": 1.0219666957855225
+    },
+    {
+      "step": 49,
+      "pre_violation_rate": 0.5584415793418884,
+      "pre_p95": 1.0144832134246826,
+      "pre_excess": 0.021928906440734863,
+      "post_excess": 0.021928906440734863,
+      "post_max_via_lam": 1.0219289064407349
+    },
+    {
+      "step": 50,
+      "pre_violation_rate": 0.5082644820213318,
+      "pre_p95": 1.015447735786438,
+      "pre_excess": 0.022940754890441895,
+      "post_excess": 0.022940754890441895,
+      "post_max_via_lam": 1.0229406356811523
+    },
+    {
+      "step": 51,
+      "pre_violation_rate": 0.4639498293399811,
+      "pre_p95": 1.0139397382736206,
+      "pre_excess": 0.021260499954223633,
+      "post_excess": 0.021260499954223633,
+      "post_max_via_lam": 1.021260380744934
+    },
+    {
+      "step": 52,
+      "pre_violation_rate": 0.42897728085517883,
+      "pre_p95": 1.0141879320144653,
+      "pre_excess": 0.02386939525604248,
+      "post_excess": 0.02386939525604248,
+      "post_max_via_lam": 1.0238693952560425
+    },
+    {
+      "step": 53,
+      "pre_violation_rate": 0.2869318127632141,
+      "pre_p95": 1.010154366493225,
+      "pre_excess": 0.028893232345581055,
+      "post_excess": 0.028893232345581055,
+      "post_max_via_lam": 1.028893232345581
+    },
+    {
+      "step": 54,
+      "pre_violation_rate": 0.19528619945049286,
+      "pre_p95": 1.0007520914077759,
+      "pre_excess": 0.016199588775634766,
+      "post_excess": 0.016199588775634766,
+      "post_max_via_lam": 1.0161995887756348
+    },
+    {
+      "step": 55,
+      "pre_violation_rate": 0.2507837116718292,
+      "pre_p95": 1.0004510879516602,
+      "pre_excess": 0.0009402036666870117,
+      "post_excess": 0.0009402036666870117,
+      "post_max_via_lam": 1.000940203666687
+    },
+    {
+      "step": 56,
+      "pre_violation_rate": 0.25,
+      "pre_p95": 1.000419020652771,
+      "pre_excess": 0.0005956888198852539,
+      "post_excess": 0.0005956888198852539,
+      "post_max_via_lam": 1.0005956888198853
+    },
+    {
+      "step": 57,
+      "pre_violation_rate": 0.22314049303531647,
+      "pre_p95": 1.0004106760025024,
+      "pre_excess": 0.0015692710876464844,
+      "post_excess": 0.0015692710876464844,
+      "post_max_via_lam": 1.0015692710876465
+    },
+    {
+      "step": 58,
+      "pre_violation_rate": 0.32828283309936523,
+      "pre_p95": 1.0007622241973877,
+      "pre_excess": 0.00926506519317627,
+      "post_excess": 0.00926506519317627,
+      "post_max_via_lam": 1.0092650651931763
+    },
+    {
+      "step": 59,
+      "pre_violation_rate": 0.22045454382896423,
+      "pre_p95": 1.0006033182144165,
+      "pre_excess": 0.019914984703063965,
+      "post_excess": 0.019914984703063965,
+      "post_max_via_lam": 1.0199147462844849
+    },
+    {
+      "step": 60,
+      "pre_violation_rate": 0.2811839282512665,
+      "pre_p95": 1.0008208751678467,
+      "pre_excess": 0.016245722770690918,
+      "post_excess": 0.016245722770690918,
+      "post_max_via_lam": 1.016245722770691
+    },
+    {
+      "step": 61,
+      "pre_violation_rate": 0.3087121248245239,
+      "pre_p95": 1.0014866590499878,
+      "pre_excess": 0.022702813148498535,
+      "post_excess": 0.022702813148498535,
+      "post_max_via_lam": 1.0227028131484985
+    },
+    {
+      "step": 62,
+      "pre_violation_rate": 0.3418181836605072,
+      "pre_p95": 1.0016584396362305,
+      "pre_excess": 0.02164304256439209,
+      "post_excess": 0.02164304256439209,
+      "post_max_via_lam": 1.021643042564392
+    },
+    {
+      "step": 63,
+      "pre_violation_rate": 0.3799999952316284,
+      "pre_p95": 1.0016257762908936,
+      "pre_excess": 0.019596099853515625,
+      "post_excess": 0.019596099853515625,
+      "post_max_via_lam": 1.0195960998535156
+    },
+    {
+      "step": 64,
+      "pre_violation_rate": 0.39393940567970276,
+      "pre_p95": 1.001712679862976,
+      "pre_excess": 0.022118687629699707,
+      "post_excess": 0.022118687629699707,
+      "post_max_via_lam": 1.0221186876296997
+    },
+    {
+      "step": 65,
+      "pre_violation_rate": 0.3737373650074005,
+      "pre_p95": 1.0014787912368774,
+      "pre_excess": 0.017644405364990234,
+      "post_excess": 0.017644405364990234,
+      "post_max_via_lam": 1.0176445245742798
+    },
+    {
+      "step": 66,
+      "pre_violation_rate": 0.36020582914352417,
+      "pre_p95": 1.0015588998794556,
+      "pre_excess": 0.015224337577819824,
+      "post_excess": 0.015224337577819824,
+      "post_max_via_lam": 1.0152243375778198
+    },
+    {
+      "step": 67,
+      "pre_violation_rate": 0.4020979106426239,
+      "pre_p95": 1.0029839277267456,
+      "pre_excess": 0.026343345642089844,
+      "post_excess": 0.026343345642089844,
+      "post_max_via_lam": 1.0263433456420898
+    },
+    {
+      "step": 68,
+      "pre_violation_rate": 0.40232107043266296,
+      "pre_p95": 1.0016188621520996,
+      "pre_excess": 0.007447242736816406,
+      "post_excess": 0.007447242736816406,
+      "post_max_via_lam": 1.0074472427368164
+    },
+    {
+      "step": 69,
+      "pre_violation_rate": 0.44805195927619934,
+      "pre_p95": 1.0015660524368286,
+      "pre_excess": 0.004623889923095703,
+      "post_excess": 0.004623889923095703,
+      "post_max_via_lam": 1.0046238899230957
+    },
+    {
+      "step": 70,
+      "pre_violation_rate": 0.28354978561401367,
+      "pre_p95": 1.0026105642318726,
+      "pre_excess": 0.009661078453063965,
+      "post_excess": 0.009661078453063965,
+      "post_max_via_lam": 1.0096609592437744
+    },
+    {
+      "step": 71,
+      "pre_violation_rate": 0.35227271914482117,
+      "pre_p95": 1.007157325744629,
+      "pre_excess": 0.018860220909118652,
+      "post_excess": 0.018860220909118652,
+      "post_max_via_lam": 1.0188603401184082
+    },
+    {
+      "step": 72,
+      "pre_violation_rate": 0.3808353841304779,
+      "pre_p95": 1.0097386837005615,
+      "pre_excess": 0.02119302749633789,
+      "post_excess": 0.02119302749633789,
+      "post_max_via_lam": 1.0211931467056274
+    },
+    {
+      "step": 73,
+      "pre_violation_rate": 0.44415584206581116,
+      "pre_p95": 1.0111229419708252,
+      "pre_excess": 0.020276665687561035,
+      "post_excess": 0.020276665687561035,
+      "post_max_via_lam": 1.020276665687561
+    },
+    {
+      "step": 74,
+      "pre_violation_rate": 0.4267676770687103,
+      "pre_p95": 1.0099940299987793,
+      "pre_excess": 0.016866564750671387,
+      "post_excess": 0.016866564750671387,
+      "post_max_via_lam": 1.0168665647506714
+    },
+    {
+      "step": 75,
+      "pre_violation_rate": 0.5184274911880493,
+      "pre_p95": 1.0116389989852905,
+      "pre_excess": 0.020507335662841797,
+      "post_excess": 0.020507335662841797,
+      "post_max_via_lam": 1.0205073356628418
+    },
+    {
+      "step": 76,
+      "pre_violation_rate": 0.5823096036911011,
+      "pre_p95": 1.014352560043335,
+      "pre_excess": 0.02211129665374756,
+      "post_excess": 0.02211129665374756,
+      "post_max_via_lam": 1.0221112966537476
+    },
+    {
+      "step": 77,
+      "pre_violation_rate": 0.6035353541374207,
+      "pre_p95": 1.0160236358642578,
+      "pre_excess": 0.02231001853942871,
+      "post_excess": 0.02231001853942871,
+      "post_max_via_lam": 1.0223100185394287
+    },
+    {
+      "step": 78,
+      "pre_violation_rate": 0.614973247051239,
+      "pre_p95": 1.017401933670044,
+      "pre_excess": 0.02113962173461914,
+      "post_excess": 0.02113962173461914,
+      "post_max_via_lam": 1.0211395025253296
+    },
+    {
+      "step": 79,
+      "pre_violation_rate": 0.6558441519737244,
+      "pre_p95": 1.0189690589904785,
+      "pre_excess": 0.02317214012145996,
+      "post_excess": 0.02317214012145996,
+      "post_max_via_lam": 1.0231720209121704
+    },
+    {
+      "step": 80,
+      "pre_violation_rate": 0.6636363863945007,
+      "pre_p95": 1.0181975364685059,
+      "pre_excess": 0.022516369819641113,
+      "post_excess": 0.022516369819641113,
+      "post_max_via_lam": 1.0225163698196411
+    },
+    {
+      "step": 81,
+      "pre_violation_rate": 0.5738636255264282,
+      "pre_p95": 1.0177717208862305,
+      "pre_excess": 0.021521449089050293,
+      "post_excess": 0.021521449089050293,
+      "post_max_via_lam": 1.0215213298797607
+    },
+    {
+      "step": 82,
+      "pre_violation_rate": 0.5090909004211426,
+      "pre_p95": 1.0119681358337402,
+      "pre_excess": 0.01432955265045166,
+      "post_excess": 0.01432955265045166,
+      "post_max_via_lam": 1.0143295526504517
+    },
+    {
+      "step": 83,
+      "pre_violation_rate": 0.5,
+      "pre_p95": 1.004882574081421,
+      "pre_excess": 0.01416623592376709,
+      "post_excess": 0.01416623592376709,
+      "post_max_via_lam": 1.0141661167144775
+    },
+    {
+      "step": 84,
+      "pre_violation_rate": 0.5303030014038086,
+      "pre_p95": 1.0092931985855103,
+      "pre_excess": 0.01438760757446289,
+      "post_excess": 0.01438760757446289,
+      "post_max_via_lam": 1.014387607574463
+    },
+    {
+      "step": 85,
+      "pre_violation_rate": 0.5533596873283386,
+      "pre_p95": 1.007698893547058,
+      "pre_excess": 0.012556195259094238,
+      "post_excess": 0.012556195259094238,
+      "post_max_via_lam": 1.0125561952590942
+    },
+    {
+      "step": 86,
+      "pre_violation_rate": 0.4740259647369385,
+      "pre_p95": 1.00636625289917,
+      "pre_excess": 0.010491251945495605,
+      "post_excess": 0.010491251945495605,
+      "post_max_via_lam": 1.0104912519454956
+    },
+    {
+      "step": 87,
+      "pre_violation_rate": 0.43030303716659546,
+      "pre_p95": 1.0048694610595703,
+      "pre_excess": 0.008573055267333984,
+      "post_excess": 0.008573055267333984,
+      "post_max_via_lam": 1.0085731744766235
+    },
+    {
+      "step": 88,
+      "pre_violation_rate": 0.3887147307395935,
+      "pre_p95": 1.0032848119735718,
+      "pre_excess": 0.0067021846771240234,
+      "post_excess": 0.0067021846771240234,
+      "post_max_via_lam": 1.006702184677124
+    },
+    {
+      "step": 89,
+      "pre_violation_rate": 0.3569023609161377,
+      "pre_p95": 1.0023162364959717,
+      "pre_excess": 0.004861593246459961,
+      "post_excess": 0.004861593246459961,
+      "post_max_via_lam": 1.00486159324646
+    },
+    {
+      "step": 90,
+      "pre_violation_rate": 0.3418181836605072,
+      "pre_p95": 1.001235008239746,
+      "pre_excess": 0.006080269813537598,
+      "post_excess": 0.006080269813537598,
+      "post_max_via_lam": 1.0060802698135376
+    },
+    {
+      "step": 91,
+      "pre_violation_rate": 0.35537189245224,
+      "pre_p95": 1.001802682876587,
+      "pre_excess": 0.008180618286132812,
+      "post_excess": 0.008180618286132812,
+      "post_max_via_lam": 1.0081806182861328
+    },
+    {
+      "step": 92,
+      "pre_violation_rate": 0.3083004057407379,
+      "pre_p95": 1.0025112628936768,
+      "pre_excess": 0.006466984748840332,
+      "post_excess": 0.006466984748840332,
+      "post_max_via_lam": 1.0064669847488403
+    },
+    {
+      "step": 93,
+      "pre_violation_rate": 0.33712121844291687,
+      "pre_p95": 1.0040898323059082,
+      "pre_excess": 0.008836746215820312,
+      "post_excess": 0.008836746215820312,
+      "post_max_via_lam": 1.0088367462158203
+    },
+    {
+      "step": 94,
+      "pre_violation_rate": 0.38181817531585693,
+      "pre_p95": 1.0058358907699585,
+      "pre_excess": 0.009521961212158203,
+      "post_excess": 0.009521961212158203,
+      "post_max_via_lam": 1.0095218420028687
+    },
+    {
+      "step": 95,
+      "pre_violation_rate": 0.38111889362335205,
+      "pre_p95": 1.0071340799331665,
+      "pre_excess": 0.012261390686035156,
+      "post_excess": 0.012261390686035156,
+      "post_max_via_lam": 1.0122613906860352
+    },
+    {
+      "step": 96,
+      "pre_violation_rate": 0.37012988328933716,
+      "pre_p95": 1.006524682044983,
+      "pre_excess": 0.010167598724365234,
+      "post_excess": 0.010167598724365234,
+      "post_max_via_lam": 1.0101675987243652
+    },
+    {
+      "step": 97,
+      "pre_violation_rate": 0.39811912178993225,
+      "pre_p95": 1.007199764251709,
+      "pre_excess": 0.010002970695495605,
+      "post_excess": 0.010002970695495605,
+      "post_max_via_lam": 1.0100030899047852
+    },
+    {
+      "step": 98,
+      "pre_violation_rate": 0.42521995306015015,
+      "pre_p95": 1.0089466571807861,
+      "pre_excess": 0.01265871524810791,
+      "post_excess": 0.01265871524810791,
+      "post_max_via_lam": 1.012658715248108
+    },
+    {
+      "step": 99,
+      "pre_violation_rate": 0.4710743725299835,
+      "pre_p95": 1.011505365371704,
+      "pre_excess": 0.018096446990966797,
+      "post_excess": 0.018096446990966797,
+      "post_max_via_lam": 1.0180964469909668
+    },
+    {
+      "step": 100,
+      "pre_violation_rate": 0.5267379879951477,
+      "pre_p95": 1.014915108680725,
+      "pre_excess": 0.021510004997253418,
+      "post_excess": 0.021510004997253418,
+      "post_max_via_lam": 1.0215098857879639
+    },
+    {
+      "step": 101,
+      "pre_violation_rate": 0.5808081030845642,
+      "pre_p95": 1.0187675952911377,
+      "pre_excess": 0.02536475658416748,
+      "post_excess": 0.02536475658416748,
+      "post_max_via_lam": 1.025364637374878
+    },
+    {
+      "step": 102,
+      "pre_violation_rate": 0.5785123705863953,
+      "pre_p95": 1.0170279741287231,
+      "pre_excess": 0.023110628128051758,
+      "post_excess": 0.023110628128051758,
+      "post_max_via_lam": 1.0231105089187622
+    },
+    {
+      "step": 103,
+      "pre_violation_rate": 0.6112852692604065,
+      "pre_p95": 1.0171761512756348,
+      "pre_excess": 0.025090456008911133,
+      "post_excess": 0.025090456008911133,
+      "post_max_via_lam": 1.0250904560089111
+    },
+    {
+      "step": 104,
+      "pre_violation_rate": 0.6174242496490479,
+      "pre_p95": 1.015425205230713,
+      "pre_excess": 0.024103283882141113,
+      "post_excess": 0.024103283882141113,
+      "post_max_via_lam": 1.0241032838821411
+    },
+    {
+      "step": 105,
+      "pre_violation_rate": 0.5119616985321045,
+      "pre_p95": 1.0133373737335205,
+      "pre_excess": 0.02031397819519043,
+      "post_excess": 0.02031397819519043,
+      "post_max_via_lam": 1.0203139781951904
+    },
+    {
+      "step": 106,
+      "pre_violation_rate": 0.49696969985961914,
+      "pre_p95": 1.0124119520187378,
+      "pre_excess": 0.016731977462768555,
+      "post_excess": 0.016731977462768555,
+      "post_max_via_lam": 1.0167319774627686
+    },
+    {
+      "step": 107,
+      "pre_violation_rate": 0.6704545617103577,
+      "pre_p95": 1.0154457092285156,
+      "pre_excess": 0.017737388610839844,
+      "post_excess": 0.017737388610839844,
+      "post_max_via_lam": 1.0177373886108398
+    },
+    {
+      "step": 108,
+      "pre_violation_rate": 0.9040403962135315,
+      "pre_p95": 1.0190883874893188,
+      "pre_excess": 0.026835083961486816,
+      "post_excess": 0.026835083961486816,
+      "post_max_via_lam": 1.0268350839614868
+    },
+    {
+      "step": 109,
+      "pre_violation_rate": 0.8074866533279419,
+      "pre_p95": 1.0170209407806396,
+      "pre_excess": 0.021176695823669434,
+      "post_excess": 0.021176695823669434,
+      "post_max_via_lam": 1.021176815032959
+    },
+    {
+      "step": 110,
+      "pre_violation_rate": 0.7857142686843872,
+      "pre_p95": 1.0174793004989624,
+      "pre_excess": 0.022784948348999023,
+      "post_excess": 0.022784948348999023,
+      "post_max_via_lam": 1.022784948348999
+    },
+    {
+      "step": 111,
+      "pre_violation_rate": 0.7190082669258118,
+      "pre_p95": 1.0191209316253662,
+      "pre_excess": 0.022147059440612793,
+      "post_excess": 0.022147059440612793,
+      "post_max_via_lam": 1.0221469402313232
+    },
+    {
+      "step": 112,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": 1.0258448123931885
+    },
+    {
+      "step": 113,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 114,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 115,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 116,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 117,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 118,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 119,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 120,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 121,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 122,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 123,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 124,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 125,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 126,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 127,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 128,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 129,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 130,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 131,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    },
+    {
+      "step": 132,
+      "pre_violation_rate": 0.6060606241226196,
+      "pre_p95": 1.0226356983184814,
+      "pre_excess": 0.025844812393188477,
+      "post_excess": 0.025844812393188477,
+      "post_max_via_lam": NaN
+    }
+  ]
+}
