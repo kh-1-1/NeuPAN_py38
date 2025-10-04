@@ -3,8 +3,20 @@ robot:
   length: 1.6
   width: 2.0
 
+device: cuda
 
 train:
+
+ # minimal PoC for learned prox + constraint loss
+  direct_train: true
+  model_name: acker_learned_prox_poc
+  projection: learned         # {hard|none|learned}
+  use_lconstr: true
+  w_constr: 0.10
+  use_kkt: false
+  w_kkt: 0.00
+  kkt_rho: 0.50
+
   direct_train: true
   data_size: 100000
   data_range: [-25, -25, 25, 25]
