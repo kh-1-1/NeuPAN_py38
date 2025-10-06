@@ -1,0 +1,30 @@
+Epoch 0/200 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        3.29e-07 | Validate L_constr:        2.93e-07
+  L_kkt:           9.37e-01 | Validate L_kkt:           9.36e-01
+
+Epoch 50/200 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        1.21e-06 | Validate L_constr:        9.02e-07
+  L_kkt:           9.36e-01 | Validate L_kkt:           9.36e-01
+
+Epoch 100/200 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        8.86e-07 | Validate L_constr:        5.82e-07
+  L_kkt:           9.36e-01 | Validate L_kkt:           9.36e-01
+
+Epoch 150/200 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        1.17e-06 | Validate L_constr:        7.72e-07
+  L_kkt:           9.36e-01 | Validate L_kkt:           9.36e-01
+
+Epoch 200/200 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        8.64e-07 | Validate L_constr:        9.32e-07
+  L_kkt:           9.36e-01 | Validate L_kkt:           9.36e-01
+
