@@ -123,7 +123,7 @@ def simulate(
 ) -> Dict[str, Any]:
     """
     Generic simulation runner (supports projection/unroll/combined configs).
-    
+
     Args:
         example_name: str, example directory name (e.g., 'corridor')
         kinematics: str, 'diff' or 'acker'
@@ -142,7 +142,7 @@ def simulate(
         full: bool, full rendering mode
         point_vel: bool, use point velocities
         reverse: bool, reverse mode (for 'reverse' example)
-        
+
     Returns:
         dict with summary metrics
     """
@@ -179,6 +179,11 @@ def simulate(
     evaluator = MetricsEvaluator(planner_config)
     profile_timing = planner_config.get('profile_timing', False)
 
+    # stuck detection parameters (aligned with LON_corridor_01)
+    stuck_threshold = 0.01
+    stuck_count = 0
+    stuck_count_thresh = 5
+
     for step in range(max_steps):
         robot_state = env.get_robot_state()
         lidar_scan = env.get_lidar_scan()
@@ -214,7 +219,21 @@ def simulate(
             env.draw_trajectory(planner.ref_trajectory, 'b', refresh=True)
             env.render()
 
+        # record pre-step position for stuck detection
+        pre_pos = env.get_robot_state()[0:2]
+
         env.step(action)
+
+        # stuck detection: small displacement for consecutive steps
+        cur_pos = env.get_robot_state()[0:2]
+        if np.linalg.norm(cur_pos - pre_pos) < stuck_threshold:
+            stuck_count += 1
+        else:
+            stuck_count = 0
+        if stuck_count > stuck_count_thresh:
+            print(f"stuck: True, diff_distance < {stuck_threshold}")
+            break
+
         if info.get('arrive') or info.get('stop') or env.done():
             break
 
@@ -249,7 +268,7 @@ def safe_simulate(
 ) -> Tuple[bool, Dict[str, Any], str]:
     """
     Wrapper that catches exceptions and returns (success, report, err) tuple.
-    
+
     Args:
         example: example name
         kin: kinematics ('diff' or 'acker')
@@ -259,7 +278,7 @@ def safe_simulate(
         save_results: save JSON results
         quiet: suppress stdout
         results_dir: output directory
-        
+
     Returns:
         (success: bool, report: dict, error_msg: str)
     """
@@ -302,10 +321,10 @@ def safe_simulate(
 def aggregate_metrics(reports: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
     Aggregate multiple run reports into mean/std statistics.
-    
+
     Args:
         reports: list of summary dicts from simulate()
-        
+
     Returns:
         dict with aggregated metrics (mean, std, rates)
     """
@@ -321,7 +340,7 @@ def aggregate_metrics(reports: List[Dict[str, Any]]) -> Dict[str, Any]:
         a = arr(key)
         out[key + '_mean'] = float(a.mean()) if a.size else None
         out[key + '_std'] = float(a.std()) if a.size else None
-    
+
     out['num_runs'] = len(reports)
     return out
 

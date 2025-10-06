@@ -1,0 +1,36 @@
+robot:
+  kinematics: 'acker'
+  length: 4.6
+  width: 1.6
+  wheelbase: 3
+
+device: cuda
+
+# Start from the converged learned-prox checkpoint, then KKT fine-tune
+pan:
+  dune_checkpoint: example/dune_train/model/acker_learned_prox_robot/model_2500.pth
+
+train:
+  # KKT fine-tune on top of learned-prox
+  direct_train: true
+  model_name: acker_learned_prox_kkt_tuned_robot
+  projection: learned          # keep learned prox in the loop
+
+  # Feasibility + KKT (balanced)
+  use_lconstr: true
+  w_constr: 0.10               # keep feasibility pressure
+  use_kkt: true
+  w_kkt: 1e-5                  # smaller KKT weight to avoid overwhelming loss scale
+  kkt_rho: 0.50                # start mid-range; tune in [0.1, 1.0]
+
+  # Data/training schedule
+  data_size: 100000
+  data_range: [-25, -25, 25, 25]
+  batch_size: 256
+  epoch: 1500
+  valid_freq: 50
+  save_freq: 250
+  lr: 5e-5                     # restore baseline LR to allow trunk updates
+  lr_decay: 0.5
+  decay_freq: 750
+

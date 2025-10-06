@@ -29,7 +29,6 @@ class ProxHead(nn.Module):
             nn.Linear(hidden, self.E),
         )
 
-    @torch.no_grad()
     def _ensure_2d(self, mu: torch.Tensor) -> torch.Tensor:
         """
         Ensure mu has shape [E, N]. Accepts [E], [E, 1], [E, N], [E, 1, 1].

@@ -37,7 +37,7 @@ from test.evaluation_utils import safe_simulate, aggregate_metrics
 DEFAULT_CKPT: Dict[str, Dict[str, str]] = {
     'diff': {
         'hard':    'example/model/diff_robot_default/model_5000.pth',
-        'learned': 'example/dune_train/model/diff_learned_prox_robot/TBD.pth',
+        'learned': 'example/dune_train/model/diff_learned_prox_robot/model_2500.pth',
         'none':    'example/model/diff_robot_default/model_5000.pth',
     },
     'acker': {
