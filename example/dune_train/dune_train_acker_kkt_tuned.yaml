@@ -20,7 +20,7 @@ train:
   use_lconstr: true
   w_constr: 0.10               # keep feasibility pressure
   use_kkt: true
-  w_kkt: 1e-4                  # smaller KKT weight to avoid overwhelming loss scale
+  w_kkt: 1e-3                  # smaller KKT weight to avoid overwhelming loss scale
   kkt_rho: 0.50                # start mid-range; tune in [0.1, 1.0]
 
   # Data/training schedule

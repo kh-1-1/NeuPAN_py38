@@ -9,40 +9,40 @@ data_size: 100000, data_range: [-25, -25, 25, 25], batch_size: 256, epoch: 200, 
 Epoch 0/200 learning rate 5e-05 
 ---------------------------------
 Losses:
-  Mu Loss:          4.31e-06   | Validate Mu Loss:            2.06e-06
-  Distance Loss:    2.23e-04   | Validate Distance Loss:      1.98e-05
-  Fa Loss:          4.21e-05   | Validate Fa Loss:            2.71e-05
-  Fb Loss:          1.39e-03   | Validate Fb Loss:            5.75e-04
+  Mu Loss:          5.66e-06   | Validate Mu Loss:            5.58e-06
+  Distance Loss:    3.00e-04   | Validate Distance Loss:      8.81e-05
+  Fa Loss:          5.02e-05   | Validate Fa Loss:            5.07e-05
+  Fb Loss:          1.66e-03   | Validate Fb Loss:            3.20e-03
 
 Epoch 50/200 learning rate 5e-05 
 ---------------------------------
 Losses:
-  Mu Loss:          3.57e-06   | Validate Mu Loss:            1.38e-06
-  Distance Loss:    1.97e-04   | Validate Distance Loss:      1.00e-04
-  Fa Loss:          3.23e-05   | Validate Fa Loss:            2.70e-05
-  Fb Loss:          8.23e-04   | Validate Fb Loss:            1.90e-04
+  Mu Loss:          6.23e-06   | Validate Mu Loss:            2.81e-06
+  Distance Loss:    2.05e-04   | Validate Distance Loss:      6.39e-04
+  Fa Loss:          4.61e-05   | Validate Fa Loss:            3.92e-05
+  Fb Loss:          1.54e-03   | Validate Fb Loss:            2.54e-03
 
 Epoch 100/200 learning rate 5e-05 
 ---------------------------------
 Losses:
-  Mu Loss:          1.19e-06   | Validate Mu Loss:            1.01e-06
-  Distance Loss:    4.28e-04   | Validate Distance Loss:      6.56e-05
-  Fa Loss:          1.29e-05   | Validate Fa Loss:            1.51e-05
-  Fb Loss:          1.10e-03   | Validate Fb Loss:            3.63e-04
+  Mu Loss:          4.33e-06   | Validate Mu Loss:            2.17e-06
+  Distance Loss:    3.57e-04   | Validate Distance Loss:      9.80e-05
+  Fa Loss:          4.01e-05   | Validate Fa Loss:            4.32e-05
+  Fb Loss:          2.12e-03   | Validate Fb Loss:            1.63e-03
 
 Epoch 150/200 learning rate 5e-05 
 ---------------------------------
 Losses:
-  Mu Loss:          1.69e-06   | Validate Mu Loss:            1.36e-06
-  Distance Loss:    1.76e-04   | Validate Distance Loss:      8.62e-05
-  Fa Loss:          3.41e-05   | Validate Fa Loss:            1.74e-05
-  Fb Loss:          8.17e-04   | Validate Fb Loss:            3.81e-04
+  Mu Loss:          6.86e-06   | Validate Mu Loss:            1.53e-06
+  Distance Loss:    3.60e-04   | Validate Distance Loss:      1.83e-04
+  Fa Loss:          6.44e-05   | Validate Fa Loss:            2.94e-05
+  Fb Loss:          1.76e-03   | Validate Fb Loss:            7.77e-04
 
 Epoch 200/200 learning rate 5e-05 
 ---------------------------------
 Losses:
-  Mu Loss:          8.76e-07   | Validate Mu Loss:            1.34e-06
-  Distance Loss:    4.63e-05   | Validate Distance Loss:      8.64e-05
-  Fa Loss:          1.26e-05   | Validate Fa Loss:            1.82e-05
-  Fb Loss:          2.15e-04   | Validate Fb Loss:            4.26e-04
+  Mu Loss:          5.55e-06   | Validate Mu Loss:            2.39e-06
+  Distance Loss:    3.43e-04   | Validate Distance Loss:      2.62e-04
+  Fa Loss:          4.15e-05   | Validate Fa Loss:            3.10e-05
+  Fb Loss:          2.28e-03   | Validate Fb Loss:            1.57e-03
 

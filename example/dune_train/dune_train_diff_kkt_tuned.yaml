@@ -19,8 +19,8 @@ train:
   use_lconstr: true
   w_constr: 0.10
   use_kkt: true
-  w_kkt: 1e-4                  # reduce to prevent dominance over task/feasibility losses
-  kkt_rho: 0.10                # keep original diff default; tune in [0.1, 1.0]
+  w_kkt: 1e-3                  # reduce to prevent dominance over task/feasibility losses
+  kkt_rho: 0.50                # keep original diff default; tune in [0.1, 1.0]
 
   # Data/training schedule
   data_size: 100000
