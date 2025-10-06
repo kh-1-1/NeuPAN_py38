@@ -76,7 +76,7 @@ class neupan(torch.nn.Module):
         self.ipath = InitialPath(
             receding, step_time, ref_speed, self.robot, **ipath_kwargs
         )
-            
+
         pan_kwargs["adjust_kwargs"] = adjust_kwargs
         pan_kwargs["train_kwargs"] = train_kwargs
         self.dune_train_kwargs = train_kwargs
@@ -142,6 +142,13 @@ class neupan(torch.nn.Module):
         self.info['ref_state_tensor'] = nom_input_tensor[2]
         self.info['ref_speed_tensor'] = nom_input_tensor[3]
 
+        # propagate PDHG profiling info to info dict if available
+        try:
+            dune_layer = self.pan.dune_layer
+            self.info['pdhg_profile'] = getattr(dune_layer, 'pdhg_profile', None) if dune_layer is not None else None
+        except Exception:
+            pass
+
         self.info["ref_state_list"] = [
             state[:, np.newaxis] for state in nom_input_np[2].T
         ]
@@ -159,7 +166,7 @@ class neupan(torch.nn.Module):
 
     def check_stop(self):
         return self.min_distance < self.collision_threshold
-    
+
 
     def scan_to_point(
         self,
@@ -169,7 +176,7 @@ class neupan(torch.nn.Module):
         angle_range = [-np.pi, np.pi],
         down_sample: int = 1,
     ):
-        
+
         """
         input:
             state: [x, y, theta]
@@ -300,7 +307,7 @@ class neupan(torch.nn.Module):
 
         """
         self.ipath.init_check(state)
-    
+
     def set_reference_speed(self, speed: float):
 
         """
@@ -310,7 +317,7 @@ class neupan(torch.nn.Module):
 
         self.ipath.ref_speed = speed
         self.ref_speed = speed
-    
+
     def update_initial_path_from_goal(self, start, goal):
 
         """
@@ -344,29 +351,29 @@ class neupan(torch.nn.Module):
             d_max: float, the maximum distance to the obstacle
             d_min: float, the minimum distance to the obstacle
         """
-        
+
         self.pan.nrmp_layer.update_adjust_parameters_value(**kwargs)
 
     @property
     def min_distance(self):
         return self.pan.min_distance
-    
+
     @property
     def dune_points(self):
         return self.pan.dune_points
-    
+
     @property
     def nrmp_points(self):
         return self.pan.nrmp_points
-    
+
     @property
     def initial_path(self):
         return self.ipath.initial_path
-    
+
     @property
     def adjust_parameters(self):
         return self.pan.nrmp_layer.adjust_parameters
-    
+
     @property
     def waypoints(self):
 
@@ -375,7 +382,7 @@ class neupan(torch.nn.Module):
         '''
 
         return self.ipath.waypoints
-    
+
     @property
     def opt_trajectory(self):
 
@@ -385,7 +392,7 @@ class neupan(torch.nn.Module):
         '''
 
         return self.info["opt_state_list"]
-    
+
     @property
     def ref_trajectory(self):
 
@@ -396,7 +403,7 @@ class neupan(torch.nn.Module):
 
         return self.info["ref_state_list"]
 
-    
 
-    
+
+
 

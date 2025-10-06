@@ -35,10 +35,10 @@ from neupan import neupan
 # ---------------------- Defaults ----------------------
 
 DEFAULT_CKPT: Dict[str, Dict[str, str]] = {
-    # Diff-drive defaults (learned placeholder TBD)
+    # Diff-drive defaults 
     'diff': {
         'hard':    'example/model/diff_robot_default/model_5000.pth',
-        'learned': 'example/dune_train/model/diff_learned_prox_robot/TBD.pth',  # TODO: replace when available
+        'learned': 'example/dune_train/model/diff_learned_prox_robot/model_2500.pth',  
         'none':    'example/model/diff_robot_default/model_5000.pth',
     },
     # Acker defaults
@@ -164,6 +164,11 @@ def simulate(example_name: str,
 
     evaluator = ProjectionEvaluator(projection)
 
+    # stuck detection parameters (aligned with LON_corridor_01)
+    stuck_threshold = 0.01
+    stuck_count = 0
+    stuck_count_thresh = 5
+
     for step in range(max_steps):
         robot_state = env.get_robot_state()
         lidar_scan = env.get_lidar_scan()
@@ -185,7 +190,21 @@ def simulate(example_name: str,
             env.draw_trajectory(planner.ref_trajectory, 'b', refresh=True)
             env.render()
 
+        # record pre-step position for stuck detection
+        pre_pos = env.get_robot_state()[0:2]
+
         env.step(action)
+
+        # stuck detection: small displacement for consecutive steps
+        cur_pos = env.get_robot_state()[0:2]
+        if np.linalg.norm(cur_pos - pre_pos) < stuck_threshold:
+            stuck_count += 1
+        else:
+            stuck_count = 0
+        if stuck_count > stuck_count_thresh:
+            print(f"stuck: True, diff_distance < {stuck_threshold}")
+            break
+
         if info.get('arrive') or info.get('stop') or env.done():
             break
 

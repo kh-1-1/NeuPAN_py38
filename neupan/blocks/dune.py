@@ -127,8 +127,30 @@ class DUNE(torch.nn.Module):
 
             # PDHG-Unroll refinement (before learned_prox/hard projection)
             if self.pdhg_unroll is not None:
+                mu_pre = total_mu.detach()
                 a_total = (self.G @ total_points - self.h)  # [E, N_total]
                 total_mu = self.pdhg_unroll(total_mu, a_total, self.G)
+
+                # profiling: mu statistics pre/post PDHG and timing
+                try:
+                    v_pre = self.G.t() @ mu_pre
+                    v_post = self.G.t() @ total_mu
+                    pre_mean_norm = torch.norm(v_pre, dim=0).mean().item()
+                    post_mean_norm = torch.norm(v_post, dim=0).mean().item()
+                    delta_mu_l2_mean = torch.norm(total_mu - mu_pre, dim=0).mean().item()
+                except Exception:
+                    pre_mean_norm = None
+                    post_mean_norm = None
+                    delta_mu_l2_mean = None
+
+                timing = getattr(self.pdhg_unroll, 'last_timing', {}) or {}
+                self.pdhg_profile = {
+                    'pre_mean_dual_norm': pre_mean_norm,
+                    'post_mean_dual_norm': post_mean_norm,
+                    'delta_mu_l2_mean': delta_mu_l2_mean,
+                    'total_time': timing.get('total'),
+                    'per_step_times': timing.get('per_step'),
+                }
 
             # Optional learned proximal refinement before hard projection
             if self.projection == 'learned' and self.prox_head is not None:
