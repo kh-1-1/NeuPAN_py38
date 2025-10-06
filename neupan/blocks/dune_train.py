@@ -60,12 +60,13 @@ class PointDataset(Dataset):
 
 
 class DUNETrain:
-    def __init__(self, model, robot_G, robot_h, checkpoint_path, prox_head=None) -> None:
+    def __init__(self, model, robot_G, robot_h, checkpoint_path, prox_head=None, pdhg_unroll=None) -> None:
 
         self.G = robot_G
         self.h = robot_h
         self.model = model
         self.prox_head = prox_head  # optional learned proximal head
+        self.pdhg_unroll = pdhg_unroll  # optional PDHG-Unroll module
 
         # training config defaults (can be overridden in start(**kwargs))
         self.use_lconstr = True
@@ -80,10 +81,12 @@ class DUNETrain:
 
         self.loss_fn = torch.nn.MSELoss()
 
-        # optimizer: include prox_head params if present
+        # optimizer: include prox_head and pdhg_unroll params if present
         params = list(self.model.parameters())
         if self.prox_head is not None:
             params += list(self.prox_head.parameters())
+        if self.pdhg_unroll is not None:
+            params += list(self.pdhg_unroll.parameters())
         self.optimizer = Adam(params, lr=1e-4, weight_decay=1e-4)
 
         # for rich progress
@@ -292,12 +295,15 @@ class DUNETrain:
 
                 if i % save_freq == 0:
                     print("save model at epoch {}".format(i))
-                    # composite checkpoint when prox_head exists; otherwise plain state_dict for backward-compat
-                    if self.prox_head is not None:
+                    # composite checkpoint when prox_head or pdhg_unroll exists
+                    if self.prox_head is not None or self.pdhg_unroll is not None:
                         state = {
                             'model': self.model.state_dict(),
-                            'prox_head': self.prox_head.state_dict(),
                         }
+                        if self.prox_head is not None:
+                            state['prox_head'] = self.prox_head.state_dict()
+                        if self.pdhg_unroll is not None:
+                            state['pdhg_unroll'] = self.pdhg_unroll.state_dict()
                     else:
                         state = self.model.state_dict()
                     ful_model_name = self.checkpoint_path + "/" + "model_" + str(i) + ".pth"
@@ -347,6 +353,16 @@ class DUNETrain:
             input_point = torch.squeeze(input_point)
             output_mu = self.model(input_point)
             output_mu = torch.unsqueeze(output_mu, 2)
+
+            # PDHG-Unroll refinement (align with inference path)
+            if self.pdhg_unroll is not None:
+                ip = torch.unsqueeze(input_point, 2)  # [B, 2, 1]
+                a = (self.G @ ip - self.h)  # [B, E, 1]
+                # Convert to column format [E, B] for PDHG
+                mu_col = output_mu.squeeze(-1).t()  # [E, B]
+                a_col = a.squeeze(-1).t()  # [E, B]
+                mu_refined_col = self.pdhg_unroll(mu_col, a_col, self.G)
+                output_mu = mu_refined_col.t().unsqueeze(-1)  # [B, E, 1]
 
             distance = self.cal_distance(output_mu, input_point)
 

@@ -1,0 +1,33 @@
+{
+  "config": {
+    "projection": "none",
+    "unroll_J": 0,
+    "pdhg_tau": 0.5,
+    "pdhg_sigma": 0.5,
+    "pdhg_learnable": false,
+    "ckpt_override": "example/model/acker_robot_default/model_5000.pth",
+    "profile_timing": true,
+    "timing_warmup": 3
+  },
+  "summary": {
+    "config": {
+      "projection": "none",
+      "unroll_J": 0,
+      "pdhg_tau": 0.5,
+      "pdhg_sigma": 0.5,
+      "pdhg_learnable": false,
+      "ckpt_override": "example/model/acker_robot_default/model_5000.pth",
+      "profile_timing": true,
+      "timing_warmup": 3
+    },
+    "steps_executed": 143,
+    "avg_pre_violation_rate": 0.46741610093855523,
+    "avg_pre_p95": 1.0039483879653501,
+    "avg_pre_excess": 0.007182665274176799,
+    "avg_post_excess": 0.007182665274176799,
+    "avg_post_max": 1.009030893163861,
+    "max_post_max": 1.031394362449646,
+    "avg_total_time_ms": 58.07140214310493,
+    "std_total_time_ms": 26.624883038547377
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "convex_obs::diff::hard::J0": {
+    "aggregate": {
+      "avg_pre_violation_rate_mean": 0.43297022581100464,
+      "avg_pre_violation_rate_std": 0.0,
+      "avg_pre_p95_mean": 1.006009302641216,
+      "avg_pre_p95_std": 0.0,
+      "avg_pre_excess_mean": 0.011371612548828125,
+      "avg_pre_excess_std": 0.0,
+      "avg_post_max_mean": 1.000000094112597,
+      "avg_post_max_std": 0.0,
+      "max_post_max_mean": 1.0000001192092896,
+      "max_post_max_std": 0.0,
+      "avg_post_excess_mean": 7.529007761101973e-08,
+      "avg_post_excess_std": 0.0,
+      "steps_executed_mean": 20.0,
+      "steps_executed_std": 0.0,
+      "num_runs": 1,
+      "errors": 0
+    },
+    "runs": [
+      {
+        "config": {
+          "projection": "hard",
+          "unroll_J": 0,
+          "pdhg_tau": 0.5,
+          "pdhg_sigma": 0.5,
+          "pdhg_learnable": false,
+          "ckpt_override": "example/model/diff_robot_default/model_5000.pth",
+          "profile_timing": false,
+          "timing_warmup": 3
+        },
+        "steps_executed": 20,
+        "avg_pre_violation_rate": 0.43297022581100464,
+        "avg_pre_p95": 1.006009302641216,
+        "avg_pre_excess": 0.011371612548828125,
+        "avg_post_excess": 7.529007761101973e-08,
+        "avg_post_max": 1.000000094112597,
+        "max_post_max": 1.0000001192092896
+      }
+    ]
+  },
+  "convex_obs::diff::hard::J1": {
+    "aggregate": {
+      "avg_pre_violation_rate_mean": 0.009495427121261233,
+      "avg_pre_violation_rate_std": 0.0,
+      "avg_pre_p95_mean": 1.0,
+      "avg_pre_p95_std": 0.0,
+      "avg_pre_excess_mean": 9.411259701377467e-08,
+      "avg_pre_excess_std": 0.0,
+      "avg_post_max_mean": 1.0000001129351164,
+      "avg_post_max_std": 0.0,
+      "max_post_max_mean": 1.0000001192092896,
+      "max_post_max_std": 0.0,
+      "avg_post_excess_mean": 0.0,
+      "avg_post_excess_std": 0.0,
+      "steps_executed_mean": 20.0,
+      "steps_executed_std": 0.0,
+      "num_runs": 1,
+      "errors": 0
+    },
+    "runs": [
+      {
+        "config": {
+          "projection": "hard",
+          "unroll_J": 1,
+          "pdhg_tau": 0.5,
+          "pdhg_sigma": 0.5,
+          "pdhg_learnable": false,
+          "ckpt_override": "example/model/diff_robot_default/model_5000.pth",
+          "profile_timing": false,
+          "timing_warmup": 3
+        },
+        "steps_executed": 20,
+        "avg_pre_violation_rate": 0.009495427121261233,
+        "avg_pre_p95": 1.0,
+        "avg_pre_excess": 9.411259701377467e-08,
+        "avg_post_excess": 0.0,
+        "avg_post_max": 1.0000001129351164,
+        "max_post_max": 1.0000001192092896
+      }
+    ]
+  },
+  "convex_obs::acker::hard::J0": {
+    "aggregate": {
+      "avg_pre_violation_rate_mean": 0.5668446289168464,
+      "avg_pre_violation_rate_std": 0.0,
+      "avg_pre_p95_mean": 1.0061599016189575,
+      "avg_pre_p95_std": 0.0,
+      "avg_pre_excess_mean": 0.022488249672783747,
+      "avg_pre_excess_std": 0.0,
+      "avg_post_max_mean": 1.0000001125865512,
+      "avg_post_max_std": 0.0,
+      "max_post_max_mean": 1.0000001192092896,
+      "max_post_max_std": 0.0,
+      "avg_post_excess_mean": 1.1258655124240451e-07,
+      "avg_post_excess_std": 0.0,
+      "steps_executed_mean": 20.0,
+      "steps_executed_std": 0.0,
+      "num_runs": 1,
+      "errors": 0
+    },
+    "runs": [
+      {
+        "config": {
+          "projection": "hard",
+          "unroll_J": 0,
+          "pdhg_tau": 0.5,
+          "pdhg_sigma": 0.5,
+          "pdhg_learnable": false,
+          "ckpt_override": "example/model/acker_robot_default/model_5000.pth",
+          "profile_timing": false,
+          "timing_warmup": 3
+        },
+        "steps_executed": 20,
+        "avg_pre_violation_rate": 0.5668446289168464,
+        "avg_pre_p95": 1.0061599016189575,
+        "avg_pre_excess": 0.022488249672783747,
+        "avg_post_excess": 1.1258655124240451e-07,
+        "avg_post_max": 1.0000001125865512,
+        "max_post_max": 1.0000001192092896
+      }
+    ]
+  },
+  "convex_obs::acker::hard::J1": {
+    "aggregate": {
+      "avg_pre_violation_rate_mean": 0.020382188105334837,
+      "avg_pre_violation_rate_std": 0.0,
+      "avg_pre_p95_mean": 1.0,
+      "avg_pre_p95_std": 0.0,
+      "avg_pre_excess_mean": 1.0596381293402777e-07,
+      "avg_pre_excess_std": 0.0,
+      "avg_post_max_mean": 1.0000000529819064,
+      "avg_post_max_std": 0.0,
+      "max_post_max_mean": 1.0000001192092896,
+      "max_post_max_std": 0.0,
+      "avg_post_excess_mean": 0.0,
+      "avg_post_excess_std": 0.0,
+      "steps_executed_mean": 20.0,
+      "steps_executed_std": 0.0,
+      "num_runs": 1,
+      "errors": 0
+    },
+    "runs": [
+      {
+        "config": {
+          "projection": "hard",
+          "unroll_J": 1,
+          "pdhg_tau": 0.5,
+          "pdhg_sigma": 0.5,
+          "pdhg_learnable": false,
+          "ckpt_override": "example/model/acker_robot_default/model_5000.pth",
+          "profile_timing": false,
+          "timing_warmup": 3
+        },
+        "steps_executed": 20,
+        "avg_pre_violation_rate": 0.020382188105334837,
+        "avg_pre_p95": 1.0,
+        "avg_pre_excess": 1.0596381293402777e-07,
+        "avg_post_excess": 0.0,
+        "avg_post_max": 1.0000000529819064,
+        "max_post_max": 1.0000001192092896
+      }
+    ]
+  }
+}

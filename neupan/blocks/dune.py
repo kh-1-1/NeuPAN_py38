@@ -23,6 +23,7 @@ import torch
 from math import inf
 from neupan.blocks import ObsPointNet, DUNETrain
 from neupan.blocks.learned_prox import ProxHead
+from neupan.blocks.pdhg_unroll import PDHGUnroll, PDHGUnrollPerStep
 from neupan.configuration import np_to_tensor, to_device
 from neupan.util import time_it, file_check, repeat_mk_dirs
 from typing import Optional
@@ -47,7 +48,7 @@ class DUNE(torch.nn.Module):
         train_kwargs = train_kwargs or dict()
         self.projection = train_kwargs.get('projection', 'hard')  # 'hard' | 'none' | 'learned'
         self.monitor_dual_norm = train_kwargs.get('monitor_dual_norm', True)
-        self.unroll_J = int(train_kwargs.get('unroll_J', 0))  # PDHG steps (not enabled here)
+        self.unroll_J = int(train_kwargs.get('unroll_J', 0))  # PDHG steps (0=disabled)
         self.se2_embed = bool(train_kwargs.get('se2_embed', False))  # not enabled here
 
         # optional learned proximal head (for 'learned' projection)
@@ -57,6 +58,28 @@ class DUNE(torch.nn.Module):
                 self.prox_head = to_device(ProxHead(self.edge_dim, hidden=32))
             except Exception:
                 self.prox_head = None
+
+        # PDHG-Unroll module (Stage 1: fixed step sizes)
+        self.pdhg_unroll = None
+        if self.unroll_J > 0:
+            pdhg_tau = float(train_kwargs.get('pdhg_tau', 0.5))
+            pdhg_sigma = float(train_kwargs.get('pdhg_sigma', 0.5))
+            pdhg_learnable = bool(train_kwargs.get('pdhg_learnable', False))
+            pdhg_per_step = bool(train_kwargs.get('pdhg_per_step', False))
+
+            if pdhg_per_step:
+                # Stage 4: per-step learnable (advanced)
+                self.pdhg_unroll = to_device(
+                    PDHGUnrollPerStep(self.edge_dim, J=self.unroll_J,
+                                     tau_init=pdhg_tau, sigma_init=pdhg_sigma)
+                )
+            else:
+                # Stage 1-3: global step sizes (fixed or learnable)
+                self.pdhg_unroll = to_device(
+                    PDHGUnroll(self.edge_dim, J=self.unroll_J,
+                              tau=pdhg_tau, sigma=pdhg_sigma,
+                              learnable_steps=pdhg_learnable)
+                )
 
         self.dual_norm_violation_rate = None
         self.dual_norm_p95 = None
@@ -96,10 +119,15 @@ class DUNE(torch.nn.Module):
         self.obstacle_points = obs_points_list[0] # current obstacle points considered in the dune at time 0
 
         total_points = torch.hstack(point_flow)
-        
+
         # map the point flow to the latent distance features mu
         with torch.no_grad():
             total_mu = self.model(total_points.T).T  # [E, N]
+
+            # PDHG-Unroll refinement (before learned_prox/hard projection)
+            if self.pdhg_unroll is not None:
+                a_total = (self.G @ total_points - self.h)  # [E, N_total]
+                total_mu = self.pdhg_unroll(total_mu, a_total, self.G)
 
             # Optional learned proximal refinement before hard projection
             if self.projection == 'learned' and self.prox_head is not None:
@@ -208,12 +236,18 @@ class DUNE(torch.nn.Module):
 
             self.abs_checkpoint_path = file_check(checkpoint)
             state = torch.load(self.abs_checkpoint_path, map_location=torch.device('cpu'))
-            if isinstance(state, dict) and ('model' in state or 'prox_head' in state):
+            if isinstance(state, dict) and ('model' in state or 'prox_head' in state or 'pdhg_unroll' in state):
                 # composite checkpoint
                 self.model.load_state_dict(state['model'] if 'model' in state else state)
                 if self.projection == 'learned' and self.prox_head is not None and 'prox_head' in state:
                     try:
                         self.prox_head.load_state_dict(state['prox_head'])
+                    except Exception:
+                        pass
+                # Load PDHG-Unroll state (only if learnable parameters exist)
+                if self.pdhg_unroll is not None and 'pdhg_unroll' in state:
+                    try:
+                        self.pdhg_unroll.load_state_dict(state['pdhg_unroll'])
                     except Exception:
                         pass
             else:
@@ -242,11 +276,16 @@ class DUNE(torch.nn.Module):
 
                 if self.ask_to_continue():
                     state = torch.load(self.full_model_name, map_location=torch.device('cpu'))
-                    if isinstance(state, dict) and ('model' in state or 'prox_head' in state):
+                    if isinstance(state, dict) and ('model' in state or 'prox_head' in state or 'pdhg_unroll' in state):
                         self.model.load_state_dict(state['model'] if 'model' in state else state)
                         if self.projection == 'learned' and self.prox_head is not None and 'prox_head' in state:
                             try:
                                 self.prox_head.load_state_dict(state['prox_head'])
+                            except Exception:
+                                pass
+                        if self.pdhg_unroll is not None and 'pdhg_unroll' in state:
+                            try:
+                                self.pdhg_unroll.load_state_dict(state['pdhg_unroll'])
                             except Exception:
                                 pass
                     else:
@@ -270,10 +309,12 @@ class DUNE(torch.nn.Module):
 
         checkpoint_path = sys.path[0] + '/model' + '/' + model_name
         checkpoint_path = repeat_mk_dirs(checkpoint_path)
-        
-        # pass optional prox_head to trainer when using learned projection
+
+        # pass optional prox_head and pdhg_unroll to trainer
         prox_head = self.prox_head if self.projection == 'learned' else None
-        self.train_model = DUNETrain(self.model, self.G, self.h, checkpoint_path, prox_head=prox_head)
+        pdhg_unroll = self.pdhg_unroll if self.unroll_J > 0 else None
+        self.train_model = DUNETrain(self.model, self.G, self.h, checkpoint_path,
+                                     prox_head=prox_head, pdhg_unroll=pdhg_unroll)
         self.full_model_name = self.train_model.start(**train_kwargs)
         print('Complete Training. The model is saved in ' + self.full_model_name)
 

@@ -1,0 +1,33 @@
+{
+  "config": {
+    "projection": "hard",
+    "unroll_J": 2,
+    "pdhg_tau": 0.5,
+    "pdhg_sigma": 0.5,
+    "pdhg_learnable": false,
+    "ckpt_override": "example/model/diff_robot_default/model_5000.pth",
+    "profile_timing": true,
+    "timing_warmup": 3
+  },
+  "summary": {
+    "config": {
+      "projection": "hard",
+      "unroll_J": 2,
+      "pdhg_tau": 0.5,
+      "pdhg_sigma": 0.5,
+      "pdhg_learnable": false,
+      "ckpt_override": "example/model/diff_robot_default/model_5000.pth",
+      "profile_timing": true,
+      "timing_warmup": 3
+    },
+    "steps_executed": 171,
+    "avg_pre_violation_rate": 0.009912323385986112,
+    "avg_pre_p95": 1.0,
+    "avg_pre_excess": 8.959207475555609e-08,
+    "avg_post_excess": 0.0,
+    "avg_post_max": 1.000000115388479,
+    "max_post_max": 1.0000001192092896,
+    "avg_total_time_ms": 66.67856845368598,
+    "std_total_time_ms": 22.683354010792115
+  }
+}

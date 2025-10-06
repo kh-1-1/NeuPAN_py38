@@ -1,0 +1,24 @@
+﻿# Stage 2: Timing Analysis Config for PDHG-Unroll
+# Focus on corridor, polygon_robot, dyna_obs; 20 runs each; J in {0,1,2,3}
+# Collect timing with 5-step warmup to exclude compilation overhead
+
+# Core selection
+examples: "corridor,polygon_robot,dyna_obs"
+modes: "hard"
+unroll_J: "0,1,2,3"
+runs: 20
+
+# Execution behavior
+no_display: true
+quiet: true
+save_results: true
+max_steps: 1000
+
+# Timing profiling
+profile_timing: true
+timing_warmup: 5
+
+# PDHG hyperparameters (use defaults unless overridden)
+# pdhg_tau: 0.5
+# pdhg_sigma: 0.5
+# pdhg_learnable: false
