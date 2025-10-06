@@ -20,6 +20,7 @@ along with NeuPAN planner. If not, see <https://www.gnu.org/licenses/>.
 
 
 import torch
+import os
 from math import inf
 from neupan.blocks import ObsPointNet, DUNETrain
 from neupan.blocks.learned_prox import ProxHead
@@ -307,7 +308,14 @@ class DUNE(torch.nn.Module):
 
         model_name = train_kwargs.get("model_name", self.robot.name)
 
-        checkpoint_path = sys.path[0] + '/model' + '/' + model_name
+        # Build checkpoint directory robustly (Windows-friendly) and ensure parent exists
+        model_root = os.path.join(sys.path[0], 'model')
+        try:
+            os.makedirs(model_root, exist_ok=True)
+        except Exception:
+            pass
+
+        checkpoint_path = os.path.join(model_root, model_name)
         checkpoint_path = repeat_mk_dirs(checkpoint_path)
 
         # pass optional prox_head and pdhg_unroll to trainer
