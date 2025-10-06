@@ -23,12 +23,16 @@ import torch.nn as nn
 import torch
 
 class ObsPointNet(nn.Module):
-    def __init__(self, input_dim: int = 2,  output_dim: int=4) -> None:
+    def __init__(self, input_dim: int = 2,  output_dim: int=4, se2_embed: bool = False) -> None:
         super(ObsPointNet, self).__init__()
 
-        hidden_dim = 32
+        self.se2_embed = se2_embed
 
-        self.MLP = nn.Sequential(   nn.Linear(input_dim, hidden_dim),
+        hidden_dim = 32
+        actual_in = 3 if se2_embed else input_dim
+
+
+        self.MLP = nn.Sequential(   nn.Linear(actual_in, hidden_dim),
                                     nn.LayerNorm(hidden_dim),
                                     nn.Tanh(),
                                     nn.Linear(hidden_dim, hidden_dim),
@@ -44,6 +48,18 @@ class ObsPointNet(nn.Module):
                                     nn.Linear(hidden_dim, output_dim),
                                     nn.ReLU(),
                                     )
-        
+
+    def polar_embed(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Convert Cartesian (x, y) -> polar embedding (r, cos(theta), sin(theta)).
+        Expect x: [N, 2], return [N, 3].
+        """
+        r = torch.norm(x, dim=1, keepdim=True)
+        theta = torch.atan2(x[:, 1], x[:, 0]).unsqueeze(1)
+        return torch.cat([r, torch.cos(theta), torch.sin(theta)], dim=1)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if self.se2_embed:
+            x = self.polar_embed(x)
+
         return self.MLP(x)

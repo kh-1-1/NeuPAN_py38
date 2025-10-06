@@ -1,0 +1,32 @@
+robot:
+  kinematics: 'diff'
+  length: 1.6
+  width: 2.0
+
+device: cuda
+
+pan:
+    dune_checkpoint: example/dune_train/model/diff_learned_prox_robot/model_2500.pth
+
+train:
+  # learned prox + KKT + SE(2) 极坐标编码
+  direct_train: true
+  model_name: diff_learned_prox_kkt_se2_robot
+  projection: learned         # {hard|none|learned}
+  use_lconstr: true
+  w_constr: 0.10
+  use_kkt: true
+  w_kkt: 1e-4
+  kkt_rho: 0.10
+  se2_embed: true             # 启用SE(2)等变编码
+
+  data_size: 100000
+  data_range: [-25, -25, 25, 25]
+  batch_size: 256
+  epoch: 1000
+  valid_freq: 1
+  save_freq: 500
+  lr: 2.5e-5
+  lr_decay: 0.5
+  decay_freq: 250
+
