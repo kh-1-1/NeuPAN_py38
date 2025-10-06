@@ -1,0 +1,31 @@
+# 消融实验配置：测试 PDHG vs 硬投影的独立贡献
+# 用法: python -m test.batch_unroll_evaluation --config test/configs/ablation_study_config.yaml
+
+# 基础配置
+runs: 10
+max_steps: 1000
+no_display: true
+save_results: true
+quiet: true
+
+# 评测矩阵（关键：测试不同 projection 模式）
+examples: all
+modes: none,hard              # 'none' = 纯 PDHG，'hard' = PDHG + 硬投影
+unroll_J: 0,1,2,3            # 对比不同 J 值
+
+# PDHG 参数
+pdhg_tau: 0.5
+pdhg_sigma: 0.5
+pdhg_learnable: false
+
+# 性能分析（关键：记录时延）
+profile_timing: true          # 开启时延分析
+timing_warmup: 3             # 预热 3 步
+
+# 说明：
+# 1. modes='none' 时，PDHG 内部的硬投影仍会执行，但 DUNE 外部不再投影
+#    - 可以评估 PDHG 的"净效果"
+# 2. modes='hard' 时，PDHG + 外部硬投影（双重投影）
+#    - 当前的默认方案
+# 3. 对比两者的 pre_violation_rate 和 timing，可以分离贡献
+

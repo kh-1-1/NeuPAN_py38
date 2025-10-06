@@ -1,0 +1,16 @@
+example,kin,J,cost_per_percent_ms_per_pct
+corridor,acker,1,-0.098853
+corridor,acker,2,-0.199443
+corridor,acker,3,-0.032498
+corridor,diff,1,0.951712
+corridor,diff,2,0.406972
+corridor,diff,3,0.584528
+dyna_obs,acker,1,0.107200
+dyna_obs,acker,2,0.080386
+dyna_obs,acker,3,-0.011802
+dyna_obs,diff,1,-0.268402
+dyna_obs,diff,2,-0.332711
+dyna_obs,diff,3,-0.279106
+polygon_robot,diff,1,0.068153
+polygon_robot,diff,2,0.142936
+polygon_robot,diff,3,-0.104945

@@ -1,0 +1,33 @@
+# PDHG-Unroll 全量评测配置文件
+# 用法: python -m test.batch_unroll_evaluation --config test/configs/full_evaluation_config.yaml
+
+# 基础配置
+runs: 10                    # 每个配置运行次数
+max_steps: 1000            # 每次仿真最大步数
+no_display: true           # 禁用可视化（加速）
+save_results: true         # 保存每次运行的 JSON
+quiet: true                # 抑制详细输出
+
+# 评测矩阵
+examples: all              # 'all' 或逗号分隔列表，如 'corridor,polygon_robot'
+modes: hard                # projection 模式: 'hard', 'learned', 'none' 或组合 'hard,learned'
+unroll_J: 0,1,2,3         # PDHG 展开步数（逗号分隔）
+
+# PDHG 参数
+pdhg_tau: 0.5             # primal 步长
+pdhg_sigma: 0.5           # dual 步长
+pdhg_learnable: false     # 是否可学习步长
+
+# Checkpoint 路径（可选覆盖）
+# 如果不指定，使用默认路径
+ckpt_diff_hard: ""
+ckpt_diff_learned: ""
+ckpt_diff_none: ""
+ckpt_acker_hard: ""
+ckpt_acker_learned: ""
+ckpt_acker_none: ""
+
+# 性能分析（新增）
+profile_timing: true       # 是否记录详细时延
+timing_warmup: 3          # 预热步数（排除首次推理的编译开销）
+
