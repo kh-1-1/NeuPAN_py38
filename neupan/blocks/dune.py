@@ -44,13 +44,15 @@ class DUNE(torch.nn.Module):
         self.edge_dim = self.G.shape[0]
         self.state_dim = self.G.shape[1]
 
-        self.model = to_device(ObsPointNet(2, self.edge_dim))
         # configuration flags (with safe defaults)
         train_kwargs = train_kwargs or dict()
         self.projection = train_kwargs.get('projection', 'hard')  # 'hard' | 'none' | 'learned'
         self.monitor_dual_norm = train_kwargs.get('monitor_dual_norm', True)
         self.unroll_J = int(train_kwargs.get('unroll_J', 0))  # PDHG steps (0=disabled)
-        self.se2_embed = bool(train_kwargs.get('se2_embed', False))  # not enabled here
+        self.se2_embed = bool(train_kwargs.get('se2_embed', False))
+
+        # ObsPointNet with optional SE(2) embedding (backward compatible default False)
+        self.model = to_device(ObsPointNet(2, self.edge_dim, se2_embed=self.se2_embed))
 
         # optional learned proximal head (for 'learned' projection)
         self.prox_head = None

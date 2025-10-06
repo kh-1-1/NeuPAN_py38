@@ -197,6 +197,7 @@ class DUNETrain:
             "w_kkt": self.w_kkt,
             "kkt_rho": self.kkt_rho,
             "projection": self.projection_mode,
+            "se2_embed": getattr(self.model, "se2_embed", False),
         }
 
         with open(self.checkpoint_path + "/train_dict.pkl", "wb") as f:
@@ -434,7 +435,20 @@ class DUNETrain:
                 Gy = self.G @ (self.G.t() @ mu_reg_be1)   # [B,E,1] or [E,1]
                 s = torch.relu(-mu_reg_be1)               # [B,E,1] or [E,1]
                 r = -a + self.kkt_rho * Gy - s            # [B,E,1] or [E,1]
-                L_kkt = (r ** 2).mean()
+
+                # Relative/normalized KKT residual to reduce scale domination by |a|
+                # L_kkt = mean( ( ||r||_2 / (||a||_2 + eps) )^2 )
+                eps = 1e-6
+                r_flat = r.squeeze(-1)                    # [B,E] or [E]
+                a_flat = a.squeeze(-1)                    # [B,E] or [E]
+                if r_flat.dim() == 1:
+                    num = torch.norm(r_flat, p=2)
+                    den = torch.norm(a_flat, p=2)
+                    L_kkt = (num / (den + eps)) ** 2
+                else:
+                    num = torch.norm(r_flat, p=2, dim=-1)  # [B]
+                    den = torch.norm(a_flat, p=2, dim=-1)  # [B]
+                    L_kkt = ((num / (den + eps)) ** 2).mean()
 
             loss = mse_mu + mse_distance + mse_fa + mse_fb \
                    + self.w_constr * L_constr + self.w_kkt * L_kkt
