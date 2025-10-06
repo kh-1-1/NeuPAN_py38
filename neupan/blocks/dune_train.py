@@ -233,9 +233,8 @@ class DUNETrain:
 
                 self.model.train(True)
 
-                mu_loss, distance_loss, fa_loss, fb_loss = self.train_one_epoch(
-                    train_dataloader, False
-                )
+                mu_loss, distance_loss, fa_loss, fb_loss, lconstr_loss, lkkt_loss = \
+                    self.train_one_epoch(train_dataloader, False)
 
                 ml, dl, al, bl = (
                     "{:.2e}".format(mu_loss),
@@ -251,7 +250,11 @@ class DUNETrain:
                         valid_distance_loss,
                         validate_fa_loss,
                         validate_fb_loss,
+                        valid_lconstr_loss,
+                        valid_lkkt_loss,
                     ) = self.train_one_epoch(valid_dataloader, True)
+
+                    # (TensorBoard removed by request)
 
                     vml, vdl, val, vbl = (
                         "{:.2e}".format(valid_mu_loss),
@@ -260,19 +263,14 @@ class DUNETrain:
                         "{:.2e}".format(validate_fb_loss),
                     )
 
-                    self.print_loss(
-                        i,
-                        epoch,
-                        ml,
-                        dl,
-                        al,
-                        bl,
-                        vml,
-                        vdl,
-                        val,
-                        vbl,
-                        self.optimizer.param_groups[0]["lr"],
+                    # also print and save constraint/KKT losses separately for diagnosis (file only)
+                    reg_line = (
+                        f"Reg Losses: L_constr: {lconstr_loss:.2e} | "
+                        f"Validate L_constr: {valid_lconstr_loss:.2e}\n"
+                        f"            L_kkt:    {lkkt_loss:.2e} | "
+                        f"Validate L_kkt:    {valid_lkkt_loss:.2e}"
                     )
+                    # no console print; only persisted to results_reg.txt below
 
                     with open(self.checkpoint_path + "/results.txt", "a") as f:
                         self.print_loss(
@@ -289,9 +287,33 @@ class DUNETrain:
                             self.optimizer.param_groups[0]["lr"],
                             f,
                         )
+                    # write reg losses to a separate file
+                    with open(self.checkpoint_path + "/results_reg.txt", "a") as f:
+                        print(
+                            "Epoch {}/{} learning rate {}\n".format(
+                                i, epoch, self.optimizer.param_groups[0]["lr"]
+                            )
+                            + "---------------------------------\n"
+                            + "Reg Losses:\n"
+                            + "  L_constr:        {} | Validate L_constr:        {}\n".format(
+                                "{:.2e}".format(lconstr_loss),
+                                "{:.2e}".format(valid_lconstr_loss),
+                            )
+                            + "  L_kkt:           {} | Validate L_kkt:           {}\n".format(
+                                "{:.2e}".format(lkkt_loss),
+                                "{:.2e}".format(valid_lkkt_loss),
+                            ),
+                            file=f,
+                        )
 
                 if i % save_freq == 0:
                     print("save model at epoch {}".format(i))
+                    # Ensure checkpoint directory exists (robust on Windows)
+                    try:
+                        os.makedirs(self.checkpoint_path, exist_ok=True)
+                    except Exception:
+                        pass
+
                     # composite checkpoint when prox_head exists; otherwise plain state_dict for backward-compat
                     if self.prox_head is not None:
                         state = {
@@ -300,16 +322,17 @@ class DUNETrain:
                         }
                     else:
                         state = self.model.state_dict()
-                    ful_model_name = self.checkpoint_path + "/" + "model_" + str(i) + ".pth"
-                    torch.save(state, ful_model_name)
+
+                    ful_model_name = os.path.join(self.checkpoint_path, f"model_{i}.pth")
+                    # Use Python file handle to bypass potential Windows Unicode path issues in PyTorch C++ writer
+                    with open(ful_model_name, 'wb') as f:
+                        torch.save(state, f)
 
                 if (i + 1) % decay_freq == 0:
                     self.optimizer.param_groups[0]["lr"] = (
                         self.optimizer.param_groups[0]["lr"] * lr_decay
                     )
-                    print(
-                        "current learning rate:", self.optimizer.param_groups[0]["lr"]
-                    )
+                    # do not print learning rate to terminal; write to results file below
 
                     with open(self.checkpoint_path + "/results.txt", "a") as f:
                         print(
@@ -339,6 +362,7 @@ class DUNETrain:
         """
 
         mu_loss, distance_loss, fa_loss, fb_loss = 0, 0, 0, 0
+        lconstr_loss, lkkt_loss = 0, 0
 
         for input_point, label_mu, label_distance in train_dataloader:
 
@@ -389,7 +413,7 @@ class DUNETrain:
 
             L_kkt = torch.zeros((), device=mu_vec.device)
             if self.use_kkt:
-                ip = input_point.unsqueeze(1)             # [B,2,1] or [2,1]
+                ip = input_point.unsqueeze(-1)             # [B,2,1] or [2,1]
                 a = self.G @ ip - self.h                  # [B,E,1] or [E,1]
                 Gy = self.G @ (self.G.t() @ mu_reg_be1)   # [B,E,1] or [E,1]
                 s = torch.relu(-mu_reg_be1)               # [B,E,1] or [E,1]
@@ -407,12 +431,16 @@ class DUNETrain:
             distance_loss += mse_distance.item()
             fa_loss += mse_fa.item()
             fb_loss += mse_fb.item()
+            lconstr_loss += float(L_constr.detach().item())
+            lkkt_loss += float(L_kkt.detach().item())
 
         return (
             mu_loss / len(train_dataloader),
             distance_loss / len(train_dataloader),
             fa_loss / len(train_dataloader),
             fb_loss / len(train_dataloader),
+            lconstr_loss / len(train_dataloader),
+            lkkt_loss / len(train_dataloader),
         )
 
     def cal_loss_fab(self, output_mu, label_mu, input_point):
@@ -615,3 +643,6 @@ class DUNETrain:
         #                     str(average_loss_list[2]).ljust(10),
         #                     str(average_loss_list[3]).ljust(10)))
         return loss_list, inference_time
+
+
+
