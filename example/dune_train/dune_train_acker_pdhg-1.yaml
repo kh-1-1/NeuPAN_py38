@@ -1,0 +1,46 @@
+robot:
+  kinematics: 'acker'
+  length: 4.6
+  width: 1.6
+  wheelbase: 3
+
+device: cuda
+
+train:
+  # minimal PoC for learned prox + constraint loss
+  direct_train: true
+  model_name: acker_learned_prox_pdhg-1_robot
+  projection: learned         # {hard|none|learned}
+  use_lconstr: true
+  w_constr: 0.10
+  use_kkt: false
+  w_kkt: 0.01
+  kkt_rho: 0.50
+
+  data_size: 100000              # extreme short sanity
+  data_range: [-25, -25, 25, 25]
+  batch_size: 128
+  epoch: 2500
+  valid_freq: 250
+  save_freq: 500
+  lr: 5e-5
+  lr_decay: 0.5
+  decay_freq: 1500
+
+
+   # Feasibility + KKT (balanced)
+  use_lconstr: true
+  w_constr: 0.10
+  use_kkt: false
+  w_kkt: 1e-3                  # reduce to prevent dominance over task/feasibility losses
+  kkt_rho: 0.50                # keep original diff default; tune in [0.1, 1.0]
+
+  # PDHG-Unroll (optional)
+  unroll_J: 1                  # 0=disabled; set 1/2/3 to enable
+  pdhg_tau: 0.5
+  pdhg_sigma: 0.5
+  pdhg_learnable: false
+  pdhg_per_step: false
+
+  # SE(2) embedding (optional; interface only)
+  se2_embed: false

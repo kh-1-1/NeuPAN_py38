@@ -1,0 +1,66 @@
+Epoch 0/2500 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        6.56e-02 | Validate L_constr:        1.25e-03
+  L_kkt:           0.00e+00 | Validate L_kkt:           0.00e+00
+
+Epoch 250/2500 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        2.67e-13 | Validate L_constr:        2.98e-15
+  L_kkt:           0.00e+00 | Validate L_kkt:           0.00e+00
+
+Epoch 500/2500 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        2.18e-13 | Validate L_constr:        3.16e-13
+  L_kkt:           0.00e+00 | Validate L_kkt:           0.00e+00
+
+Epoch 750/2500 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        4.03e-11 | Validate L_constr:        3.73e-10
+  L_kkt:           0.00e+00 | Validate L_kkt:           0.00e+00
+
+Epoch 1000/2500 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        3.86e-11 | Validate L_constr:        1.21e-13
+  L_kkt:           0.00e+00 | Validate L_kkt:           0.00e+00
+
+Epoch 1250/2500 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        6.35e-13 | Validate L_constr:        2.65e-16
+  L_kkt:           0.00e+00 | Validate L_kkt:           0.00e+00
+
+Epoch 1500/2500 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        3.98e-17 | Validate L_constr:        1.41e-18
+  L_kkt:           0.00e+00 | Validate L_kkt:           0.00e+00
+
+Epoch 1750/2500 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        1.61e-13 | Validate L_constr:        1.56e-11
+  L_kkt:           0.00e+00 | Validate L_kkt:           0.00e+00
+
+Epoch 2000/2500 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        8.25e-13 | Validate L_constr:        2.04e-13
+  L_kkt:           0.00e+00 | Validate L_kkt:           0.00e+00
+
+Epoch 2250/2500 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        4.24e-14 | Validate L_constr:        1.24e-16
+  L_kkt:           0.00e+00 | Validate L_kkt:           0.00e+00
+
+Epoch 2500/2500 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        7.89e-13 | Validate L_constr:        2.26e-17
+  L_kkt:           0.00e+00 | Validate L_kkt:           0.00e+00
+
