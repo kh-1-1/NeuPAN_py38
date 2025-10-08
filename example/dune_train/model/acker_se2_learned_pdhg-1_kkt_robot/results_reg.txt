@@ -1,0 +1,606 @@
+Epoch 0/5000 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        4.13e-03 | Validate L_constr:        8.42e-04
+  L_kkt:           9.59e-01 | Validate L_kkt:           9.61e-01
+
+Epoch 50/5000 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        1.67e-07 | Validate L_constr:        1.63e-07
+  L_kkt:           9.28e-01 | Validate L_kkt:           9.28e-01
+
+Epoch 100/5000 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.43e-08 | Validate L_constr:        5.32e-08
+  L_kkt:           9.30e-01 | Validate L_kkt:           9.30e-01
+
+Epoch 150/5000 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.38e-08 | Validate L_constr:        5.34e-08
+  L_kkt:           9.31e-01 | Validate L_kkt:           9.31e-01
+
+Epoch 200/5000 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.37e-08 | Validate L_constr:        5.40e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 250/5000 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.32e-08 | Validate L_constr:        5.38e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 300/5000 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.34e-08 | Validate L_constr:        5.40e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 350/5000 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.28e-08 | Validate L_constr:        5.39e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 400/5000 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.28e-08 | Validate L_constr:        5.36e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 450/5000 learning rate 5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.28e-08 | Validate L_constr:        5.37e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 500/5000 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.12e-08 | Validate L_constr:        5.94e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 550/5000 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.18e-08 | Validate L_constr:        5.55e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 600/5000 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.19e-08 | Validate L_constr:        5.54e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 650/5000 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.19e-08 | Validate L_constr:        5.71e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 700/5000 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.19e-08 | Validate L_constr:        6.27e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 750/5000 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.19e-08 | Validate L_constr:        5.57e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 800/5000 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.19e-08 | Validate L_constr:        6.23e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 850/5000 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.19e-08 | Validate L_constr:        6.28e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 900/5000 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.18e-08 | Validate L_constr:        6.27e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 950/5000 learning rate 2.5e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.18e-08 | Validate L_constr:        6.27e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 1000/5000 learning rate 1.25e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.10e-08 | Validate L_constr:        5.11e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1050/5000 learning rate 1.25e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.09e-08 | Validate L_constr:        5.16e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 1100/5000 learning rate 1.25e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.09e-08 | Validate L_constr:        5.15e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1150/5000 learning rate 1.25e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.09e-08 | Validate L_constr:        5.16e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 1200/5000 learning rate 1.25e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.09e-08 | Validate L_constr:        5.15e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1250/5000 learning rate 1.25e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.09e-08 | Validate L_constr:        5.16e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 1300/5000 learning rate 1.25e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.09e-08 | Validate L_constr:        5.16e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 1350/5000 learning rate 1.25e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.09e-08 | Validate L_constr:        5.14e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1400/5000 learning rate 1.25e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.09e-08 | Validate L_constr:        5.15e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 1450/5000 learning rate 1.25e-05
+---------------------------------
+Reg Losses:
+  L_constr:        5.09e-08 | Validate L_constr:        5.15e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1500/5000 learning rate 6.25e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.06e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1550/5000 learning rate 6.25e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.06e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1600/5000 learning rate 6.25e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.06e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.32e-01
+
+Epoch 1650/5000 learning rate 6.25e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.06e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1700/5000 learning rate 6.25e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.06e-08 | Validate L_constr:        5.01e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1750/5000 learning rate 6.25e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.06e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1800/5000 learning rate 6.25e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.06e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1850/5000 learning rate 6.25e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.06e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1900/5000 learning rate 6.25e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.06e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 1950/5000 learning rate 6.25e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.06e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2000/5000 learning rate 3.125e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.05e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2050/5000 learning rate 3.125e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.05e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2100/5000 learning rate 3.125e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.05e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2150/5000 learning rate 3.125e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.05e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2200/5000 learning rate 3.125e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.05e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2250/5000 learning rate 3.125e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.05e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2300/5000 learning rate 3.125e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.05e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2350/5000 learning rate 3.125e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.05e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2400/5000 learning rate 3.125e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.05e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2450/5000 learning rate 3.125e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.05e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2500/5000 learning rate 1.5625e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.03e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2550/5000 learning rate 1.5625e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.03e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2600/5000 learning rate 1.5625e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.03e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2650/5000 learning rate 1.5625e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.03e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2700/5000 learning rate 1.5625e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.03e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2750/5000 learning rate 1.5625e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.03e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2800/5000 learning rate 1.5625e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.03e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2850/5000 learning rate 1.5625e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.03e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2900/5000 learning rate 1.5625e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.03e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 2950/5000 learning rate 1.5625e-06
+---------------------------------
+Reg Losses:
+  L_constr:        5.03e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3000/5000 learning rate 7.8125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3050/5000 learning rate 7.8125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3100/5000 learning rate 7.8125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3150/5000 learning rate 7.8125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3200/5000 learning rate 7.8125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3250/5000 learning rate 7.8125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3300/5000 learning rate 7.8125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3350/5000 learning rate 7.8125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3400/5000 learning rate 7.8125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3450/5000 learning rate 7.8125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3500/5000 learning rate 3.90625e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3550/5000 learning rate 3.90625e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3600/5000 learning rate 3.90625e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3650/5000 learning rate 3.90625e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3700/5000 learning rate 3.90625e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3750/5000 learning rate 3.90625e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3800/5000 learning rate 3.90625e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3850/5000 learning rate 3.90625e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3900/5000 learning rate 3.90625e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 3950/5000 learning rate 3.90625e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.04e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4000/5000 learning rate 1.953125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4050/5000 learning rate 1.953125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4100/5000 learning rate 1.953125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4150/5000 learning rate 1.953125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4200/5000 learning rate 1.953125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4250/5000 learning rate 1.953125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4300/5000 learning rate 1.953125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4350/5000 learning rate 1.953125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4400/5000 learning rate 1.953125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4450/5000 learning rate 1.953125e-07
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.03e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4500/5000 learning rate 9.765625e-08
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4550/5000 learning rate 9.765625e-08
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4600/5000 learning rate 9.765625e-08
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4650/5000 learning rate 9.765625e-08
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4700/5000 learning rate 9.765625e-08
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4750/5000 learning rate 9.765625e-08
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4800/5000 learning rate 9.765625e-08
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4850/5000 learning rate 9.765625e-08
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4900/5000 learning rate 9.765625e-08
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 4950/5000 learning rate 9.765625e-08
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
+Epoch 5000/5000 learning rate 4.8828125e-08
+---------------------------------
+Reg Losses:
+  L_constr:        5.02e-08 | Validate L_constr:        5.02e-08
+  L_kkt:           9.32e-01 | Validate L_kkt:           9.33e-01
+
