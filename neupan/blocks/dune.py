@@ -260,7 +260,15 @@ class DUNE(torch.nn.Module):
                 raise FileNotFoundError
 
             self.abs_checkpoint_path = file_check(checkpoint)
-            state = torch.load(self.abs_checkpoint_path, map_location=torch.device('cpu'))
+            # Prefer safe loading in newer PyTorch; gracefully fallback if unsupported
+            try:
+                state = torch.load(
+                    self.abs_checkpoint_path,
+                    map_location=torch.device('cpu'),
+                    weights_only=True,
+                )
+            except TypeError:
+                state = torch.load(self.abs_checkpoint_path, map_location=torch.device('cpu'))
             if isinstance(state, dict) and ('model' in state or 'prox_head' in state or 'pdhg_unroll' in state):
                 # composite checkpoint
                 self.model.load_state_dict(state['model'] if 'model' in state else state)

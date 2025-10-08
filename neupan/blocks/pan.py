@@ -74,7 +74,7 @@ class PAN(torch.nn.Module):
             p_u=adjust_kwargs.get("p_u", 1.0),
             ro_obs=adjust_kwargs.get("ro_obs", 400),
             bk=adjust_kwargs.get("bk", 0.1),
-            solver=adjust_kwargs.get("solver", "ECOS"),
+            solver=adjust_kwargs.get("solver", "CLARABEL"),
         )
 
         self.no_obs = (nrmp_max_num == 0 or dune_max_num == 0)

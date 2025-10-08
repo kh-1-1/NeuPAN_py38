@@ -150,7 +150,7 @@ class DUNETrain:
     def prob_solve(self, p_value):
 
         self.p.value = p_value
-        self.prob.solve(solver=cp.ECOS)  # distance
+        self.prob.solve(solver=cp.CLARABEL)  # distance
         # self.prob.solve()  # distance
 
         return self.prob.value, self.mu.value

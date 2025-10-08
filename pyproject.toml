@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = 'neupan'
-version = "1.1"
+version = "2.1"
 requires-python = ">= 3.8"
 authors = [{name = "Han Ruihua", email = "hanrh@connect.hku.hk"}]
 description = "NeuPAN"
@@ -21,6 +21,8 @@ dependencies = [
     'pyyaml',
     "torch>=2.0.1",
     "ecos",
+    "clarabel",
+
 ]
 
 [project.optional-dependencies]
