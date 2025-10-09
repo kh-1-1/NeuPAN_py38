@@ -1,0 +1,45 @@
+robot:
+  kinematics: 'diff'
+  length: 1.6
+  width: 2.0
+
+device: cuda
+
+# Start from the converged learned-prox checkpoint, then KKT fine-tune
+#pan:
+#  dune_checkpoint: example/dune_train/model/diff_learned_prox_robot/model_2500.pth
+
+train:
+  # KKT fine-tune on top of learned-prox
+  direct_train: true
+  model_name: diff_learned_robot
+  projection: learned
+
+  # Feasibility + KKT (balanced)
+  use_lconstr: true
+  w_constr: 0.10
+  use_kkt: false
+  w_kkt: 1e-3                  # reduce to prevent dominance over task/feasibility losses
+  kkt_rho: 0.50                # keep original diff default; tune in [0.1, 1.0]
+
+  # PDHG-Unroll (optional)
+  unroll_J: 1                  # 0=disabled; set 1/2/3 to enable
+  pdhg_tau: 0.5
+  pdhg_sigma: 0.5
+  pdhg_learnable: false
+  pdhg_per_step: false
+
+  # SE(2) embedding (optional; interface only)
+  se2_embed: false
+
+  # Data/training schedule
+  data_size: 100000
+  data_range: [-25, -25, 25, 25]
+  batch_size: 10240
+  epoch: 2500
+  valid_freq: 2
+  save_freq: 500
+  lr: 5e-5                     # higher than previous KKT run to enable effective fine-tune
+  lr_decay: 0.5
+  decay_freq: 700
+
