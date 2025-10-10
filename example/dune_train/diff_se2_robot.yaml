@@ -12,11 +12,11 @@ device: cuda
 train:
   # KKT fine-tune on top of learned-prox
   direct_train: true
-  model_name: diff_learned_robot
-  projection: learned
+  model_name: diff_se2_robot
+  projection: none
 
   # Feasibility + KKT (balanced)
-  use_lconstr: true
+  use_lconstr: false
   w_constr: 0.10
   use_kkt: false
   w_kkt: 1e-3                  # reduce to prevent dominance over task/feasibility losses
@@ -30,7 +30,7 @@ train:
   pdhg_per_step: false
 
   # SE(2) embedding (optional; interface only)
-  se2_embed: false
+  se2_embed: true
 
   # Data/training schedule
   data_size: 100000
