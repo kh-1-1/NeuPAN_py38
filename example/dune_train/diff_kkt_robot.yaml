@@ -12,13 +12,13 @@ device: cuda
 train:
   # KKT fine-tune on top of learned-prox
   direct_train: true
-  model_name: diff_learned_robot
-  projection: learned
+  model_name: diff_kkt_robot
+  projection: none
 
   # Feasibility + KKT (balanced)
-  use_lconstr: true
+  use_lconstr: false
   w_constr: 0.10
-  use_kkt: false
+  use_kkt: true
   w_kkt: 1e-3                  # reduce to prevent dominance over task/feasibility losses
   kkt_rho: 0.50                # keep original diff default; tune in [0.1, 1.0]
 

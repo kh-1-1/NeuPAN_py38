@@ -13,11 +13,11 @@ device: cuda
 train:
   # KKT fine-tune on top of learned-prox
   direct_train: true
-  model_name: acker_learned_robot
-  projection: learned          # keep learned prox in the loop
+  model_name: acker_se2_robot
+  projection: none          # keep learned prox in the loop
 
   # Feasibility + KKT (balanced)
-  use_lconstr: true
+  use_lconstr: false
   w_constr: 0.10               # keep feasibility pressure
   use_kkt: false
   w_kkt: 1e-3                  # smaller KKT weight to avoid overwhelming loss scale
@@ -32,7 +32,7 @@ train:
   pdhg_per_step: false         # true to learn per-step parameters (advanced)
 
   # SE(2) embedding (optional; interface only)
-  se2_embed: false             # true to enable SE(2)-aware input encoding (if implemented)
+  se2_embed: true             # true to enable SE(2)-aware input encoding (if implemented)
 
   # Data/training schedule
   data_size: 100000
