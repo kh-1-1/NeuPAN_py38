@@ -1,0 +1,40 @@
+robot:
+  kinematics: 'diff'
+  length: 1.6
+  width: 2.0
+
+device: cuda
+
+train:
+  # FlexiblePDHG front-end configuration
+  direct_train: true
+  model_name: diff_flex_pdhg_robot
+  front: flex_pdhg
+  front_J: 2
+  front_hidden: 32
+  front_learned: true
+  front_tau: 0.5
+  front_sigma: 0.5
+  front_residual_scale: 0.5
+  unroll_J: 0
+  projection: hard
+  se2_embed: false
+
+  # Loss/regularization
+  use_lconstr: false
+  w_constr: 0.10
+  use_kkt: false
+  w_kkt: 0.00
+  kkt_rho: 0.50
+
+  # Data/training schedule
+  data_size: 100000
+  data_range: [-25, -25, 25, 25]
+  batch_size: 256
+  epoch: 2500
+  valid_freq: 1
+  save_freq: 500
+  lr: 5e-5
+  lr_decay: 0.5
+  decay_freq: 1500
+
