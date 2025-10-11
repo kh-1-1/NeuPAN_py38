@@ -9,7 +9,7 @@ train:
 
  # minimal PoC for learned prox + constraint loss
   direct_train: true
-  model_name: diff_robot 
+  model_name: diff_CLARABEL_robot 
   projection: none         # {hard|none|learned}
   use_lconstr: false
   w_constr: 0.10
@@ -21,8 +21,8 @@ train:
   data_size: 100000
   data_range: [-25, -25, 25, 25]
   batch_size: 256
-  epoch: 2500
-  valid_freq: 1
+  epoch: 5000
+  valid_freq: 2
   save_freq: 500
   lr: 5e-5
   lr_decay: 0.5
