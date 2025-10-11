@@ -13,11 +13,11 @@ device: cuda
 train:
   # KKT fine-tune on top of learned-prox
   direct_train: true
-  model_name: acker_pdhg-1_robot
+  model_name: acker_pdhg-1-learn_robot
   projection: none          # keep learned prox in the loop
 
   # Feasibility + KKT (balanced)
-  use_lconstr: false
+  use_lconstr: true
   w_constr: 0.10               # keep feasibility pressure
   use_kkt: false
   w_kkt: 1e-3                  # smaller KKT weight to avoid overwhelming loss scale
@@ -28,7 +28,7 @@ train:
   unroll_J: 1                  # 0=disabled; 1/2/3 to enable PDHG unroll
   pdhg_tau: 0.5
   pdhg_sigma: 0.5
-  pdhg_learnable: false        # true to learn step sizes (Stage 3)
+  pdhg_learnable: true        # true to learn step sizes (Stage 3)
   pdhg_per_step: false         # true to learn per-step parameters (advanced)
 
   # SE(2) embedding (optional; interface only)
@@ -38,9 +38,9 @@ train:
   data_size: 100000
   data_range: [-25, -25, 25, 25]
   batch_size: 256
-  epoch: 2500
+  epoch: 5000
   valid_freq: 2
   save_freq: 500
   lr: 5e-5                     # restore baseline LR to allow trunk updates
   lr_decay: 0.5
-  decay_freq: 700
+  decay_freq: 1500
