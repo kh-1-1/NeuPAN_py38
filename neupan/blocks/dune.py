@@ -22,7 +22,7 @@ along with NeuPAN planner. If not, see <https://www.gnu.org/licenses/>.
 import torch
 import os
 from math import inf
-from neupan.blocks import ObsPointNet, DUNETrain
+from neupan.blocks import ObsPointNet, DUNETrain, FlexiblePDHGFront
 from neupan.blocks.learned_prox import ProxHead
 from neupan.blocks.pdhg_unroll import PDHGUnroll, PDHGUnrollPerStep
 from neupan.configuration import np_to_tensor, to_device
@@ -51,8 +51,37 @@ class DUNE(torch.nn.Module):
         self.unroll_J = int(train_kwargs.get('unroll_J', 0))  # PDHG steps (0=disabled)
         self.se2_embed = bool(train_kwargs.get('se2_embed', False))
 
-        # ObsPointNet with optional SE(2) embedding (backward compatible default False)
-        self.model = to_device(ObsPointNet(2, self.edge_dim, se2_embed=self.se2_embed))
+        # Front-end selector: default ObsPointNet, optional FlexiblePDHGFront
+        front_name = str(train_kwargs.get('front', 'obs_point')).lower()
+        if front_name in ('flex', 'flex_pdhg', 'flexible', 'flexible_pdhg'):
+            # If using FlexiblePDHGFront, disable legacy PDHG unroll to avoid duplication
+            self.unroll_J = 0
+            front_J = int(train_kwargs.get('front_J', 1))
+            front_hidden = int(train_kwargs.get('front_hidden', 32))
+            front_learned = bool(train_kwargs.get('front_learned', True))
+            front_tau = float(train_kwargs.get('front_tau', 0.5))
+            front_sigma = float(train_kwargs.get('front_sigma', 0.5))
+            residual_scale = float(train_kwargs.get('front_residual_scale', 0.5))
+            self.model = to_device(
+                FlexiblePDHGFront(
+                    input_dim=2,
+                    E=self.edge_dim,
+                    G=self.G,
+                    h=self.h,
+                    hidden=front_hidden,
+                    J=front_J,
+                    se2_embed=self.se2_embed,
+                    use_learned_prox=front_learned,
+                    residual_scale=residual_scale,
+                    tau=front_tau,
+                    sigma=front_sigma,
+                )
+            )
+            self.front_type = 'flex_pdhg'
+        else:
+            # ObsPointNet with optional SE(2) embedding (backward compatible default False)
+            self.model = to_device(ObsPointNet(2, self.edge_dim, se2_embed=self.se2_embed))
+            self.front_type = 'obs_point'
 
         # optional learned proximal head (for 'learned' projection)
         self.prox_head = None
@@ -64,7 +93,7 @@ class DUNE(torch.nn.Module):
 
         # PDHG-Unroll module (Stage 1: fixed step sizes)
         self.pdhg_unroll = None
-        if self.unroll_J > 0:
+        if (self.unroll_J > 0) and (self.front_type == 'obs_point'):
             pdhg_tau = float(train_kwargs.get('pdhg_tau', 0.5))
             pdhg_sigma = float(train_kwargs.get('pdhg_sigma', 0.5))
             pdhg_learnable = bool(train_kwargs.get('pdhg_learnable', False))
