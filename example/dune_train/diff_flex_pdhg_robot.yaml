@@ -31,7 +31,7 @@ train:
   data_size: 100000
   data_range: [-25, -25, 25, 25]
   batch_size: 256
-  epoch: 2500
+  epoch: 5000
   valid_freq: 1
   save_freq: 500
   lr: 5e-5
