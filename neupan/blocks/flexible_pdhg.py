@@ -37,18 +37,37 @@ class FlexiblePDHGFront(nn.Module):
         residual_scale: float = 0.5,
         tau: float = 0.5,
         sigma: float = 0.5,
+        use_precond: bool = False,
+        learnable_steps: bool = False,
+        tau_min: float = 0.05,
+        tau_max: float = 0.99,
+        sigma_min: float = 0.05,
+        sigma_max: float = 0.99,
     ) -> None:
         super().__init__()
 
         self.E = int(E)
-        self.J = int(J)
+        self.J = max(1, int(J))
         self.se2_embed = bool(se2_embed)
         self.use_learned_prox = bool(use_learned_prox)
         self.residual_scale = float(residual_scale)
+        self.use_precond = bool(use_precond)
+        self.learnable_steps = bool(learnable_steps)
 
         # Register geometry as buffers to keep them on the right device and avoid grads
-        self.register_buffer("G", G.detach().clone())  # [E,2]
-        self.register_buffer("h", h.detach().clone())  # [E,1]
+        base_G = G.detach().clone()
+        base_h = h.detach().clone()
+        self.register_buffer("G", base_G)
+        self.register_buffer("h", base_h)
+
+        if self.use_precond:
+            row_norm = torch.norm(base_G, dim=1, keepdim=True).clamp(min=1e-6)
+            self.register_buffer("row_scale", 1.0 / row_norm)
+        else:
+            self.register_buffer("row_scale", torch.ones_like(base_h))
+
+        self.register_buffer("G_eff", self.row_scale * base_G)
+        self.register_buffer("h_eff", self.row_scale * base_h)
 
         actual_in = 3 if self.se2_embed else input_dim
 
@@ -79,9 +98,20 @@ class FlexiblePDHGFront(nn.Module):
             nn.Linear(hidden, self.E),
         )
 
-        # Step sizes as buffers (kept fixed by default)
-        self.register_buffer("tau", torch.tensor(float(tau), dtype=torch.float32))
-        self.register_buffer("sigma", torch.tensor(float(sigma), dtype=torch.float32))
+        tau = float(tau)
+        sigma = float(sigma)
+
+        self.register_buffer("tau_min", torch.tensor(float(tau_min), dtype=torch.float32))
+        self.register_buffer("tau_max", torch.tensor(float(tau_max), dtype=torch.float32))
+        self.register_buffer("sigma_min", torch.tensor(float(sigma_min), dtype=torch.float32))
+        self.register_buffer("sigma_max", torch.tensor(float(sigma_max), dtype=torch.float32))
+
+        if self.learnable_steps:
+            self.tau_param = nn.Parameter(torch.full((self.J,), tau, dtype=torch.float32))
+            self.sigma_param = nn.Parameter(torch.full((self.J,), sigma, dtype=torch.float32))
+        else:
+            self.register_buffer("tau_buf", torch.tensor(tau, dtype=torch.float32))
+            self.register_buffer("sigma_buf", torch.tensor(sigma, dtype=torch.float32))
 
     @staticmethod
     def _polar_embed(x: torch.Tensor) -> torch.Tensor:
@@ -90,44 +120,55 @@ class FlexiblePDHGFront(nn.Module):
         theta = torch.atan2(x[:, 1], x[:, 0]).unsqueeze(1)
         return torch.cat([r, torch.cos(theta), torch.sin(theta)], dim=1)
 
-    def _project_mu_row(self, mu: torch.Tensor) -> torch.Tensor:
-        """Project row-layout mu [N,E] onto {mu>=0, ||G^T mu||<=1}.
-        Uses real geometry self.G.
-        """
+    def _project_mu_row(self, mu: torch.Tensor, G: torch.Tensor) -> torch.Tensor:
+        """Project row-layout mu [N,E] using provided geometry G."""
         mu = mu.clamp_min(0.0)
-        # v = (G^T mu)^T = mu @ G  -> [N,2]
-        v = mu @ self.G  # [N,2]
+        v = mu @ G
         v_norm = torch.norm(v, dim=1, keepdim=True)
         mu = mu / v_norm.clamp(min=1.0)
         return mu
 
-    def _step(self, x: torch.Tensor, y: torch.Tensor, mu: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-        """One PDHG-like row-layout step with optional learned-prox.
-        x:  [N,2]
-        y:  [N,2]
-        mu: [N,E]
-        """
-        # y^{k+1} = Proj_{||·||<=1}( y^k + sigma * (mu @ G) )
-        y = y + self.sigma * (mu @ self.G)
+    def _step(
+        self,
+        x: torch.Tensor,
+        y: torch.Tensor,
+        mu: torch.Tensor,
+        tau: torch.Tensor,
+        sigma: torch.Tensor,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """One PDHG-like row-layout step with optional learned-prox."""
+        # y^{k+1} = Proj_{||·||<=1}( y^k + sigma * (mu @ G_eff) )
+        y = y + sigma * (mu @ self.G_eff)
         y_norm = torch.norm(y, dim=1, keepdim=True)
         y = y / y_norm.clamp(min=1.0)
 
-        # Compute a_row = (G @ x - h)^T in row layout: [N,E]
-        # x @ G^T -> [N,E]; h^T broadcasts to [E]
-        a_row = x @ self.G.t() - self.h.t()  # [N,E]
+        # Compute a_row = (G_eff @ x - h_eff)^T in row layout: [N,E]
+        a_row = x @ self.G_eff.t() - self.h_eff.t()
 
-        # mu^{k+1/2} = mu^k + tau * (a - y G^T)
-        mu = mu + self.tau * (a_row - (y @ self.G.t()))
+        # mu^{k+1/2} = mu^k + tau * (a - y G_eff^T)
+        mu = mu + tau * (a_row - (y @ self.G_eff.t()))
 
-        # Optional learned-prox residual on z = mu @ G
+        # Optional learned-prox residual on z = mu @ G_eff
         if self.use_learned_prox:
-            z = mu @ self.G  # [N,2]
+            z = mu @ self.G_eff
             delta = self.prox_head(z)
             mu = mu + self.residual_scale * delta
 
-        # Hard projection guarantees feasibility
-        mu = self._project_mu_row(mu)
+        # Hard projection guarantees feasibility (in scaled geometry)
+        mu = self._project_mu_row(mu, self.G_eff)
         return y, mu
+
+    def _prepare_step_sizes(self, device: torch.device, dtype: torch.dtype) -> Tuple[torch.Tensor, torch.Tensor]:
+        if self.learnable_steps:
+            tau_vals = torch.clamp(self.tau_param, self.tau_min.item(), self.tau_max.item())
+            sigma_vals = torch.clamp(self.sigma_param, self.sigma_min.item(), self.sigma_max.item())
+        else:
+            tau_vals = self.tau_buf.expand(self.J)
+            sigma_vals = self.sigma_buf.expand(self.J)
+
+        tau_vals = tau_vals.to(device=device, dtype=dtype)
+        sigma_vals = sigma_vals.to(device=device, dtype=dtype)
+        return tau_vals, sigma_vals
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -148,9 +189,15 @@ class FlexiblePDHGFront(nn.Module):
         mu = self.init_mu(h)  # [N,E] non-negative init
         y = self.init_y(h)    # [N,2] bounded init
 
-        for _ in range(max(1, self.J)):
-            y, mu = self._step(x, y, mu)
+        tau_vals, sigma_vals = self._prepare_step_sizes(x.device, x.dtype)
+
+        steps = max(1, self.J)
+        for j in range(steps):
+            tau_j = tau_vals[j]
+            sigma_j = sigma_vals[j]
+            y, mu = self._step(x, y, mu, tau_j, sigma_j)
 
         # Final safety projection (idempotent if feasible already)
-        mu = self._project_mu_row(mu)
+        mu = mu * self.row_scale.view(1, -1)
+        mu = self._project_mu_row(mu, self.G)
         return mu

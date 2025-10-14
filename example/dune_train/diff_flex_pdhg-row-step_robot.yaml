@@ -1,33 +1,32 @@
 robot:
-  kinematics: 'acker'
-  length: 4.6
-  width: 1.6
-  wheelbase: 3
+  kinematics: 'diff'
+  length: 1.6
+  width: 2.0
 
 device: cuda
 
 train:
-  # Use new FlexiblePDHG front-end; disable legacy PDHG
+  # FlexiblePDHG front-end configuration
   direct_train: true
-  model_name: acker_flex_pdhg-row-step_robot
+  model_name: diff_flex_pdhg-row-step_robot
   front: flex_pdhg
-  front_J: 2              # per-step learned-prox + hard projection
+  front_J: 2
   front_hidden: 32
   front_learned: true
   front_tau: 0.5
   front_sigma: 0.5
   front_residual_scale: 0.5
-  front_precond: row
-  front_learn_steps: true
+  front_precond: row           # {none|row}
+  front_learn_steps: true      # learn per-step tau/sigma
   front_tau_min: 0.05
   front_tau_max: 0.99
   front_sigma_min: 0.05
   front_sigma_max: 0.99
-  unroll_J: 0             # do not instantiate legacy PDHGUnroll in DUNE
-  projection: hard        # keep DUNE hard projection as idempotent fallback
+  unroll_J: 0
+  projection: hard
   se2_embed: false
 
-  # Regularizers (kept off for clean comparison)
+  # Loss/regularization
   use_lconstr: false
   w_constr: 0.10
   use_kkt: false
@@ -44,4 +43,3 @@ train:
   lr: 5e-5
   lr_decay: 0.5
   decay_freq: 1500
-

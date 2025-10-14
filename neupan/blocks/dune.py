@@ -22,9 +22,7 @@ along with NeuPAN planner. If not, see <https://www.gnu.org/licenses/>.
 import torch
 import os
 from math import inf
-from neupan.blocks import ObsPointNet, DUNETrain, FlexiblePDHGFront
 from neupan.blocks.learned_prox import ProxHead
-from neupan.blocks.pdhg_unroll import PDHGUnroll, PDHGUnrollPerStep
 from neupan.configuration import np_to_tensor, to_device
 from neupan.util import time_it, file_check, repeat_mk_dirs
 from typing import Optional
@@ -48,13 +46,9 @@ class DUNE(torch.nn.Module):
         train_kwargs = train_kwargs or dict()
         self.projection = train_kwargs.get('projection', 'hard')  # 'hard' | 'none' | 'learned'
         self.monitor_dual_norm = train_kwargs.get('monitor_dual_norm', True)
-        self.unroll_J = int(train_kwargs.get('unroll_J', 0))  # PDHG steps (0=disabled)
         self.se2_embed = bool(train_kwargs.get('se2_embed', False))
 
-        # Front-end selector: default ObsPointNet, optional FlexiblePDHGFront
         front_name = str(train_kwargs.get('front', 'obs_point')).lower()
-        if front_name in ('flex', 'flex_pdhg', 'flexible', 'flexible_pdhg'):
-            # If using FlexiblePDHGFront, disable legacy PDHG unroll to avoid duplication
             self.unroll_J = 0
             front_J = int(train_kwargs.get('front_J', 1))
             front_hidden = int(train_kwargs.get('front_hidden', 32))
@@ -62,8 +56,15 @@ class DUNE(torch.nn.Module):
             front_tau = float(train_kwargs.get('front_tau', 0.5))
             front_sigma = float(train_kwargs.get('front_sigma', 0.5))
             residual_scale = float(train_kwargs.get('front_residual_scale', 0.5))
+            front_precond = str(train_kwargs.get('front_precond', 'none')).lower()
+            use_precond = front_precond in ('row', 'rows', 'true', 'yes', '1')
+            learn_steps = bool(train_kwargs.get('front_learn_steps',
+                                                train_kwargs.get('front_learnable_steps', False)))
+            front_tau_min = float(train_kwargs.get('front_tau_min', 0.05))
+            front_tau_max = float(train_kwargs.get('front_tau_max', 0.99))
+            front_sigma_min = float(train_kwargs.get('front_sigma_min', 0.05))
+            front_sigma_max = float(train_kwargs.get('front_sigma_max', 0.99))
             self.model = to_device(
-                FlexiblePDHGFront(
                     input_dim=2,
                     E=self.edge_dim,
                     G=self.G,
@@ -75,9 +76,14 @@ class DUNE(torch.nn.Module):
                     residual_scale=residual_scale,
                     tau=front_tau,
                     sigma=front_sigma,
+                    use_precond=use_precond,
+                    learnable_steps=learn_steps,
+                    tau_min=front_tau_min,
+                    tau_max=front_tau_max,
+                    sigma_min=front_sigma_min,
+                    sigma_max=front_sigma_max,
                 )
             )
-            self.front_type = 'flex_pdhg'
         else:
             # ObsPointNet with optional SE(2) embedding (backward compatible default False)
             self.model = to_device(ObsPointNet(2, self.edge_dim, se2_embed=self.se2_embed))
@@ -91,27 +97,6 @@ class DUNE(torch.nn.Module):
             except Exception:
                 self.prox_head = None
 
-        # PDHG-Unroll module (Stage 1: fixed step sizes)
-        self.pdhg_unroll = None
-        if (self.unroll_J > 0) and (self.front_type == 'obs_point'):
-            pdhg_tau = float(train_kwargs.get('pdhg_tau', 0.5))
-            pdhg_sigma = float(train_kwargs.get('pdhg_sigma', 0.5))
-            pdhg_learnable = bool(train_kwargs.get('pdhg_learnable', False))
-            pdhg_per_step = bool(train_kwargs.get('pdhg_per_step', False))
-
-            if pdhg_per_step:
-                # Stage 4: per-step learnable (advanced)
-                self.pdhg_unroll = to_device(
-                    PDHGUnrollPerStep(self.edge_dim, J=self.unroll_J,
-                                     tau_init=pdhg_tau, sigma_init=pdhg_sigma)
-                )
-            else:
-                # Stage 1-3: global step sizes (fixed or learnable)
-                self.pdhg_unroll = to_device(
-                    PDHGUnroll(self.edge_dim, J=self.unroll_J,
-                              tau=pdhg_tau, sigma=pdhg_sigma,
-                              learnable_steps=pdhg_learnable)
-                )
 
         self.dual_norm_violation_rate = None
         self.dual_norm_p95 = None
@@ -155,33 +140,6 @@ class DUNE(torch.nn.Module):
         # map the point flow to the latent distance features mu
         with torch.no_grad():
             total_mu = self.model(total_points.T).T  # [E, N]
-
-            # PDHG-Unroll refinement (before learned_prox/hard projection)
-            if self.pdhg_unroll is not None:
-                mu_pre = total_mu.detach()
-                a_total = (self.G @ total_points - self.h)  # [E, N_total]
-                total_mu = self.pdhg_unroll(total_mu, a_total, self.G)
-
-                # profiling: mu statistics pre/post PDHG and timing
-                try:
-                    v_pre = self.G.t() @ mu_pre
-                    v_post = self.G.t() @ total_mu
-                    pre_mean_norm = torch.norm(v_pre, dim=0).mean().item()
-                    post_mean_norm = torch.norm(v_post, dim=0).mean().item()
-                    delta_mu_l2_mean = torch.norm(total_mu - mu_pre, dim=0).mean().item()
-                except Exception:
-                    pre_mean_norm = None
-                    post_mean_norm = None
-                    delta_mu_l2_mean = None
-
-                timing = getattr(self.pdhg_unroll, 'last_timing', {}) or {}
-                self.pdhg_profile = {
-                    'pre_mean_dual_norm': pre_mean_norm,
-                    'post_mean_dual_norm': post_mean_norm,
-                    'delta_mu_l2_mean': delta_mu_l2_mean,
-                    'total_time': timing.get('total'),
-                    'per_step_times': timing.get('per_step'),
-                }
 
             # Optional learned proximal refinement before hard projection
             if self.projection == 'learned' and self.prox_head is not None:
@@ -298,18 +256,12 @@ class DUNE(torch.nn.Module):
                 )
             except TypeError:
                 state = torch.load(self.abs_checkpoint_path, map_location=torch.device('cpu'))
-            if isinstance(state, dict) and ('model' in state or 'prox_head' in state or 'pdhg_unroll' in state):
+            if isinstance(state, dict) and ('model' in state or 'prox_head' in state):
                 # composite checkpoint
                 self.model.load_state_dict(state['model'] if 'model' in state else state)
                 if self.projection == 'learned' and self.prox_head is not None and 'prox_head' in state:
                     try:
                         self.prox_head.load_state_dict(state['prox_head'])
-                    except Exception:
-                        pass
-                # Load PDHG-Unroll state (only if learnable parameters exist)
-                if self.pdhg_unroll is not None and 'pdhg_unroll' in state:
-                    try:
-                        self.pdhg_unroll.load_state_dict(state['pdhg_unroll'])
                     except Exception:
                         pass
             else:
@@ -338,16 +290,11 @@ class DUNE(torch.nn.Module):
 
                 if self.ask_to_continue():
                     state = torch.load(self.full_model_name, map_location=torch.device('cpu'))
-                    if isinstance(state, dict) and ('model' in state or 'prox_head' in state or 'pdhg_unroll' in state):
+                    if isinstance(state, dict) and ('model' in state or 'prox_head' in state):
                         self.model.load_state_dict(state['model'] if 'model' in state else state)
                         if self.projection == 'learned' and self.prox_head is not None and 'prox_head' in state:
                             try:
                                 self.prox_head.load_state_dict(state['prox_head'])
-                            except Exception:
-                                pass
-                        if self.pdhg_unroll is not None and 'pdhg_unroll' in state:
-                            try:
-                                self.pdhg_unroll.load_state_dict(state['pdhg_unroll'])
                             except Exception:
                                 pass
                     else:
@@ -379,11 +326,10 @@ class DUNE(torch.nn.Module):
         checkpoint_path = os.path.join(model_root, model_name)
         checkpoint_path = repeat_mk_dirs(checkpoint_path)
 
-        # pass optional prox_head and pdhg_unroll to trainer
+        # pass optional prox_head to trainer
         prox_head = self.prox_head if self.projection == 'learned' else None
-        pdhg_unroll = self.pdhg_unroll if self.unroll_J > 0 else None
         self.train_model = DUNETrain(self.model, self.G, self.h, checkpoint_path,
-                                     prox_head=prox_head, pdhg_unroll=pdhg_unroll)
+                                     prox_head=prox_head)
         self.full_model_name = self.train_model.start(**train_kwargs)
         print('Complete Training. The model is saved in ' + self.full_model_name)
 
