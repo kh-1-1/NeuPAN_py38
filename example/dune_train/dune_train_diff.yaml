@@ -16,6 +16,12 @@ train:
   front_tau: 0.5
   front_sigma: 0.5
   front_residual_scale: 0.5
+  front_precond: row           # {none|row}
+  front_learn_steps: true      # learn per-step tau/sigma
+  front_tau_min: 0.05
+  front_tau_max: 0.99
+  front_sigma_min: 0.05
+  front_sigma_max: 0.99
   unroll_J: 0
   projection: hard
   se2_embed: false
@@ -37,4 +43,3 @@ train:
   lr: 5e-5
   lr_decay: 0.5
   decay_freq: 1500
-
