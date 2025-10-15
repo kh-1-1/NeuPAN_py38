@@ -373,6 +373,13 @@ class DUNETrain:
             output_mu = self.model(input_point)
             output_mu = torch.unsqueeze(output_mu, 2)
 
+            # --- A-1: Supervised losses on mu and distance ---
+            distance = self.cal_distance(output_mu, input_point)
+            mse_mu = self.loss_fn(output_mu, label_mu)
+            mse_distance = self.loss_fn(distance, label_distance)
+            # --- A-2: Alignment losses on fa/fb (rotation-invariant forms) ---
+            mse_fa, mse_fb = self.cal_loss_fab(output_mu, label_mu, input_point)
+
 
             # --- A-3: Dual constraint & optional KKT residual (on pre-hard mu) ---
             # derive mu vector [E, 1] for regularization
