@@ -23,6 +23,9 @@ import torch
 import os
 from math import inf
 from neupan.blocks.learned_prox import ProxHead
+from neupan.blocks.obs_point_net import ObsPointNet
+from neupan.blocks.flexible_pdhg import FlexiblePDHGFront
+from neupan.blocks.dune_train import DUNETrain
 from neupan.configuration import np_to_tensor, to_device
 from neupan.util import time_it, file_check, repeat_mk_dirs
 from typing import Optional
@@ -48,8 +51,13 @@ class DUNE(torch.nn.Module):
         self.monitor_dual_norm = train_kwargs.get('monitor_dual_norm', True)
         self.se2_embed = bool(train_kwargs.get('se2_embed', False))
 
+        # Select front-end model
         front_name = str(train_kwargs.get('front', 'obs_point')).lower()
-            self.unroll_J = 0
+        if front_name in ('flex_pdhg', 'flexible_pdhg', 'flex', 'flexible'):
+            # New Flexible PDHG front-end
+            self.front_type = 'flex_pdhg'
+            self.unroll_J = 0  # keep legacy field for compatibility
+
             front_J = int(train_kwargs.get('front_J', 1))
             front_hidden = int(train_kwargs.get('front_hidden', 32))
             front_learned = bool(train_kwargs.get('front_learned', True))
@@ -64,28 +72,28 @@ class DUNE(torch.nn.Module):
             front_tau_max = float(train_kwargs.get('front_tau_max', 0.99))
             front_sigma_min = float(train_kwargs.get('front_sigma_min', 0.05))
             front_sigma_max = float(train_kwargs.get('front_sigma_max', 0.99))
-            self.model = to_device(
-                    input_dim=2,
-                    E=self.edge_dim,
-                    G=self.G,
-                    h=self.h,
-                    hidden=front_hidden,
-                    J=front_J,
-                    se2_embed=self.se2_embed,
-                    use_learned_prox=front_learned,
-                    residual_scale=residual_scale,
-                    tau=front_tau,
-                    sigma=front_sigma,
-                    use_precond=use_precond,
-                    learnable_steps=learn_steps,
-                    tau_min=front_tau_min,
-                    tau_max=front_tau_max,
-                    sigma_min=front_sigma_min,
-                    sigma_max=front_sigma_max,
-                )
-            )
+
+            self.model = to_device(FlexiblePDHGFront(
+                input_dim=2,
+                E=self.edge_dim,
+                G=self.G,
+                h=self.h,
+                hidden=front_hidden,
+                J=front_J,
+                se2_embed=self.se2_embed,
+                use_learned_prox=front_learned,
+                residual_scale=residual_scale,
+                tau=front_tau,
+                sigma=front_sigma,
+                use_precond=use_precond,
+                learnable_steps=learn_steps,
+                tau_min=front_tau_min,
+                tau_max=front_tau_max,
+                sigma_min=front_sigma_min,
+                sigma_max=front_sigma_max,
+            ))
         else:
-            # ObsPointNet with optional SE(2) embedding (backward compatible default False)
+            # Default: ObsPointNet with optional SE(2) embedding
             self.model = to_device(ObsPointNet(2, self.edge_dim, se2_embed=self.se2_embed))
             self.front_type = 'obs_point'
 
