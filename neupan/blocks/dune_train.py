@@ -77,6 +77,11 @@ class DUNETrain:
 
         self.construct_problem()
         self.checkpoint_path = checkpoint_path
+        # derive a human-friendly model name from the checkpoint directory
+        try:
+            self.model_name = os.path.basename(os.path.normpath(self.checkpoint_path))
+        except Exception:
+            self.model_name = None
 
         self.loss_fn = torch.nn.MSELoss()
 
@@ -164,6 +169,12 @@ class DUNETrain:
         lr_decay: float = 0.5,
         decay_freq: int = 1500,
         save_loss: bool = False,
+        # Early stopping options (disabled by default)
+        early_stop: bool = False,
+        early_stop_patience: int = 300,
+        early_stop_min_delta: float = 0.0,
+        early_stop_min_epoch: int = 0,
+        early_stop_metric: str = 'val_total',  # 'val_total'|'val_mu' etc. (for future)
         **kwargs,
     ):
 
@@ -188,6 +199,7 @@ class DUNETrain:
             "robot_G": self.G,
             "robot_h": self.h,
             "model": self.model,
+            "model_name": self.model_name,
             "use_lconstr": self.use_lconstr,
             "w_constr": self.w_constr,
             "use_kkt": self.use_kkt,
@@ -200,18 +212,35 @@ class DUNETrain:
         with open(self.checkpoint_path + "/train_dict.pkl", "wb") as f:
             pickle.dump(train_dict, f)
 
-        print(
+        header_line = (
+            f"model_name: {self.model_name} | " if self.model_name else ""
+        ) + (
             f"data_size: {data_size}, data_range: {data_range}, batch_size: {batch_size}, epoch: {epoch}, valid_freq: {valid_freq}, save_freq: {save_freq}, lr: {lr}, lr_decay: {lr_decay}, decay_freq: {decay_freq}, robot_G: {self.G}, robot_h: {self.h}"
         )
+        print(header_line)
 
         with open(self.checkpoint_path + "/results.txt", "a") as f:
-            print(
-                f"data_size: {data_size}, data_range: {data_range}, batch_size: {batch_size}, epoch: {epoch}, valid_freq: {valid_freq}, save_freq: {save_freq}, lr: {lr}, lr_decay: {lr_decay}, decay_freq: {decay_freq}, robot_G: {self.G}, robot_h: {self.h}\n",
-                file=f,
-            )
+            print(header_line + "\n", file=f)
 
         self.optimizer.param_groups[0]["lr"] = float(lr)
         ful_model_name = None
+
+        # configure early stopping state
+        es_enabled = bool(kwargs.get('early_stop', early_stop))
+        es_patience = int(kwargs.get('early_stop_patience', early_stop_patience))
+        es_min_delta = float(kwargs.get('early_stop_min_delta', early_stop_min_delta))
+        es_min_epoch = int(kwargs.get('early_stop_min_epoch', early_stop_min_epoch))
+        es_metric = str(kwargs.get('early_stop_metric', early_stop_metric))
+        best_metric = float('inf')
+        best_epoch = -1
+        best_model_path = None
+        # write ES config once
+        if es_enabled:
+            with open(self.checkpoint_path + "/results.txt", "a") as f:
+                print(
+                    f"early_stop: enabled | patience(epochs): {es_patience} | min_delta: {es_min_delta} | min_epoch: {es_min_epoch} | metric: {es_metric}",
+                    file=f,
+                )
 
         print("dataset generating start ...")
         dataset = self.generate_data_set(data_size, data_range)
@@ -288,6 +317,17 @@ class DUNETrain:
                             self.optimizer.param_groups[0]["lr"],
                             f,
                         )
+                        # also append validation totals for reference
+                        try:
+                            v_total = (
+                                float(valid_mu_loss) + float(valid_distance_loss)
+                                + float(validate_fa_loss) + float(validate_fb_loss)
+                                + float(self.w_constr) * float(valid_lconstr_loss)
+                                + float(self.w_kkt) * float(valid_lkkt_loss)
+                            )
+                            print(f"val_total: {v_total:.6e}", file=f)
+                        except Exception:
+                            pass
                     # write reg losses to a separate file
                     with open(self.checkpoint_path + "/results_reg.txt", "a") as f:
                         print(
@@ -306,6 +346,51 @@ class DUNETrain:
                             ),
                             file=f,
                         )
+
+                    # Early stopping check and best checkpoint save (on validation steps)
+                    if es_enabled:
+                        try:
+                            current = (
+                                float(valid_mu_loss) + float(valid_distance_loss)
+                                + float(validate_fa_loss) + float(validate_fb_loss)
+                                + float(self.w_constr) * float(valid_lconstr_loss)
+                                + float(self.w_kkt) * float(valid_lkkt_loss)
+                            ) if es_metric == 'val_total' else float(valid_mu_loss)
+                        except Exception:
+                            current = float(valid_mu_loss)
+
+                        improved = (current < best_metric - es_min_delta)
+                        if improved:
+                            best_metric = current
+                            best_epoch = i
+                            # save best model snapshot
+                            state = {
+                                'model': self.model.state_dict(),
+                            } if self.prox_head is not None else self.model.state_dict()
+                            best_model_path = os.path.join(self.checkpoint_path, 'model_best.pth')
+                            try:
+                                with open(best_model_path, 'wb') as f:
+                                    torch.save(state, f)
+                            except Exception:
+                                # best effort; do not crash training on IO issues
+                                best_model_path = None
+                            # log improvement
+                            with open(self.checkpoint_path + "/results.txt", "a") as f:
+                                tag = f"model_name: {self.model_name} | " if self.model_name else ""
+                                print(f"{tag}New best @ epoch {i}: val_total {best_metric:.6e}", file=f)
+
+                        # stop if patience exceeded and minimum epoch satisfied
+                        if (i - best_epoch) >= es_patience and i >= es_min_epoch:
+                            with open(self.checkpoint_path + "/results.txt", "a") as f:
+                                tag = f"model_name: {self.model_name} | " if self.model_name else ""
+                                print(
+                                    f"{tag}Early stopping triggered at epoch {i}. Best epoch: {best_epoch}, best metric: {best_metric:.6e}",
+                                    file=f,
+                                )
+                            # set final model name to best if available
+                            if best_model_path is not None:
+                                ful_model_name = best_model_path
+                            break
 
                 if i % save_freq == 0:
                     print("save model at epoch {}".format(i))
@@ -336,11 +421,17 @@ class DUNETrain:
                     # do not print learning rate to terminal; write to results file below
 
                     with open(self.checkpoint_path + "/results.txt", "a") as f:
-                        print(
-                            "current learning rate:",
-                            self.optimizer.param_groups[0]["lr"],
-                            file=f,
-                        )
+                        if self.model_name:
+                            print(
+                                f"model_name: {self.model_name} | current learning rate: {self.optimizer.param_groups[0]['lr']}",
+                                file=f,
+                            )
+                        else:
+                            print(
+                                "current learning rate:",
+                                self.optimizer.param_groups[0]["lr"],
+                                file=f,
+                            )
 
                 self.loss_of_epoch = mu_loss + distance_loss + fa_loss + fb_loss
                 self.loss_list.append(self.loss_of_epoch)
