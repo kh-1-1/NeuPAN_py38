@@ -23,11 +23,7 @@ train:
   kkt_rho: 0.50                # keep original diff default; tune in [0.1, 1.0]
 
   # PDHG-Unroll (optional)
-  unroll_J: 1                  # 0=disabled; set 1/2/3 to enable
-  pdhg_tau: 0.5
-  pdhg_sigma: 0.5
-  pdhg_learnable: false
-  pdhg_per_step: false
+  # (legacy PDHG options removed for flex front-end)
 
   # SE(2) embedding (optional; interface only)
   se2_embed: false
@@ -42,4 +38,11 @@ train:
   lr: 5e-5                     # higher than previous KKT run to enable effective fine-tune
   lr_decay: 0.5
   decay_freq: 700
+
+  # Early stopping
+  early_stop: true
+  early_stop_patience: 500
+  early_stop_min_delta: 1.0e-7
+  early_stop_min_epoch: 1000
+  early_stop_metric: val_total
 

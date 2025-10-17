@@ -30,5 +30,12 @@ train:
   lr_decay: 0.5
   decay_freq: 250
 
+  # Early stopping
+  early_stop: true
+  early_stop_patience: 500
+  early_stop_min_delta: 1.0e-7
+  early_stop_min_epoch: 1000
+  early_stop_metric: val_total
+
 
 
