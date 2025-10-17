@@ -22,7 +22,6 @@ train:
   front_tau_max: 0.99
   front_sigma_min: 0.05
   front_sigma_max: 0.99
-  unroll_J: 0
   projection: hard
   se2_embed: true
 
@@ -43,3 +42,10 @@ train:
   lr: 5e-5
   lr_decay: 0.5
   decay_freq: 1500
+
+  # Early stopping
+  early_stop: true
+  early_stop_patience: 500
+  early_stop_min_delta: 1.0e-7
+  early_stop_min_epoch: 1000
+  early_stop_metric: val_total

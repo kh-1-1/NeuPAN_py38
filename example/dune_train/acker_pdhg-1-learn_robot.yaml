@@ -25,11 +25,7 @@ train:
 
   # PDHG-Unroll (optional)
   # Set unroll_J>0 to enable; tau/sigma are step sizes; learnable toggles learning them
-  unroll_J: 1                  # 0=disabled; 1/2/3 to enable PDHG unroll
-  pdhg_tau: 0.5
-  pdhg_sigma: 0.5
-  pdhg_learnable: true        # true to learn step sizes (Stage 3)
-  pdhg_per_step: false         # true to learn per-step parameters (advanced)
+  # (legacy PDHG options removed for flex front-end)
 
   # SE(2) embedding (optional; interface only)
   se2_embed: false             # true to enable SE(2)-aware input encoding (if implemented)
@@ -44,3 +40,10 @@ train:
   lr: 5e-5                     # restore baseline LR to allow trunk updates
   lr_decay: 0.5
   decay_freq: 1500
+
+  # Early stopping
+  early_stop: true
+  early_stop_patience: 500
+  early_stop_min_delta: 1.0e-7
+  early_stop_min_epoch: 1000
+  early_stop_metric: val_total
