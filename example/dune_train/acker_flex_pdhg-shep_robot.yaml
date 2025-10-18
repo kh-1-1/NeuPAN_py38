@@ -1,0 +1,53 @@
+robot:
+  kinematics: 'acker'
+  length: 4.6
+  width: 1.6
+  wheelbase: 3
+
+device: cuda
+
+train:
+  # Use new FlexiblePDHG front-end; disable legacy PDHG
+  direct_train: true
+  model_name: acker_flex_pdhg-shep_robot
+  front: flex_pdhg
+  front_J: 2              # per-step learned-prox + hard projection
+  front_hidden: 32
+  front_learned: true
+  front_tau: 0.5
+  front_sigma: 0.5
+  front_residual_scale: 0.5
+  front_precond: none
+  front_learn_steps: true
+  front_tau_min: 0.05
+  front_tau_max: 0.99
+  front_sigma_min: 0.05
+  front_sigma_max: 0.99
+  projection: hard        # keep DUNE hard projection as idempotent fallback
+  se2_embed: false
+
+  # Regularizers (kept off for clean comparison)
+  use_lconstr: false
+  w_constr: 0.10
+  use_kkt: false
+  w_kkt: 0.00
+  kkt_rho: 0.50
+
+  # Data/training schedule
+  data_size: 100000
+  data_range: [-25, -25, 25, 25]
+  batch_size: 256
+  epoch: 5000
+  valid_freq: 1
+  save_freq: 500
+  lr: 5e-5
+  lr_decay: 0.5
+  decay_freq: 1500
+
+  # Early stopping
+  early_stop: true
+  early_stop_patience: 500
+  early_stop_min_delta: 1.0e-7
+  early_stop_min_epoch: 1000
+  early_stop_metric: val_total
+
