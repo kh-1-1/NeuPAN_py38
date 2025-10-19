@@ -45,6 +45,14 @@ adjust:
   d_min: 0.1
 
   
+roi:
+  enabled: true
+  strategy_order: [ellipse, tube, wedge]
+  wedge: { fov_deg: 60.0, r_max_m: 8.0 }
+  ellipse: { safety_scale: 1.08 }
+  tube: { r0_m: 0.5, kappa_gain: 0.4, v_tau_m: 0.3 }
+  guardrail: { n_min: 10, n_max: 500, relax_step: 1.15, tighten_step: 0.9 }
+  always_keep: { near_radius_m: 1.5, goal_radius_m: 1.5 }
 
 
   

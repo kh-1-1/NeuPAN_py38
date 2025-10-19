@@ -27,6 +27,7 @@ from neupan.util import time_it, file_check, get_transform
 import numpy as np
 from neupan.configuration import np_to_tensor, tensor_to_np
 from math import cos, sin
+from neupan.blocks.roi_selector import ROISelector, ROIConfig
 
 class neupan(torch.nn.Module):
 
@@ -85,6 +86,32 @@ class neupan(torch.nn.Module):
 
         self.info = {"stop": False, "arrive": False, "collision": False}
 
+        # ROI/Neural Focusing configuration
+        roi_kwargs = kwargs.get("roi_kwargs", {})
+        self.roi_enabled = bool(roi_kwargs.get("enabled", False))
+        self.roi_selector = None
+        self._roi_state = {"last_c_best": None}
+
+        if self.roi_enabled:
+            # Build ROIConfig from roi_kwargs
+            roi_cfg = ROIConfig(
+                enabled=True,
+                strategy_order=roi_kwargs.get("strategy_order", ['ellipse', 'tube', 'wedge']),
+                wedge_fov_deg=roi_kwargs.get("wedge", {}).get("fov_deg", 60.0),
+                wedge_r_max_m=roi_kwargs.get("wedge", {}).get("r_max_m", 8.0),
+                ellipse_safety_scale=roi_kwargs.get("ellipse", {}).get("safety_scale", 1.08),
+                tube_r0_m=roi_kwargs.get("tube", {}).get("r0_m", 0.5),
+                tube_kappa_gain=roi_kwargs.get("tube", {}).get("kappa_gain", 0.4),
+                tube_v_tau_m=roi_kwargs.get("tube", {}).get("v_tau_m", 0.3),
+                guardrail_n_min=roi_kwargs.get("guardrail", {}).get("n_min", 30),
+                guardrail_n_max=roi_kwargs.get("guardrail", {}).get("n_max", 500),
+                guardrail_relax_step=roi_kwargs.get("guardrail", {}).get("relax_step", 1.15),
+                guardrail_tighten_step=roi_kwargs.get("guardrail", {}).get("tighten_step", 0.9),
+                always_keep_near_radius_m=roi_kwargs.get("always_keep", {}).get("near_radius_m", 1.5),
+                always_keep_goal_radius_m=roi_kwargs.get("always_keep", {}).get("goal_radius_m", 1.5),
+            )
+            self.roi_selector = ROISelector(roi_cfg)
+
     @classmethod
     def init_from_yaml(cls, yaml_file, **kwargs):
         abs_path = file_check(yaml_file)
@@ -98,6 +125,7 @@ class neupan(torch.nn.Module):
         config["pan_kwargs"] = config.pop("pan", dict())
         config["adjust_kwargs"] = config.pop("adjust", dict())
         config["train_kwargs"] = config.pop("train", dict())
+        config["roi_kwargs"] = config.pop("roi", dict())
 
         return cls(**config)
 
@@ -121,6 +149,11 @@ class neupan(torch.nn.Module):
 
         # convert to tensor
         nom_input_tensor = [np_to_tensor(n) for n in nom_input_np]
+
+        # Apply ROI filtering if enabled
+        if self.roi_enabled and points is not None:
+            points = self._apply_roi(points, nom_input_np, state)
+
         obstacle_points_tensor = np_to_tensor(points) if points is not None else None
         point_velocities_tensor = (
             np_to_tensor(velocities) if velocities is not None else None
@@ -167,6 +200,276 @@ class neupan(torch.nn.Module):
     def check_stop(self):
         return self.min_distance < self.collision_threshold
 
+    def _apply_roi(self, points: np.ndarray, nom_input_np: list, state: np.ndarray) -> np.ndarray:
+        """
+        Apply ROI filtering to obstacle points
+
+        Args:
+            points: (2, N) obstacle points in global coordinates
+            nom_input_np: list of nominal inputs [nom_s, nom_u, ref_s, ref_us]
+            state: (3, 1) current robot state [x, y, theta]
+
+        Returns:
+            (2, N_roi) filtered obstacle points in global coordinates
+        """
+        # Select reference path (prioritize previous optimized trajectory)
+        path_xy = self._select_path(nom_input_np)
+
+        # Estimate c_best from path
+        c_best = self._estimate_cbest(path_xy)
+
+        # Extract robot state
+        heading_rad = float(state[2, 0])
+        v_robot = float(self.cur_vel_array[0, 0]) if self.cur_vel_array.shape[1] > 0 else 0.0
+
+        # Apply ROI selection
+        roi_output = self.roi_selector.select(
+            pts=points,
+            path_xy=path_xy,
+            heading_rad=heading_rad,
+            v_robot=v_robot,
+            c_best_hint=c_best,
+            goal_xy=None  # Could extract from ipath if needed
+        )
+
+        # Log ROI statistics
+        self.info["roi"] = {
+            "strategy": roi_output.strategy,
+            "n_in": roi_output.n_in,
+            "n_roi": roi_output.n_roi,
+            "relax_count": roi_output.relax_count,
+            "tighten_count": roi_output.tighten_count,
+        }
+
+        # Update state for visualization
+        self._roi_state["last_c_best"] = c_best
+        self._roi_state["path_xy"] = path_xy
+        self._roi_state["robot_xy"] = state[:2, :].copy()
+        self._roi_state["heading_rad"] = heading_rad
+        self._roi_state["roi_params_snapshot"] = getattr(self.roi_selector, "_work_cfg", {}).copy() if self.roi_selector else {}
+        self._roi_state["pts_roi"] = roi_output.pts
+
+        return roi_output.pts
+
+    def _select_path(self, nom_input_np: list) -> np.ndarray:
+        """
+        Select reference path for ROI
+
+        Priority:
+        1. Previous cycle optimized trajectory (if available)
+        2. Current cycle reference trajectory
+
+        Args:
+            nom_input_np: list of nominal inputs [nom_s, nom_u, ref_s, ref_us]
+
+        Returns:
+            (2, T+1) reference path in global coordinates
+        """
+        # Try previous optimized trajectory first
+        if "opt_state_list" in self.info and self.info["opt_state_list"]:
+            opt_states = self.info["opt_state_list"]
+            # Extract x, y from state list (each state is (3, 1))
+            path_xy = np.hstack([s[:2, :] for s in opt_states])  # (2, T+1)
+            return path_xy
+
+        # Fallback to current reference trajectory
+        ref_s = nom_input_np[2]  # (3, T+1)
+        path_xy = ref_s[:2, :]  # (2, T+1)
+        return path_xy
+
+    def _estimate_cbest(self, path_xy: np.ndarray) -> float:
+        """
+        Estimate c_best (current best path length) from reference path
+
+        Uses geometric arc length of the path with safety margin.
+
+        Args:
+            path_xy: (2, T+1) reference path in global coordinates
+
+        Returns:
+            c_best: estimated path length (meters)
+        """
+        if path_xy is None or path_xy.shape[1] < 2:
+            return None
+
+        # Compute arc length
+        diffs = np.diff(path_xy, axis=1)  # (2, T)
+        seg_lengths = np.linalg.norm(diffs, axis=0)  # (T,)
+        arc_length = np.sum(seg_lengths)
+
+        # Apply safety margin and lower bound
+        c_min = np.linalg.norm(path_xy[:, -1] - path_xy[:, 0])  # straight-line distance
+        c_best = max(arc_length, c_min * 1.001)  # ensure c_best > c_min
+
+        return float(c_best)
+
+    def visualize_roi_region(self, env):
+        """
+        Visualize current ROI region (ellipse/tube/wedge) in the simulation environment
+
+        Args:
+            env: irsim environment with draw_points/draw_trajectory methods
+        """
+        if not self.roi_enabled or "roi" not in self.info:
+            return
+
+        strategy = self.info["roi"].get("strategy", "none")
+        if strategy == "none":
+            return
+
+        # Draw filtered points (ROI output) in orange for comparison
+        pts_roi = self._roi_state.get("pts_roi")
+        if pts_roi is not None and pts_roi.shape[1] > 0:
+            env.draw_points(pts_roi, s=18, c="orange", alpha=0.6, refresh=True)
+
+        # Draw ROI region boundary based on strategy
+        if strategy == "ellipse":
+            self._visualize_ellipse_roi(env)
+        elif strategy == "tube":
+            self._visualize_tube_roi(env)
+        elif strategy == "wedge":
+            self._visualize_wedge_roi(env)
+
+    def _visualize_ellipse_roi(self, env):
+        """Visualize ellipse ROI region boundary"""
+        path_xy = self._roi_state.get("path_xy")
+        c_best = self._roi_state.get("last_c_best")
+        params = self._roi_state.get("roi_params_snapshot", {})
+
+        if path_xy is None or c_best is None or path_xy.shape[1] < 2:
+            return
+
+        # Ellipse parameters
+        start = path_xy[:, 0:1]  # (2, 1)
+        goal = path_xy[:, -1:]   # (2, 1)
+        c_min = np.linalg.norm(goal - start) + 1e-6
+
+        if c_best <= c_min * 1.001:
+            return  # Degenerate ellipse
+
+        safety_scale = params.get("ellipse_safety", 1.08)
+        center = 0.5 * (start + goal)
+        a = 0.5 * c_best * safety_scale
+        b = 0.5 * np.sqrt(max(c_best**2 - c_min**2, 1e-6)) * safety_scale
+
+        # Rotation matrix (align major axis with start->goal)
+        v = goal - start
+        e = v / c_min  # unit vector along major axis
+        e_perp = np.array([[-e[1, 0]], [e[0, 0]]])
+        R = np.hstack([e, e_perp])  # (2, 2)
+
+        # Sample ellipse boundary
+        angles = np.linspace(0, 2*np.pi, 100)
+        ellipse_local = np.vstack([a * np.cos(angles), b * np.sin(angles)])  # (2, 100)
+        ellipse_global = R @ ellipse_local + center  # (2, 100)
+
+        # Draw as points (yellow ellipse boundary)
+        # Convert (2, N) to list of [x, y] to avoid irsim bug
+        ellipse_list = [[ellipse_global[0, i], ellipse_global[1, i]] for i in range(ellipse_global.shape[1])]
+        env.draw_points(ellipse_list, s=8, c="yellow", alpha=0.7, refresh=True)
+
+    def _visualize_tube_roi(self, env):
+        """Visualize tube ROI region boundary"""
+        path_xy = self._roi_state.get("path_xy")
+        params = self._roi_state.get("roi_params_snapshot", {})
+
+        if path_xy is None or path_xy.shape[1] < 2:
+            return
+
+        # Tube radius
+        tube_r0 = params.get("tube_r0", 0.5)
+        v_robot = float(self.cur_vel_array[0, 0]) if self.cur_vel_array.shape[1] > 0 else 0.0
+        r = tube_r0 + self.roi_selector.cfg.tube_v_tau_m * abs(v_robot)
+
+        # Estimate curvature adjustment (simplified)
+        if path_xy.shape[1] >= 3:
+            angles = []
+            for i in range(path_xy.shape[1] - 2):
+                v1 = path_xy[:, i+1] - path_xy[:, i]
+                v2 = path_xy[:, i+2] - path_xy[:, i+1]
+                angle = np.arctan2(v2[1], v2[0]) - np.arctan2(v1[1], v1[0])
+                angle = np.arctan2(np.sin(angle), np.cos(angle))
+                angles.append(abs(angle))
+            max_kappa_proxy = max(angles) if angles else 0.0
+            r += self.roi_selector.cfg.tube_kappa_gain * max_kappa_proxy
+
+        # Generate boundary points (left and right offset)
+        left_boundary = []
+        right_boundary = []
+
+        for i in range(path_xy.shape[1] - 1):
+            p1 = path_xy[:, i]
+            p2 = path_xy[:, i+1]
+            tangent = p2 - p1
+            tangent_norm = np.linalg.norm(tangent)
+            if tangent_norm < 1e-6:
+                continue
+            tangent = tangent / tangent_norm
+            normal = np.array([-tangent[1], tangent[0]])  # perpendicular
+
+            left_boundary.append(p1 + r * normal)
+            right_boundary.append(p1 - r * normal)
+
+        # Add last point
+        if path_xy.shape[1] >= 2:
+            p_last = path_xy[:, -1]
+            tangent = path_xy[:, -1] - path_xy[:, -2]
+            tangent_norm = np.linalg.norm(tangent)
+            if tangent_norm >= 1e-6:
+                tangent = tangent / tangent_norm
+                normal = np.array([-tangent[1], tangent[0]])
+                left_boundary.append(p_last + r * normal)
+                right_boundary.append(p_last - r * normal)
+
+        if left_boundary:
+            left_pts = np.column_stack(left_boundary)  # (2, N)
+            right_pts = np.column_stack(right_boundary)
+            # Convert to list format to avoid irsim bug
+            left_list = [[left_pts[0, i], left_pts[1, i]] for i in range(left_pts.shape[1])]
+            right_list = [[right_pts[0, i], right_pts[1, i]] for i in range(right_pts.shape[1])]
+            env.draw_points(left_list, s=8, c="cyan", alpha=0.7, refresh=True)
+            env.draw_points(right_list, s=8, c="cyan", alpha=0.7, refresh=True)
+
+    def _visualize_wedge_roi(self, env):
+        """Visualize wedge ROI region boundary"""
+        robot_xy = self._roi_state.get("robot_xy")
+        heading_rad = self._roi_state.get("heading_rad")
+        params = self._roi_state.get("roi_params_snapshot", {})
+
+        if robot_xy is None or heading_rad is None:
+            return
+
+        # Wedge parameters
+        fov_deg = params.get("wedge_fov", 60.0)
+        r_max = params.get("wedge_r_max", 8.0)
+        fov_rad = np.deg2rad(fov_deg)
+
+        # Sample wedge boundary (arc + two rays)
+        # Arc
+        angles = np.linspace(heading_rad - fov_rad/2, heading_rad + fov_rad/2, 50)
+        arc_x = robot_xy[0, 0] + r_max * np.cos(angles)
+        arc_y = robot_xy[1, 0] + r_max * np.sin(angles)
+        arc_pts = np.vstack([arc_x, arc_y])  # (2, 50)
+
+        # Left ray
+        left_angle = heading_rad - fov_rad/2
+        left_ray_x = np.linspace(robot_xy[0, 0], robot_xy[0, 0] + r_max * np.cos(left_angle), 20)
+        left_ray_y = np.linspace(robot_xy[1, 0], robot_xy[1, 0] + r_max * np.sin(left_angle), 20)
+        left_ray_pts = np.vstack([left_ray_x, left_ray_y])
+
+        # Right ray
+        right_angle = heading_rad + fov_rad/2
+        right_ray_x = np.linspace(robot_xy[0, 0], robot_xy[0, 0] + r_max * np.cos(right_angle), 20)
+        right_ray_y = np.linspace(robot_xy[1, 0], robot_xy[1, 0] + r_max * np.sin(right_angle), 20)
+        right_ray_pts = np.vstack([right_ray_x, right_ray_y])
+
+        # Draw all boundary elements (convert to list format to avoid irsim bug)
+        arc_list = [[arc_pts[0, i], arc_pts[1, i]] for i in range(arc_pts.shape[1])]
+        left_ray_list = [[left_ray_pts[0, i], left_ray_pts[1, i]] for i in range(left_ray_pts.shape[1])]
+        right_ray_list = [[right_ray_pts[0, i], right_ray_pts[1, i]] for i in range(right_ray_pts.shape[1])]
+        env.draw_points(arc_list, s=8, c="red", alpha=0.7, refresh=True)
+        env.draw_points(left_ray_list, s=8, c="red", alpha=0.7, refresh=True)
+        env.draw_points(right_ray_list, s=8, c="red", alpha=0.7, refresh=True)
 
     def scan_to_point(
         self,
