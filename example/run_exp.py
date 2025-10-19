@@ -2,6 +2,7 @@ from neupan import neupan
 import irsim
 import numpy as np
 import argparse
+from datetime import datetime
 
 def main(
     env_file,
@@ -11,13 +12,14 @@ def main(
     full=False,
     no_display=True,
     point_vel=False,
-    max_steps=1000, 
+    max_steps=1000,
     reverse=False,
+    visualize_roi=False,
 ):
-    
+
     env = irsim.make(env_file, save_ani=save_animation, full=full, display=no_display)
     neupan_planner = neupan.init_from_yaml(planner_file)
-    
+
     # neupan_planner.update_adjust_parameters(q_s=0.5, p_u=1.0, eta=10.0, d_max=1.0, d_min=0.1)
     # neupan_planner.set_reference_speed(5)
     # neupan_planner.update_initial_path_from_waypoints([np.array([0, 0, 0]).reshape(3, 1), np.array([100, 100, 0]).reshape(3, 1)])
@@ -34,6 +36,14 @@ def main(
             point_velocities = None
 
         action, info = neupan_planner(robot_state, points, point_velocities)
+        # ROI monitor: print strategy and point count compression (robust)
+        if "roi" in info and info["roi"] is not None:
+            r = info["roi"]
+            n_in = r.get("n_in", 0)
+            n_roi = r.get("n_roi", 0)
+            ratio = (n_roi / max(1, n_in)) if n_in else 0.0
+            print(f"[ROI] step={i} strategy={r.get('strategy')} n_in={n_in} -> n_roi={n_roi} (ratio={ratio:.2%}) relax={r.get('relax_count')} tighten={r.get('tighten_count')}")
+
 
         if info["stop"]:
             print("NeuPAN stops because of minimum distance")
@@ -49,20 +59,24 @@ def main(
 
         env.step(action)
         env.render()
+        # After render, overlay ROI visualization so it won't be cleared
+        if visualize_roi:
+            neupan_planner.visualize_roi_region(env)
+
 
         if env.done():
             break
 
         if i == 0:
-            
+
             if reverse:
                 # for reverse motion
                 for j in range(len(neupan_planner.initial_path)):
                     neupan_planner.initial_path[j][-1, 0] = -1
                     neupan_planner.initial_path[j][-2, 0] = neupan_planner.initial_path[j][-2, 0] + 3.14
-                
+
                 env.draw_trajectory(neupan_planner.initial_path, traj_type="-k", show_direction=True)
-            else:   
+            else:
                 env.draw_trajectory(neupan_planner.initial_path, traj_type="-k", show_direction=False)
 
             env.render()
@@ -80,14 +94,16 @@ if __name__ == "__main__":
     parser.add_argument("-n", "--no_display", action="store_false", help="no display")
     parser.add_argument("-v", "--point_vel", action='store_true', help="point vel")
     parser.add_argument("-m", "--max_steps", type=int, default=1000, help="max steps")
+    parser.add_argument("-vr", "--visualize_roi", dest="visualize_roi", action="store_true", help="visualize ROI region (ellipse/tube/wedge)")
 
     args = parser.parse_args()
 
     env_path_file = args.example + "/" + args.kinematics + "/env.yaml"
     planner_path_file = args.example + "/" + args.kinematics + "/planner.yaml"
 
-    ani_name = args.example + "_" + args.kinematics + "_ani"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    ani_name = f"{args.example}_{args.kinematics}_{timestamp}"
 
     reverse = (args.example == "reverse" and args.kinematics == "diff")
 
-    main(env_path_file, planner_path_file, args.save_animation, ani_name, args.full, args.no_display, args.point_vel, args.max_steps, reverse)
+    main(env_path_file, planner_path_file, args.save_animation, ani_name, args.full, args.no_display, args.point_vel, args.max_steps, reverse, args.visualize_roi)

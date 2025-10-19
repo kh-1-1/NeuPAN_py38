@@ -164,3 +164,7 @@ test.py
 
 .vscode/
 test.py
+example/animation/polygon_robot_diff_20251019_153253.gif
+example/animation/polygon_robot_diff_20251019_153253_final.png
+*.png
+*.gif
