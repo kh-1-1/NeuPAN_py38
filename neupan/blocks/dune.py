@@ -264,17 +264,38 @@ class DUNE(torch.nn.Module):
                 )
             except TypeError:
                 state = torch.load(self.abs_checkpoint_path, map_location=torch.device('cpu'))
+
+            # Helper: adapt legacy FlexiblePDHG checkpoints (tau/sigma -> tau_buf/sigma_buf)
+            def _compat_state_dict(sd: dict) -> dict:
+                try:
+                    from neupan.blocks.flexible_pdhg import FlexiblePDHGFront as _F
+                    is_flex = isinstance(self.model, _F)
+                except Exception:
+                    is_flex = False
+                if not (isinstance(sd, dict) and is_flex):
+                    return sd
+                # Map legacy scalar step-size keys
+                if 'tau' in sd and 'tau_buf' not in sd and hasattr(self.model, 'tau_buf'):
+                    sd['tau_buf'] = sd['tau']
+                if 'sigma' in sd and 'sigma_buf' not in sd and hasattr(self.model, 'sigma_buf'):
+                    sd['sigma_buf'] = sd['sigma']
+                return sd
+
             if isinstance(state, dict) and ('model' in state or 'prox_head' in state):
                 # composite checkpoint
-                self.model.load_state_dict(state['model'] if 'model' in state else state)
+                model_sd = state['model'] if 'model' in state else state
+                model_sd = _compat_state_dict(model_sd)
+                load_result = self.model.load_state_dict(model_sd, strict=False)
+                # load prox head non-strict if present
                 if self.projection == 'learned' and self.prox_head is not None and 'prox_head' in state:
                     try:
-                        self.prox_head.load_state_dict(state['prox_head'])
+                        self.prox_head.load_state_dict(state['prox_head'], strict=False)
                     except Exception:
                         pass
             else:
                 # legacy: plain state_dict for model
-                self.model.load_state_dict(state)
+                model_sd = _compat_state_dict(state if isinstance(state, dict) else dict())
+                self.model.load_state_dict(model_sd, strict=False)
             to_device(self.model)
             self.model.eval()
             if self.projection == 'learned' and self.prox_head is not None:
@@ -298,15 +319,31 @@ class DUNE(torch.nn.Module):
 
                 if self.ask_to_continue():
                     state = torch.load(self.full_model_name, map_location=torch.device('cpu'))
+                    def _compat_state_dict_train(sd: dict) -> dict:
+                        # local wrapper to avoid name capture issues
+                        try:
+                            from neupan.blocks.flexible_pdhg import FlexiblePDHGFront as _F
+                            is_flex = isinstance(self.model, _F)
+                        except Exception:
+                            is_flex = False
+                        if not (isinstance(sd, dict) and is_flex):
+                            return sd
+                        if 'tau' in sd and 'tau_buf' not in sd and hasattr(self.model, 'tau_buf'):
+                            sd['tau_buf'] = sd['tau']
+                        if 'sigma' in sd and 'sigma_buf' not in sd and hasattr(self.model, 'sigma_buf'):
+                            sd['sigma_buf'] = sd['sigma']
+                        return sd
                     if isinstance(state, dict) and ('model' in state or 'prox_head' in state):
-                        self.model.load_state_dict(state['model'] if 'model' in state else state)
+                        model_sd = _compat_state_dict_train(state['model'] if 'model' in state else state)
+                        self.model.load_state_dict(model_sd, strict=False)
                         if self.projection == 'learned' and self.prox_head is not None and 'prox_head' in state:
                             try:
-                                self.prox_head.load_state_dict(state['prox_head'])
+                                self.prox_head.load_state_dict(state['prox_head'], strict=False)
                             except Exception:
                                 pass
                     else:
-                        self.model.load_state_dict(state)
+                        model_sd = _compat_state_dict_train(state if isinstance(state, dict) else dict())
+                        self.model.load_state_dict(model_sd, strict=False)
                     to_device(self.model)
                     self.model.eval()
                     if self.projection == 'learned' and self.prox_head is not None:

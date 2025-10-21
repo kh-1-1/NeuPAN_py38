@@ -60,14 +60,7 @@ class FlexiblePDHGFront(nn.Module):
         self.register_buffer("G", base_G)
         self.register_buffer("h", base_h)
 
-        if self.use_precond:
-            row_norm = torch.norm(base_G, dim=1, keepdim=True).clamp(min=1e-6)
-            self.register_buffer("row_scale", 1.0 / row_norm)
-        else:
-            self.register_buffer("row_scale", torch.ones_like(base_h))
-
-        self.register_buffer("G_eff", self.row_scale * base_G)
-        self.register_buffer("h_eff", self.row_scale * base_h)
+        # Removed row preconditioning: operate directly on G/h
 
         actual_in = 3 if self.se2_embed else input_dim
 
@@ -101,17 +94,9 @@ class FlexiblePDHGFront(nn.Module):
         tau = float(tau)
         sigma = float(sigma)
 
-        self.register_buffer("tau_min", torch.tensor(float(tau_min), dtype=torch.float32))
-        self.register_buffer("tau_max", torch.tensor(float(tau_max), dtype=torch.float32))
-        self.register_buffer("sigma_min", torch.tensor(float(sigma_min), dtype=torch.float32))
-        self.register_buffer("sigma_max", torch.tensor(float(sigma_max), dtype=torch.float32))
-
-        if self.learnable_steps:
-            self.tau_param = nn.Parameter(torch.full((self.J,), tau, dtype=torch.float32))
-            self.sigma_param = nn.Parameter(torch.full((self.J,), sigma, dtype=torch.float32))
-        else:
-            self.register_buffer("tau_buf", torch.tensor(tau, dtype=torch.float32))
-            self.register_buffer("sigma_buf", torch.tensor(sigma, dtype=torch.float32))
+        # Keep simple scalar step sizes (no clamp/learnable vectors)
+        self.register_buffer("tau", torch.tensor(tau, dtype=torch.float32))
+        self.register_buffer("sigma", torch.tensor(sigma, dtype=torch.float32))
 
     @staticmethod
     def _polar_embed(x: torch.Tensor) -> torch.Tensor:
@@ -137,37 +122,25 @@ class FlexiblePDHGFront(nn.Module):
         sigma: torch.Tensor,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """One PDHG-like row-layout step with optional learned-prox."""
-        # y^{k+1} = Proj_{||·||<=1}( y^k + sigma * (mu @ G_eff) )
-        y = y + sigma * (mu @ self.G_eff)
+        y = y + sigma * (mu @ self.G)
         y_norm = torch.norm(y, dim=1, keepdim=True)
         y = y / y_norm.clamp(min=1.0)
 
-        # Compute a_row = (G_eff @ x - h_eff)^T in row layout: [N,E]
-        a_row = x @ self.G_eff.t() - self.h_eff.t()
+        a_row = x @ self.G.t() - self.h.t()
 
-        # mu^{k+1/2} = mu^k + tau * (a - y G_eff^T)
-        mu = mu + tau * (a_row - (y @ self.G_eff.t()))
+        mu = mu + tau * (a_row - (y @ self.G.t()))
 
-        # Optional learned-prox residual on z = mu @ G_eff
         if self.use_learned_prox:
-            z = mu @ self.G_eff
+            z = mu @ self.G
             delta = self.prox_head(z)
             mu = mu + self.residual_scale * delta
 
-        # Hard projection guarantees feasibility (in scaled geometry)
-        mu = self._project_mu_row(mu, self.G_eff)
+        mu = self._project_mu_row(mu, self.G)
         return y, mu
 
     def _prepare_step_sizes(self, device: torch.device, dtype: torch.dtype) -> Tuple[torch.Tensor, torch.Tensor]:
-        if self.learnable_steps:
-            tau_vals = torch.clamp(self.tau_param, self.tau_min.item(), self.tau_max.item())
-            sigma_vals = torch.clamp(self.sigma_param, self.sigma_min.item(), self.sigma_max.item())
-        else:
-            tau_vals = self.tau_buf.expand(self.J)
-            sigma_vals = self.sigma_buf.expand(self.J)
-
-        tau_vals = tau_vals.to(device=device, dtype=dtype)
-        sigma_vals = sigma_vals.to(device=device, dtype=dtype)
+        tau_vals = self.tau.to(device=device, dtype=dtype).expand(self.J)
+        sigma_vals = self.sigma.to(device=device, dtype=dtype).expand(self.J)
         return tau_vals, sigma_vals
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -198,6 +171,5 @@ class FlexiblePDHGFront(nn.Module):
             y, mu = self._step(x, y, mu, tau_j, sigma_j)
 
         # Final safety projection (idempotent if feasible already)
-        mu = mu * self.row_scale.view(1, -1)
         mu = self._project_mu_row(mu, self.G)
         return mu
