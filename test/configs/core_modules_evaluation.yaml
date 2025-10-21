@@ -1,0 +1,41 @@
+# 核心模块闭环测试配置（最终版）
+runs: 10
+max_steps: 800
+no_display: true
+save_results: true
+quiet: false
+
+# 测试场景	examples: corridor,pf_obs,dyna_obs,convex_obs
+# 机器人	support: diff,acker
+
+# 测试配置
+configurations:
+  baseline:
+    front_type: obs_point
+    front_learned: false
+    roi_enabled: false
+    ckpt_diff: example/model/diff_CLARABEL_robot/model_5000.pth
+    ckpt_acker: example/model/acker_CLARABEL_robot/model_5000.pth
+  
+  flex_no_learned:
+    front_type: flex_pdhg
+    front_learned: false
+    roi_enabled: false
+    ckpt_diff: example/model/diff_flex_pdhg-nolearned_robot/model_best.pth
+    ckpt_acker: example/model/acker_flex_pdhg-nolearned_robot/model_best.pth
+  
+  flex_learned:
+    front_type: flex_pdhg
+    front_learned: true
+    roi_enabled: false
+    ckpt_diff: example/model/diff_flex_pdhg_robot/model_5000.pth
+    ckpt_acker: example/model/acker_flex_pdhg_robot/model_5000.pth
+  
+  flex_roi:
+    front_type: flex_pdhg
+    front_learned: true
+    roi_enabled: true
+    roi_strategies: ['ellipse', 'tube', 'wedge']
+    ckpt_diff: example/model/diff_flex_pdhg_robot/model_5000.pth
+    ckpt_acker: example/model/acker_flex_pdhg_robot/model_5000.pth
+
