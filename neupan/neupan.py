@@ -122,12 +122,17 @@ class neupan(torch.nn.Module):
             config = yaml.safe_load(f)
             config.update(kwargs)
 
-        config["robot_kwargs"] = config.pop("robot", dict())
-        config["ipath_kwargs"] = config.pop("ipath", dict())
-        config["pan_kwargs"] = config.pop("pan", dict())
-        config["adjust_kwargs"] = config.pop("adjust", dict())
-        config["train_kwargs"] = config.pop("train", dict())
-        config["roi_kwargs"] = config.pop("roi", dict())
+        # Robustly coerce optional sections to dicts (handle None from overrides)
+        def _as_dict(section: str) -> dict:
+            val = config.pop(section, dict())
+            return val if isinstance(val, dict) else dict()
+
+        config["robot_kwargs"] = _as_dict("robot")
+        config["ipath_kwargs"] = _as_dict("ipath")
+        config["pan_kwargs"] = _as_dict("pan")
+        config["adjust_kwargs"] = _as_dict("adjust")
+        config["train_kwargs"] = _as_dict("train")
+        config["roi_kwargs"] = _as_dict("roi")
 
         return cls(**config)
 
