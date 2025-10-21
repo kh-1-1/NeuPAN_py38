@@ -462,6 +462,8 @@ def main():
     parser.add_argument('-nd', '--no-display', dest='no_display', action='store_true', help='disable rendering')
     parser.add_argument('-q', '--quiet', dest='quiet', action='store_true', help='suppress prints')
     parser.add_argument('-o', '--output-dir', dest='output_dir', type=str, default='', help='results folder')
+    parser.add_argument('--save_results', dest='save_results', action='store_true',
+                        help='save per-run JSON details and last-frame images')
 
     # ROI template
     parser.add_argument('--roi-template', dest='roi_template', type=str, default='test/configs/roi_config_template.yaml',
@@ -568,8 +570,8 @@ def main():
                         max_steps=args.max_steps,
                         no_display=args.no_display,
                         quiet=args.quiet,
-                        save_last_frame=True,
-                        results_dir=out_dir,
+                        save_last_frame=bool(args.save_results),
+                        results_dir=(out_dir if args.save_results else None),
                         run_idx=i+1,
                     )
                     runs.append(m)
