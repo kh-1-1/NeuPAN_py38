@@ -137,12 +137,14 @@ def simulate_once(example: str,
                   no_display: bool,
                   quiet: bool,
                   results_dir: Optional[Path] = None,
-                  run_idx: Optional[int] = None) -> RunMetrics:
+                  run_idx: Optional[int] = None,
+                  save_last_frame: bool = True) -> RunMetrics:
 
     env_file = f"example/{example}/{kin}/env.yaml"
     planner_file = f"example/{example}/{kin}/planner.yaml"
 
-    env = irsim.make(env_file, save_ani=False, full=False, display=not no_display)
+    # Enable frame saving when requested (similar to example/run_exp.py)
+    env = irsim.make(env_file, save_ani=bool(save_last_frame), full=False, display=not no_display)
 
     # Train/front params
     front_cfg = CONFIG_TO_FRONT[config_id]
@@ -256,7 +258,27 @@ def simulate_once(example: str,
         if info.get('arrive') or info.get('stop') or env.done():
             break
 
-    env.end(0)
+    # Optional: overlay ROI region before final save
+    try:
+        if CONFIG_TO_FRONT.get(config_id, {}).get('roi', False):
+            planner.visualize_roi_region(env)
+            env.render()
+    except Exception:
+        pass
+
+    if save_last_frame and results_dir is not None:
+        try:
+            frames_dir = Path(results_dir) / 'frames'
+            frames_dir.mkdir(parents=True, exist_ok=True)
+            ts = datetime.now().strftime('%Y%m%d_%H%M%S')
+            ani_name = str(frames_dir / f"{example}_{kin}_{config_id}_run{run_idx}_{ts}")
+            # Use non-zero end delay to ensure renderer flushes and saves frame
+            env.end(1, ani_name=ani_name)
+        except Exception:
+            # fallback: just close without saving
+            env.end(0)
+    else:
+        env.end(0)
 
     steps = len(step_times)
     avg_ms = float(np.mean(step_times)) if step_times else 0.0
@@ -546,6 +568,7 @@ def main():
                         max_steps=args.max_steps,
                         no_display=args.no_display,
                         quiet=args.quiet,
+                        save_last_frame=True,
                         results_dir=out_dir,
                         run_idx=i+1,
                     )
