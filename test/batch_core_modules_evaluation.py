@@ -282,8 +282,8 @@ def simulate_once(example: str,
             frames_dir.mkdir(parents=True, exist_ok=True)
             ts = datetime.now().strftime('%Y%m%d_%H%M%S')
             ani_name = str(frames_dir / f"{example}_{kin}_{config_id}_run{run_idx}_{ts}")
-            # Match run_exp: show close countdown then auto-close
-            env.end(3, ani_name=ani_name)
+            # Immediate close while saving last frame
+            env.end(0, ani_name=ani_name)
         except Exception:
             # fallback: just close without saving
             env.end(0)
