@@ -187,8 +187,12 @@ def simulate_once(example: str,
 
         robot_state = env.get_robot_state()
         lidar_scan = env.get_lidar_scan()
-        points = planner.scan_to_point(robot_state, lidar_scan)
-        action, info = planner(robot_state, points, None)
+        # Prefer velocity-aware scan; fall back gracefully if unavailable
+        points, point_velocities = planner.scan_to_point_velocity(robot_state, lidar_scan)
+        if points is None:
+            points = planner.scan_to_point(robot_state, lidar_scan)
+            point_velocities = None
+        action, info = planner(robot_state, points, point_velocities)
 
         # Metrics: ROI
         rinfo = info.get('roi')

@@ -92,7 +92,8 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--save_animation", action="store_true", help="save animation")
     parser.add_argument("-f", "--full", action="store_true", help="full screen")
     parser.add_argument("-n", "--no_display", action="store_false", help="no display")
-    parser.add_argument("-v", "--point_vel", action='store_true', help="point vel")
+    parser.add_argument("-v", "--point_vel", action='store_true', help="point vel (default: on)")
+    parser.set_defaults(point_vel=True)
     parser.add_argument("-m", "--max_steps", type=int, default=1000, help="max steps")
     parser.add_argument("-vr", "--visualize_roi", dest="visualize_roi", action="store_true", help="visualize ROI region (ellipse/tube/wedge)")
 
