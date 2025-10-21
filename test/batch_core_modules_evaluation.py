@@ -282,13 +282,19 @@ def simulate_once(example: str,
             frames_dir.mkdir(parents=True, exist_ok=True)
             ts = datetime.now().strftime('%Y%m%d_%H%M%S')
             ani_name = str(frames_dir / f"{example}_{kin}_{config_id}_run{run_idx}_{ts}")
-            # Use non-zero end delay to ensure renderer flushes and saves frame
-            env.end(1, ani_name=ani_name)
+            # Match run_exp: show close countdown then auto-close
+            env.end(3, ani_name=ani_name)
         except Exception:
             # fallback: just close without saving
             env.end(0)
     else:
         env.end(0)
+    # Extra safety: make sure all matplotlib figures are closed before next run
+    try:
+        import matplotlib.pyplot as plt  # type: ignore
+        plt.close('all')
+    except Exception:
+        pass
 
     steps = len(step_times)
     avg_ms = float(np.mean(step_times)) if step_times else 0.0
