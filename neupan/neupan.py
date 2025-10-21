@@ -85,6 +85,8 @@ class neupan(torch.nn.Module):
         self.pan = PAN(receding, step_time, self.robot, **pan_kwargs)
 
         self.info = {"stop": False, "arrive": False, "collision": False}
+        # Cache last scan-derived obstacle point velocities (auto-used when caller doesn't pass them)
+        self._last_point_velocities = None
 
         # ROI/Neural Focusing configuration
         roi_kwargs = kwargs.get("roi_kwargs", {})
@@ -155,6 +157,9 @@ class neupan(torch.nn.Module):
             points = self._apply_roi(points, nom_input_np, state)
 
         obstacle_points_tensor = np_to_tensor(points) if points is not None else None
+        # Auto-enable obstacle point velocities: if caller doesn't provide, but last scan carried it, use cached
+        if velocities is None and getattr(self, "_last_point_velocities", None) is not None:
+            velocities = self._last_point_velocities
         point_velocities_tensor = (
             np_to_tensor(velocities) if velocities is not None else None
         )
@@ -495,6 +500,7 @@ class neupan(torch.nn.Module):
         return point cloud: (2, n)
         """
         point_cloud = []
+        velocity_points = []
 
         ranges = np.array(scan["ranges"])
         angles = np.linspace(scan["angle_min"], scan["angle_max"], len(ranges))
@@ -509,8 +515,15 @@ class neupan(torch.nn.Module):
                         [[scan_range * cos(angle)], [scan_range * sin(angle)]]
                     )
                     point_cloud.append(point)
+                    # If per-ray velocity is available in scan, align and cache it
+                    if "velocity" in scan:
+                        v = np.asarray(scan["velocity"])  # expect shape (2, N)
+                        if v.ndim == 2 and v.shape[1] == len(ranges):
+                            velocity_points.append(v[:, i : i + 1])
 
         if len(point_cloud) == 0:
+            # Clear cache when no points
+            self._last_point_velocities = None
             return None
 
         point_array = np.hstack(point_cloud)
@@ -519,6 +532,16 @@ class neupan(torch.nn.Module):
 
         trans, R = get_transform(state)
         points = (R @ temp_points + trans)[:, ::down_sample]
+
+        # Cache aligned velocities if provided in scan (assumed already in global frame; keep consistent with scan_to_point_velocity)
+        if velocity_points:
+            try:
+                velocity = np.hstack(velocity_points)[:, ::down_sample]
+                self._last_point_velocities = velocity
+            except Exception:
+                self._last_point_velocities = None
+        else:
+            self._last_point_velocities = None
 
         return points
 
