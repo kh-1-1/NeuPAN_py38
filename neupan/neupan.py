@@ -134,6 +134,20 @@ class neupan(torch.nn.Module):
         config["train_kwargs"] = _as_dict("train")
         config["roi_kwargs"] = _as_dict("roi")
 
+        # Auto-inject more permissive arrival settings for diff-drive robots
+        try:
+            kin = str(config["robot_kwargs"].get("kinematics", "")).lower()
+            if kin == "diff":
+                ipath_defaults = {
+                    "arrive_threshold": 0.4,          # meters (was 0.1)
+                    "arrive_index_threshold": 3,       # was 1
+                    "ind_range": 20,                   # search window for nearest path index
+                }
+                for k, v in ipath_defaults.items():
+                    config["ipath_kwargs"].setdefault(k, v)
+        except Exception:
+            pass
+
         return cls(**config)
 
     @time_it("neupan forward")
