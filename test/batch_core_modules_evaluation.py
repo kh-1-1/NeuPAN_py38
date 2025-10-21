@@ -180,6 +180,7 @@ def simulate_once(example: str,
     roi_counts: Dict[str, int] = {}
 
     prev_pos = None
+    run_min_dist = float('inf')
 
     for step in range(max_steps):
         t0 = time.perf_counter()
@@ -200,6 +201,14 @@ def simulate_once(example: str,
                 roi_nin.append(float(n_in))
                 roi_nroi.append(float(n_roi))
                 roi_ratios.append(float(n_in) / max(1.0, float(n_roi)))
+
+        # Min distance across run (take per-step current, keep global min)
+        try:
+            cur_min = float(planner.min_distance)
+            if cur_min < run_min_dist:
+                run_min_dist = cur_min
+        except Exception:
+            pass
 
         # Timings
         step_time_ms = (time.perf_counter() - t0) * 1000.0
@@ -255,7 +264,7 @@ def simulate_once(example: str,
         steps=steps,
         arrive=bool(info.get('arrive', False)),
         stop=bool(info.get('stop', False)),
-        min_distance=float(planner.min_distance),
+        min_distance=run_min_dist,
         path_length=path_length,
         avg_step_time_ms=avg_ms,
         max_v=max_v,
@@ -496,4 +505,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
