@@ -376,7 +376,7 @@ def main():
                         help='YAML file defining configurations (overrides --config)')
 
     # Matrix selection
-    parser.add_argument('-e', '--examples', dest='examples', type=str, default='corridor,pf_obs,dyna_obs,convex_obs',
+    parser.add_argument('-e', '--examples', dest='examples', type=str, default='corridor,pf_obs,non_obs,convex_obs',
                         help="comma-separated example names or 'all'")
     parser.add_argument('-k', '--kinematics', dest='kinematics', type=str, default='diff,acker',
                         help='comma-separated robot types')
