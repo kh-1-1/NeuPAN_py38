@@ -135,7 +135,9 @@ def simulate_once(example: str,
                   roi_template: Optional[str],
                   max_steps: int,
                   no_display: bool,
-                  quiet: bool) -> RunMetrics:
+                  quiet: bool,
+                  results_dir: Optional[Path] = None,
+                  run_idx: Optional[int] = None) -> RunMetrics:
 
     env_file = f"example/{example}/{kin}/env.yaml"
     planner_file = f"example/{example}/{kin}/planner.yaml"
@@ -264,7 +266,7 @@ def simulate_once(example: str,
     roi_avg_roi = float(np.mean(roi_nroi)) if roi_nroi else None
     roi_avg_ratio = float(np.mean(roi_ratios)) if roi_ratios else None
 
-    return RunMetrics(
+    metrics = RunMetrics(
         steps=steps,
         arrive=bool(info.get('arrive', False)),
         stop=bool(info.get('stop', False)),
@@ -278,6 +280,57 @@ def simulate_once(example: str,
         roi_avg_n_roi=roi_avg_roi,
         roi_avg_reduction_ratio=roi_avg_ratio,
     )
+
+    # Save per-run detailed result
+    try:
+        if results_dir is not None:
+            runs_dir = Path(results_dir) / 'runs'
+            runs_dir.mkdir(parents=True, exist_ok=True)
+            run_tag = f"run{run_idx}" if run_idx is not None else datetime.now().strftime('%H%M%S')
+            out_file = runs_dir / f"{example}_{kin}_{config_id}_{run_tag}.json"
+            cfg_front = CONFIG_TO_FRONT.get(config_id, {})
+            planner_dt = getattr(planner, 'dt', None)
+            planner_T = getattr(planner, 'T', None)
+            robot_name = getattr(getattr(planner, 'robot', None), 'name', kin)
+            with open(out_file, 'w', encoding='utf-8') as f:
+                json.dump({
+                    'config': {
+                        'example': example,
+                        'kinematics': kin,
+                        'config_id': config_id,
+                        'env_file': env_file,
+                        'planner_file': planner_file,
+                        'checkpoint': ckpt,
+                        'front_type': cfg_front.get('front'),
+                        'front_learned': cfg_front.get('front_learned'),
+                        'roi_enabled': cfg_front.get('roi', False),
+                        'roi_template': roi_template,
+                        'receding': planner_T,
+                        'step_time': planner_dt,
+                        'robot': robot_name,
+                        'max_steps': max_steps,
+                    },
+                    'metrics': {
+                        'steps': steps,
+                        'arrive': metrics.arrive,
+                        'stop': metrics.stop,
+                        'min_distance': metrics.min_distance,
+                        'path_length': metrics.path_length,
+                        'avg_step_time_ms': metrics.avg_step_time_ms,
+                        'max_velocity': metrics.max_v,
+                        'avg_velocity': metrics.avg_v,
+                        'roi_strategy_counts': metrics.roi_strategy_counts,
+                        'roi_avg_n_in': metrics.roi_avg_n_in,
+                        'roi_avg_n_roi': metrics.roi_avg_n_roi,
+                        'roi_reduction_ratio': metrics.roi_avg_reduction_ratio,
+                        'total_compute_time_ms': float(np.sum(step_times)) if step_times else 0.0,
+                    }
+                }, f, indent=2)
+    except Exception:
+        # do not fail the run if saving has any issues
+        pass
+
+    return metrics
 
 
 def aggregate_runs(runs: List[RunMetrics]) -> Dict[str, Any]:
@@ -493,6 +546,8 @@ def main():
                         max_steps=args.max_steps,
                         no_display=args.no_display,
                         quiet=args.quiet,
+                        results_dir=out_dir,
+                        run_idx=i+1,
                     )
                     runs.append(m)
 
