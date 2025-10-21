@@ -238,8 +238,18 @@ def simulate_once(example: str,
         if not no_display:
             env.draw_points(planner.dune_points, s=25, c='g', refresh=True)
             env.draw_points(planner.nrmp_points, s=13, c='r', refresh=True)
+            # draw optimized and reference trajectories
             env.draw_trajectory(planner.opt_trajectory, 'r', refresh=True)
             env.draw_trajectory(planner.ref_trajectory, 'b', refresh=True)
+            # draw initial path once (mimic run_exp behavior)
+            if step == 0:
+                try:
+                    env.draw_trajectory(planner.initial_path, traj_type='-k', show_direction=False)
+                except Exception:
+                    try:
+                        env.draw_trajectory(planner.initial_path, '-k', refresh=True)
+                    except Exception:
+                        pass
             env.render()
 
         # Stuck detection
