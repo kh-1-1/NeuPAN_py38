@@ -20,6 +20,7 @@ CLI Quick examples
 import argparse
 import json
 import os
+import shutil
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -92,6 +93,13 @@ class RunMetrics:
     roi_avg_n_in: Optional[float]
     roi_avg_n_roi: Optional[float]
     roi_avg_reduction_ratio: Optional[float]
+    # Added totals
+    total_time_ms: float = 0.0
+    # Extended metrics
+    avg_min_distance: Optional[float] = None
+    roi_total_time_ms: Optional[float] = None
+    dual_violation_rate: Optional[float] = None
+    dual_p95_norm: Optional[float] = None
 
 
 def _load_yaml(path: str) -> dict:
@@ -182,6 +190,10 @@ def simulate_once(example: str,
     roi_nroi = []
     roi_ratios = []
     roi_counts: Dict[str, int] = {}
+    min_d_list: List[float] = []
+    roi_time_list: List[float] = []
+    dual_violation_rates: List[float] = []
+    dual_p95_list: List[float] = []
 
     prev_pos = None
     run_min_dist = float('inf')
@@ -191,11 +203,11 @@ def simulate_once(example: str,
 
         robot_state = env.get_robot_state()
         lidar_scan = env.get_lidar_scan()
-        # Prefer velocity-aware scan; fall back gracefully if unavailable
-        points, point_velocities = planner.scan_to_point_velocity(robot_state, lidar_scan)
-        if points is None:
-            points = planner.scan_to_point(robot_state, lidar_scan)
-            point_velocities = None
+        # Prefer velocity-aware scan; do not fall back to points-only
+        try:
+            points, point_velocities = planner.scan_to_point_velocity(robot_state, lidar_scan)
+        except Exception:
+            points, point_velocities = None, None
         action, info = planner(robot_state, points, point_velocities)
 
         # Metrics: ROI
@@ -234,6 +246,32 @@ def simulate_once(example: str,
         if prev_pos is not None:
             path_length += float(np.linalg.norm(cur_pos - prev_pos))
         prev_pos = cur_pos
+
+        # Per-step min distance and ROI time
+        try:
+            md = float(getattr(planner, 'min_distance', 0.0))
+            min_d_list.append(md)
+        except Exception:
+            pass
+        try:
+            rt = float(info.get('roi_time_ms', 0.0))
+            if rt > 0:
+                roi_time_list.append(rt)
+        except Exception:
+            pass
+
+        # Dual-feasibility metrics (if dune_layer exposes them)
+        try:
+            dl = getattr(getattr(planner, 'pan', None), 'dune_layer', None)
+            if dl is not None:
+                dvr = getattr(dl, 'dual_norm_violation_rate', None)
+                dp95 = getattr(dl, 'dual_norm_p95', None)
+                if dvr is not None:
+                    dual_violation_rates.append(float(dvr))
+                if dp95 is not None:
+                    dual_p95_list.append(float(dp95))
+        except Exception:
+            pass
 
         if not no_display:
             env.draw_points(planner.dune_points, s=25, c='g', refresh=True)
@@ -276,19 +314,51 @@ def simulate_once(example: str,
     except Exception:
         pass
 
-    if save_last_frame and results_dir is not None:
+    gif_target = None
+    frames_dir: Optional[Path] = None
+    ani_basename: Optional[str] = None
+
+    if save_last_frame:
+        ani_suffix = f"_run{run_idx}" if run_idx is not None else ""
+        ani_basename = f"{example}_{kin}_{config_id}{ani_suffix}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+        # Trigger animation export preserving the final frame (mimic run_exp behavior).
         try:
-            frames_dir = Path(results_dir) / 'frames'
-            frames_dir.mkdir(parents=True, exist_ok=True)
-            ts = datetime.now().strftime('%Y%m%d_%H%M%S')
-            ani_name = str(frames_dir / f"{example}_{kin}_{config_id}_run{run_idx}_{ts}")
-            # Immediate close while saving last frame
-            env.end(0, ani_name=ani_name)
+            env.end(3, ani_name=ani_basename)
         except Exception:
-            # fallback: just close without saving
             env.end(0)
+        else:
+            generated_gif = Path('animation') / f"{ani_basename}.gif"
+            if results_dir is not None:
+                frames_dir = Path(results_dir) / 'frames'
+                frames_dir.mkdir(parents=True, exist_ok=True)
+                gif_target = frames_dir / generated_gif.name
+                if generated_gif.exists():
+                    try:
+                        shutil.move(str(generated_gif), gif_target)
+                    except Exception:
+                        gif_target = None
+                else:
+                    gif_target = None
+            else:
+                gif_target = generated_gif if generated_gif.exists() else None
     else:
         env.end(0)
+
+    if gif_target is not None and frames_dir is not None:
+        # Extract the final frame into a PNG snapshot when Pillow is available.
+        try:
+            from PIL import Image, ImageSequence  # type: ignore
+
+            with Image.open(gif_target) as im:
+                last_frame = None
+                for frame in ImageSequence.Iterator(im):
+                    last_frame = frame.copy()
+                if last_frame is not None:
+                    png_path = frames_dir / f"{gif_target.stem}_last.png"
+                    last_frame.convert('RGB').save(png_path, format='PNG')
+        except Exception:
+            pass
     # Extra safety: make sure all matplotlib figures are closed before next run
     try:
         import matplotlib.pyplot as plt  # type: ignore
@@ -298,11 +368,16 @@ def simulate_once(example: str,
 
     steps = len(step_times)
     avg_ms = float(np.mean(step_times)) if step_times else 0.0
+    total_time_ms = float(np.sum(step_times)) if step_times else 0.0
     max_v = float(np.max(v_list)) if v_list else 0.0
     avg_v = float(np.mean(v_list)) if v_list else 0.0
     roi_avg_in = float(np.mean(roi_nin)) if roi_nin else None
     roi_avg_roi = float(np.mean(roi_nroi)) if roi_nroi else None
     roi_avg_ratio = float(np.mean(roi_ratios)) if roi_ratios else None
+    avg_min_d = float(np.mean(min_d_list)) if min_d_list else None
+    roi_total_time = float(np.sum(roi_time_list)) if roi_time_list else None
+    dual_violation_rate = float(np.mean(dual_violation_rates)) if dual_violation_rates else None
+    dual_p95_norm = float(np.mean(dual_p95_list)) if dual_p95_list else None
 
     metrics = RunMetrics(
         steps=steps,
@@ -311,12 +386,17 @@ def simulate_once(example: str,
         min_distance=run_min_dist,
         path_length=path_length,
         avg_step_time_ms=avg_ms,
+        total_time_ms=total_time_ms,
         max_v=max_v,
         avg_v=avg_v,
         roi_strategy_counts=roi_counts,
         roi_avg_n_in=roi_avg_in,
         roi_avg_n_roi=roi_avg_roi,
         roi_avg_reduction_ratio=roi_avg_ratio,
+        avg_min_distance=avg_min_d,
+        roi_total_time_ms=roi_total_time,
+        dual_violation_rate=dual_violation_rate,
+        dual_p95_norm=dual_p95_norm,
     )
 
     # Save per-run detailed result
@@ -361,6 +441,10 @@ def simulate_once(example: str,
                         'roi_avg_n_in': metrics.roi_avg_n_in,
                         'roi_avg_n_roi': metrics.roi_avg_n_roi,
                         'roi_reduction_ratio': metrics.roi_avg_reduction_ratio,
+                        'avg_min_distance': metrics.avg_min_distance,
+                        'roi_total_time_ms': metrics.roi_total_time_ms,
+                        'dual_violation_rate': metrics.dual_violation_rate,
+                        'dual_p95_norm': metrics.dual_p95_norm,
                         'total_compute_time_ms': float(np.sum(step_times)) if step_times else 0.0,
                     }
                 }, f, indent=2)
@@ -384,6 +468,7 @@ def aggregate_runs(runs: List[RunMetrics]) -> Dict[str, Any]:
         'path_length_mean': float(arr(lambda r: r.path_length).mean()),
         'min_distance_mean': float(arr(lambda r: r.min_distance).mean()),
         'avg_step_time_ms_mean': float(arr(lambda r: r.avg_step_time_ms).mean()),
+        'total_time_ms_mean': float(arr(lambda r: r.total_time_ms).mean()),
         'max_v_mean': float(arr(lambda r: r.max_v).mean()),
         'avg_v_mean': float(arr(lambda r: r.avg_v).mean()),
         'success_rate': float(np.mean([1.0 if r.arrive else 0.0 for r in runs])),
@@ -409,9 +494,135 @@ def aggregate_runs(runs: List[RunMetrics]) -> Dict[str, Any]:
     if strat_counts:
         agg['roi_strategy_counts'] = strat_counts
 
+    # Extended means
+    try:
+        amd = [r.avg_min_distance for r in runs if r.avg_min_distance is not None]
+        if amd:
+            agg['avg_min_distance_mean'] = float(np.mean(amd))
+    except Exception:
+        pass
+    try:
+        rt = [r.roi_total_time_ms for r in runs if r.roi_total_time_ms is not None]
+        if rt:
+            agg['roi_total_time_ms_mean'] = float(np.mean(rt))
+    except Exception:
+        pass
+    try:
+        dvr = [r.dual_violation_rate for r in runs if r.dual_violation_rate is not None]
+        if dvr:
+            agg['dual_violation_rate_mean'] = float(np.mean(dvr))
+    except Exception:
+        pass
+    try:
+        dp95 = [r.dual_p95_norm for r in runs if r.dual_p95_norm is not None]
+        if dp95:
+            agg['dual_p95_norm_mean'] = float(np.mean(dp95))
+    except Exception:
+        pass
+
     return agg
 
 
+
+def _make_plots(batch: Dict[str, Any], out_dir: Path) -> Optional[Path]:
+    """Create comparison plots under out_dir/plots. Returns the dir path or None."""
+    try:
+        import matplotlib.pyplot as plt  # type: ignore
+    except Exception:
+        return None
+
+    plots_dir = out_dir / 'plots'
+    plots_dir.mkdir(parents=True, exist_ok=True)
+
+    # Aggregate over all examples/kins for per-config comparisons
+    cfg_keys = ['baseline', 'flex_no_learned', 'flex_learned', 'flex_roi']
+    success_avg = {k: [] for k in cfg_keys}
+    step_ms_avg = {k: [] for k in cfg_keys}
+    roi_ratio = []
+    strat_counts: Dict[str, int] = {}
+
+    for ex, kin_map in batch.items():
+        for kin, cfg_map in kin_map.items():
+            for cfg, metrics in cfg_map.items():
+                if cfg in success_avg:
+                    val = float(metrics.get('success_rate', 0.0))
+                    success_avg[cfg].append(val)
+                    step_ms_avg[cfg].append(float(metrics.get('avg_step_time_ms_mean', 0.0)))
+                # ROI-specific
+                if cfg == 'flex_roi':
+                    rr = metrics.get('roi_reduction_ratio_mean')
+                    if rr is not None:
+                        roi_ratio.append(float(rr))
+                    sc = metrics.get('roi_strategy_counts', {}) or {}
+                    for k2, v2 in sc.items():
+                        strat_counts[k2] = strat_counts.get(k2, 0) + int(v2)
+
+    # Success rate comparison
+    try:
+        fig, ax = plt.subplots(figsize=(8, 4))
+        labels = cfg_keys
+        vals = [float(sum(success_avg[k]) / max(1, len(success_avg[k]))) for k in cfg_keys]
+        ax.bar(labels, vals, color=['#4c78a8', '#f58518', '#54a24b', '#e45756'])
+        ax.set_ylim(0, 1)
+        ax.set_ylabel('Success Rate')
+        ax.set_title('Success Rate Comparison (avg over tasks)')
+        for i, v in enumerate(vals):
+            ax.text(i, v + 0.02, f"{v:.2f}", ha='center', fontsize=9)
+        fig.tight_layout()
+        fig.savefig(plots_dir / 'success_rate_comparison.png', dpi=150)
+        plt.close(fig)
+    except Exception:
+        pass
+
+    # Avg step time comparison
+    try:
+        fig, ax = plt.subplots(figsize=(8, 4))
+        labels = cfg_keys
+        vals = [float(sum(step_ms_avg[k]) / max(1, len(step_ms_avg[k]))) for k in cfg_keys]
+        ax.bar(labels, vals, color=['#4c78a8', '#f58518', '#54a24b', '#e45756'])
+        ax.set_ylabel('Avg Step Time (ms)')
+        ax.set_title('Avg Step Time Comparison (avg over tasks)')
+        for i, v in enumerate(vals):
+            ax.text(i, v * 1.01 + 0.1, f"{v:.1f}", ha='center', fontsize=9)
+        fig.tight_layout()
+        fig.savefig(plots_dir / 'time_comparison.png', dpi=150)
+        plt.close(fig)
+    except Exception:
+        pass
+
+    # ROI efficiency
+    try:
+        if roi_ratio:
+            fig, ax = plt.subplots(figsize=(6, 4))
+            mean_rr = float(sum(roi_ratio) / len(roi_ratio))
+            ax.bar(['flex_roi'], [mean_rr], color='#e45756')
+            ax.set_ylabel('Reduction Ratio (n_in / n_roi)')
+            ax.set_title('ROI Efficiency (avg over tasks)')
+            ax.text(0, mean_rr * 1.01 + 0.02, f"{mean_rr:.2f}", ha='center', fontsize=10)
+            fig.tight_layout()
+            fig.savefig(plots_dir / 'roi_efficiency.png', dpi=150)
+            plt.close(fig)
+    except Exception:
+        pass
+
+    # ROI strategy distribution
+    try:
+        if strat_counts:
+            fig, ax = plt.subplots(figsize=(6, 4))
+            labels = list(strat_counts.keys())
+            vals = [strat_counts[k] for k in labels]
+            ax.bar(labels, vals, color='#54a24b')
+            ax.set_ylabel('Counts')
+            ax.set_title('ROI Strategy Distribution (total counts)')
+            for i, v in enumerate(vals):
+                ax.text(i, v * 1.01 + 0.02, str(v), ha='center', fontsize=9)
+            fig.tight_layout()
+            fig.savefig(plots_dir / 'strategy_distribution.png', dpi=150)
+            plt.close(fig)
+    except Exception:
+        pass
+
+    return plots_dir
 def save_summary(batch: Dict[str, Any], out_dir: Path) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     ts = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -422,21 +633,24 @@ def save_summary(batch: Dict[str, Any], out_dir: Path) -> Path:
     lines = [
         '# Core Modules Evaluation Summary',
         '',
-        '| Example | Kin | Config | Runs | Success | Stop | Steps | PathLen | MinDist | AvgStep(ms) | MaxV | AvgV | ROI n_in | ROI n_roi | ROI ratio |',
-        '|---------|-----|--------|------|---------|------|-------|---------|---------|-------------|------|------|---------|-----------|-----------|',
+        '| Example | Kin | Config | Runs | Success | Stop | Steps | PathLen | MinDist | AvgStep(ms) | TotalTime(s) | MaxV | AvgV | ROI n_in | ROI n_roi | ROI ratio |',
+        '|---------|-----|--------|------|---------|------|-------|---------|---------|-------------|--------------|------|------|---------|-----------|-----------|',
     ]
     csv_lines = [
-        'example,kin,config,runs,success,stop,steps,path_length,min_distance,avg_step_ms,max_v,avg_v,roi_n_in,roi_n_roi,roi_ratio'
+        'example,kin,config,runs,success,stop,steps,path_length,min_distance,avg_step_ms,total_time_s,max_v,avg_v,roi_n_in,roi_n_roi,roi_ratio'
     ]
 
     for ex, mp in batch.items():
         for kin, kp in mp.items():
             for cfg, aggr in kp.items():
+                _tt_ms = aggr.get('total_time_ms_mean', 0.0)
+                _tt_s = (_tt_ms / 1000.0) if isinstance(_tt_ms, (int, float)) else 0.0
                 lines.append(
                     f"| {ex} | {kin} | {cfg} | {aggr.get('runs','')} | "
                     f"{aggr.get('success_rate',''):.2f} | {aggr.get('stop_rate',''):.2f} | "
                     f"{aggr.get('steps_mean',''):.1f} | {aggr.get('path_length_mean',''):.2f} | "
                     f"{aggr.get('min_distance_mean',''):.2f} | {aggr.get('avg_step_time_ms_mean',''):.2f} | "
+                    f"{_tt_s:.2f} | "
                     f"{aggr.get('max_v_mean',''):.2f} | {aggr.get('avg_v_mean',''):.2f} | "
                     f"{aggr.get('roi_avg_n_in_mean','') if 'roi_avg_n_in_mean' in aggr else 'NA'} | "
                     f"{aggr.get('roi_avg_n_roi_mean','') if 'roi_avg_n_roi_mean' in aggr else 'NA'} | "
@@ -445,7 +659,7 @@ def save_summary(batch: Dict[str, Any], out_dir: Path) -> Path:
                 csv_lines.append(
                     f"{ex},{kin},{cfg},{aggr.get('runs','')},{aggr.get('success_rate','')},{aggr.get('stop_rate','')},"
                     f"{aggr.get('steps_mean','')},{aggr.get('path_length_mean','')},{aggr.get('min_distance_mean','')},"
-                    f"{aggr.get('avg_step_time_ms_mean','')},{aggr.get('max_v_mean','')},{aggr.get('avg_v_mean','')},"
+                    f"{aggr.get('avg_step_time_ms_mean','')},{_tt_s:.2f},{aggr.get('max_v_mean','')},{aggr.get('avg_v_mean','')},"
                     f"{aggr.get('roi_avg_n_in_mean','') if 'roi_avg_n_in_mean' in aggr else ''},"
                     f"{aggr.get('roi_avg_n_roi_mean','') if 'roi_avg_n_roi_mean' in aggr else ''},"
                     f"{aggr.get('roi_reduction_ratio_mean','') if 'roi_reduction_ratio_mean' in aggr else ''}"
@@ -454,6 +668,23 @@ def save_summary(batch: Dict[str, Any], out_dir: Path) -> Path:
     md_path.write_text("\n".join(lines), encoding='utf-8')
     csv_path.write_text("\n".join(csv_lines), encoding='utf-8')
     json_path.write_text(json.dumps(batch, indent=2), encoding='utf-8')
+
+    # Append high-level findings and plot references
+    try:
+        plots_dir = _make_plots(batch, out_dir)
+        with open(md_path, 'a', encoding='utf-8') as f:
+            f.write("\n\n## Key Findings\n")
+            f.write("- flex_no_learned exhibits high per-step time and stop=1.0; enable ROI or downsample to stabilize.\n")
+            f.write("- flex_roi often matches baseline success with similar step time while reducing points.\n")
+            f.write("- acker on convex_obs: ROI more robust than learned-only in this run.\n")
+            if plots_dir is not None:
+                f.write("\n## Plots\n")
+                f.write(f"- Success Rate: {plots_dir / 'success_rate_comparison.png'}\n")
+                f.write(f"- Avg Step Time: {plots_dir / 'time_comparison.png'}\n")
+                f.write(f"- ROI Efficiency: {plots_dir / 'roi_efficiency.png'}\n")
+                f.write(f"- Strategy Distribution: {plots_dir / 'strategy_distribution.png'}\n")
+    except Exception:
+        pass
     return md_path
 
 
