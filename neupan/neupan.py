@@ -20,6 +20,7 @@ along with NeuPAN planner. If not, see <https://www.gnu.org/licenses/>.
 
 import yaml
 import torch
+import time
 from neupan.robot import robot
 from neupan.blocks import InitialPath, PAN
 from neupan import configuration
@@ -171,14 +172,27 @@ class neupan(torch.nn.Module):
         # convert to tensor
         nom_input_tensor = [np_to_tensor(n) for n in nom_input_np]
 
-        # Apply ROI filtering if enabled
+        # Apply ROI filtering if enabled (also keep indices for aligning velocities)
+        roi_indices = None
         if self.roi_enabled and points is not None:
             points = self._apply_roi(points, nom_input_np, state)
+            try:
+                roi_indices = self._roi_state.get("indices", None)
+            except Exception:
+                roi_indices = None
 
         obstacle_points_tensor = np_to_tensor(points) if points is not None else None
         # Auto-enable obstacle point velocities: if caller doesn't provide, but last scan carried it, use cached
         if velocities is None and getattr(self, "_last_point_velocities", None) is not None:
             velocities = self._last_point_velocities
+
+        # If ROI selected a subset of points, align velocities to the same subset
+        if velocities is not None and roi_indices is not None:
+            try:
+                if velocities.shape[1] >= int(np.max(roi_indices)) + 1:
+                    velocities = velocities[:, roi_indices]
+            except Exception:
+                velocities = None
         point_velocities_tensor = (
             np_to_tensor(velocities) if velocities is not None else None
         )
@@ -246,7 +260,8 @@ class neupan(torch.nn.Module):
         heading_rad = float(state[2, 0])
         v_robot = float(self.cur_vel_array[0, 0]) if self.cur_vel_array.shape[1] > 0 else 0.0
 
-        # Apply ROI selection
+        # Apply ROI selection (time it for evaluation)
+        _t0 = time.perf_counter()
         roi_output = self.roi_selector.select(
             pts=points,
             path_xy=path_xy,
@@ -255,6 +270,10 @@ class neupan(torch.nn.Module):
             c_best_hint=c_best,
             goal_xy=None  # Could extract from ipath if needed
         )
+        try:
+            self.info["roi_time_ms"] = (time.perf_counter() - _t0) * 1000.0
+        except Exception:
+            pass
 
         # Log ROI statistics
         self.info["roi"] = {
@@ -272,6 +291,11 @@ class neupan(torch.nn.Module):
         self._roi_state["heading_rad"] = heading_rad
         self._roi_state["roi_params_snapshot"] = getattr(self.roi_selector, "_work_cfg", {}).copy() if self.roi_selector else {}
         self._roi_state["pts_roi"] = roi_output.pts
+        # Keep indices for aligning auxiliary arrays (e.g., velocities)
+        try:
+            self._roi_state["indices"] = getattr(roi_output, "indices", None)
+        except Exception:
+            self._roi_state["indices"] = None
 
         return roi_output.pts
 

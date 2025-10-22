@@ -68,6 +68,8 @@ class ROIOutputs:
     n_roi: int  # output point count
     relax_count: int = 0
     tighten_count: int = 0
+    # Indices (into input pts) of the kept points, shape (N_roi,)
+    indices: Optional[np.ndarray] = None
 
 
 class ROISelector:
@@ -128,34 +130,55 @@ class ROISelector:
             
             # Apply always_keep safety retention set
             mask = self._apply_always_keep(inputs, mask)
-            
-            pts_roi = pts[:, mask]
+
+            sel_idx = np.flatnonzero(mask)
+            pts_roi = pts[:, sel_idx]
             n_roi = pts_roi.shape[1]
-            
+
             # Apply guardrail
             if n_roi < self.cfg.guardrail_n_min:
                 # Too few points, relax and retry next strategy
                 self._relax_parameters()
                 continue
             elif n_roi > self.cfg.guardrail_n_max:
-                # Too many points, downsample deterministically
-                pts_roi = self._downsample_deterministic(pts_roi, self.cfg.guardrail_n_max)
+                # Too many points, downsample deterministically (preserve indices)
+                m = int(self.cfg.guardrail_n_max)
+                ds_local = np.linspace(0, n_roi - 1, m, dtype=int)
+                sel_idx = sel_idx[ds_local]
+                pts_roi = pts[:, sel_idx]
                 n_roi = pts_roi.shape[1]
-            
+
             # Success
-            return ROIOutputs(pts=pts_roi, strategy=strategy, n_in=n_in, n_roi=n_roi,
-                            relax_count=self._relax_count, tighten_count=self._tighten_count)
+            return ROIOutputs(
+                pts=pts_roi,
+                strategy=strategy,
+                n_in=n_in,
+                n_roi=n_roi,
+                relax_count=self._relax_count,
+                tighten_count=self._tighten_count,
+                indices=sel_idx,
+            )
         
         # Fallback: return all points (with downsampling if needed)
         if n_in > self.cfg.guardrail_n_max:
-            pts_roi = self._downsample_deterministic(pts, self.cfg.guardrail_n_max)
+            m = int(self.cfg.guardrail_n_max)
+            sel_idx = np.linspace(0, n_in - 1, m, dtype=int)
+            pts_roi = pts[:, sel_idx]
             n_roi = pts_roi.shape[1]
         else:
             pts_roi = pts
             n_roi = n_in
-        
-        return ROIOutputs(pts=pts_roi, strategy='none', n_in=n_in, n_roi=n_roi,
-                        relax_count=self._relax_count, tighten_count=self._tighten_count)
+            sel_idx = np.arange(n_in, dtype=int)
+
+        return ROIOutputs(
+            pts=pts_roi,
+            strategy='none',
+            n_in=n_in,
+            n_roi=n_roi,
+            relax_count=self._relax_count,
+            tighten_count=self._tighten_count,
+            indices=sel_idx,
+        )
     
     def _can_use_ellipse(self, inputs: ROIInputs) -> bool:
         """Check if ellipse strategy can be used"""

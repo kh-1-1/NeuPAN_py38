@@ -1,0 +1,20 @@
+{
+  "runs": 10,
+  "steps_mean": 342.0,
+  "path_length_mean": 135.60034140646448,
+  "min_distance_mean": 0.14772331714630127,
+  "avg_step_time_ms_mean": 24.38148064327313,
+  "max_v_mean": 5.35696268081665,
+  "avg_v_mean": 3.964922263346918,
+  "success_rate": 1.0,
+  "stop_rate": 0.0,
+  "roi_avg_n_in_mean": 20.108024691358025,
+  "roi_avg_n_roi_mean": 19.70679012345679,
+  "roi_reduction_ratio_mean": 1.0231161105145987,
+  "roi_strategy_counts": {
+    "none": 730,
+    "ellipse": 2410,
+    "wedge": 10,
+    "tube": 90
+  }
+}

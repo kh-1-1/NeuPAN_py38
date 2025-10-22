@@ -1,0 +1,11 @@
+{
+  "runs": 10,
+  "steps_mean": 350.0,
+  "path_length_mean": 136.12094136849052,
+  "min_distance_mean": 0.10475865006446838,
+  "avg_step_time_ms_mean": 24.234778714292457,
+  "max_v_mean": 5.412907123565674,
+  "avg_v_mean": 3.889169753385441,
+  "success_rate": 1.0,
+  "stop_rate": 0.0
+}
