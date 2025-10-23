@@ -5,7 +5,7 @@ no_display: true
 save_results: true
 quiet: false
 
-# 测试场景	examples: corridor,pf_obs,non_obs,convex_obs
+# 测试场景	examples: corridor,pf_obs,non_obs,convex_obs,dyna_non_obs
 # 机器人	support: diff,acker
 
 # 测试配置
