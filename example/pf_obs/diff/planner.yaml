@@ -33,7 +33,7 @@ pan:
   dune_max_num: 100
   nrmp_max_num: 10
   iter_threshold: 0.1
-  dune_checkpoint: 'example/model/diff_robot_default/model_5000.pth'
+  dune_checkpoint: 'example/model/diff_robot_default/model_5000.pth' #'example/model/diff_flex_pdhg_robot/model_5000.pth' #'example/model/diff_robot_default/model_5000.pth'
 
 
 # adjust parameters

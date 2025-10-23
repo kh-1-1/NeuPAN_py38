@@ -28,6 +28,7 @@ from io import StringIO
 from typing import List, Dict, Any, Tuple, Optional
 
 import numpy as np
+import yaml
 import torch
 import irsim
 from neupan import neupan
@@ -146,9 +147,16 @@ def simulate(example_name: str,
 
     env = irsim.make(env_file, save_ani=save_animation, full=full, display=not no_display)
 
-    pan_kwargs = {}
+    # Read YAML config and only override checkpoint to preserve other pan parameters
+    pan_kwargs = None
     if ckpt_override:
-        pan_kwargs['dune_checkpoint'] = ckpt_override
+        try:
+            with open(planner_file, 'r', encoding='utf-8') as f:
+                yaml_config = yaml.safe_load(f)
+                pan_kwargs = yaml_config.get('pan', {})
+                pan_kwargs['dune_checkpoint'] = ckpt_override
+        except Exception:
+            pan_kwargs = {'dune_checkpoint': ckpt_override}
 
     train_kwargs = dict(
         projection=projection,

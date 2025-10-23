@@ -38,3 +38,15 @@ adjust:
   d_max: 1.0
   d_min: 0.1
 
+
+  roi:
+    enabled: True
+    cone_fov_base_deg: 90.0
+    cone_r_max_m: 8.0
+    cone_expansion_factor: 100.0
+    cone_safety_margin_m: 0.5
+    cone_enable_reverse: False
+    cone_reverse_fov_deg: 60.0
+    guardrail_n_min: 30
+
+

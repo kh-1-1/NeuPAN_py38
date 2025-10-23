@@ -1,31 +1,26 @@
 # ROI 配置模板（将被动态注入到 planner.yaml）
+# 使用可达性圆锥策略（Reachability Cone），优化用于 MPC 预测时域
 roi:
   enabled: true
-  strategy_order: ['ellipse', 'tube', 'wedge']
-  
-  # Wedge 参数
-  wedge:
-    fov_deg: 60.0
-    r_max_m: 8.0
-  
-  # Ellipse 参数
-  ellipse:
-    safety_scale: 1.08
-  
-  # Tube 参数
-  tube:
-    r0_m: 0.5
-    kappa_gain: 0.4
-    v_tau_m: 0.3
-  
-  # Guardrail 参数（适配少点云）
+  strategy_order: ['cone']
+
+  # Reachability Cone 参数
+  cone:
+    fov_base_deg: 90.0           # 基础视野角度（度）
+    r_max_m: 8.0                 # 最大可达距离（米）
+    expansion_factor: 100.0      # 曲线路径的 FOV 扩展因子
+    safety_margin_m: 0.5         # 安全边距（米）
+    enable_reverse: false        # 是否启用倒退检测
+    reverse_fov_deg: 60.0        # 倒退时的视野角度（度）
+
+  # Guardrail 参数（自适应放松/收紧）
   guardrail:
-    n_min: 10          # 从 30 降到 10
+    n_min: 10
     n_max: 500
     relax_step: 1.15
     tighten_step: 0.9
-  
-  # Always keep 参数
+
+  # Always keep 参数（安全保留集）
   always_keep:
     near_radius_m: 1.5
     goal_radius_m: 1.5

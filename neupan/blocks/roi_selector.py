@@ -1,12 +1,12 @@
 '''
 ROI (Region of Interest) Selector for Neural Focusing in NeuPAN
 
-Implements three ROI strategies inspired by Neural Informed RRT* (ICRA 2024):
-- Ellipse: Informed elliptical corridor using c_best and c_min (for straight/gentle paths)
-- Tube: Morphological dilation around reference trajectory (for curved paths)
-- Wedge: Forward fan-shaped region (for cold start/fallback)
-
-
+Implements Reachability Cone strategy optimized for MPC prediction horizon:
+- Cone: Reachability-based cone filtering using dynamic FOV and max reachable distance
+  * O(N) computational complexity (vs O(N×T) for path-based methods)
+  * Adapts FOV based on path curvature (straight: 90°, curved: up to 150°)
+  * Considers robot dynamics and prediction horizon
+  * Optional reverse motion detection
 
 NeuPAN planner is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,26 +23,22 @@ from dataclasses import dataclass, field
 class ROIConfig:
     """Configuration for ROI selector"""
     enabled: bool = False
-    strategy_order: list = field(default_factory=lambda: ['ellipse', 'tube', 'wedge'])
-    
-    # Wedge parameters (forward fan-shaped region)
-    wedge_fov_deg: float = 60.0
-    wedge_r_max_m: float = 8.0
-    
-    # Ellipse parameters (Informed RRT* style)
-    ellipse_safety_scale: float = 1.08
-    
-    # Tube parameters (path corridor)
-    tube_r0_m: float = 0.5
-    tube_kappa_gain: float = 0.4
-    tube_v_tau_m: float = 0.3
-    
+    strategy_order: list = field(default_factory=lambda: ['cone'])
+
+    # Reachability Cone parameters (optimized for MPC prediction horizon)
+    cone_fov_base_deg: float = 90.0          # Base field of view (degrees)
+    cone_r_max_m: float = 8.0                # Maximum reachable distance (meters)
+    cone_expansion_factor: float = 100.0     # FOV expansion factor for curved paths
+    cone_safety_margin_m: float = 0.5        # Safety margin added to R_max (meters)
+    cone_enable_reverse: bool = False        # Enable reverse cone for backward motion
+    cone_reverse_fov_deg: float = 60.0       # FOV for reverse cone (degrees)
+
     # Guardrail (adaptive relaxation/tightening)
     guardrail_n_min: int = 30
     guardrail_n_max: int = 500
     guardrail_relax_step: float = 1.15
     guardrail_tighten_step: float = 0.9
-    
+
     # Always keep (safety retention set)
     always_keep_near_radius_m: float = 1.5
     always_keep_goal_radius_m: float = 1.5
@@ -53,17 +49,18 @@ class ROIInputs:
     """Inputs for ROI selection"""
     pts: np.ndarray  # (2, N) global coordinates
     path_xy: Optional[np.ndarray] = None  # (2, T+1) reference path in global coords
-    heading_rad: Optional[float] = None  # robot heading for wedge
-    v_robot: Optional[float] = None  # robot velocity
+    heading_rad: Optional[float] = None  # robot heading for cone/wedge
+    v_robot: Optional[float] = None  # robot velocity (for cone radius and reverse detection)
     c_best_hint: Optional[float] = None  # current best path length
     goal_xy: Optional[np.ndarray] = None  # (2, 1) goal position
+    robot_xy: Optional[np.ndarray] = None  # (2, 1) current robot position (for cone/always-keep)
 
 
 @dataclass
 class ROIOutputs:
     """Outputs from ROI selection"""
     pts: np.ndarray  # (2, N_roi) filtered points in global coords
-    strategy: str  # 'ellipse', 'tube', 'wedge', or 'none'
+    strategy: str  # 'cone' or 'none'
     n_in: int  # input point count
     n_roi: int  # output point count
     relax_count: int = 0
@@ -75,9 +72,10 @@ class ROIOutputs:
 class ROISelector:
     """
     ROI Selector for Neural Focusing
-    
+
     Filters obstacle points to a relevant corridor before feeding to DUNE/Flexible PDHG.
-    Supports three strategies with automatic switching and guardrail mechanism.
+    Uses Reachability Cone strategy optimized for MPC prediction horizon with automatic
+    parameter adaptation via guardrail mechanism.
     """
     
     def __init__(self, cfg: ROIConfig):
@@ -86,18 +84,17 @@ class ROISelector:
         self._tighten_count = 0
         # Working copy of parameters (can be relaxed/tightened)
         self._work_cfg = {
-            'ellipse_safety': cfg.ellipse_safety_scale,
-            'tube_r0': cfg.tube_r0_m,
-            'wedge_fov': cfg.wedge_fov_deg,
-            'wedge_r_max': cfg.wedge_r_max_m,
+            'cone_fov': cfg.cone_fov_base_deg,
+            'cone_r_max': cfg.cone_r_max_m,
         }
     
     def select(self, pts: np.ndarray, path_xy: Optional[np.ndarray] = None,
                heading_rad: Optional[float] = None, v_robot: Optional[float] = None,
-               c_best_hint: Optional[float] = None, goal_xy: Optional[np.ndarray] = None) -> ROIOutputs:
+               c_best_hint: Optional[float] = None, goal_xy: Optional[np.ndarray] = None,
+               robot_xy: Optional[np.ndarray] = None) -> ROIOutputs:
         """
         Select ROI from obstacle points
-        
+
         Args:
             pts: (2, N) obstacle points in global coordinates
             path_xy: (2, T+1) reference path in global coordinates
@@ -105,29 +102,34 @@ class ROISelector:
             v_robot: robot velocity (m/s)
             c_best_hint: current best path length (m)
             goal_xy: (2, 1) goal position in global coordinates
-            
+            robot_xy: (2, 1) current robot position in global coordinates
+
         Returns:
             ROIOutputs with filtered points and metadata
         """
         if pts is None or pts.shape[1] == 0:
             return ROIOutputs(pts=pts if pts is not None else np.zeros((2, 0)),
                             strategy='none', n_in=0, n_roi=0)
-        
+
+        # Reset parameters and counters for each frame
+        # This ensures parameters don't accumulate relaxation across frames
+        self._work_cfg = {
+            'cone_fov': self.cfg.cone_fov_base_deg,
+            'cone_r_max': self.cfg.cone_r_max_m,
+        }
+        self._relax_count = 0
+        self._tighten_count = 0
+
         n_in = pts.shape[1]
         inputs = ROIInputs(pts=pts, path_xy=path_xy, heading_rad=heading_rad,
-                          v_robot=v_robot, c_best_hint=c_best_hint, goal_xy=goal_xy)
-        
-        # Try strategies in order
-        for strategy in self.cfg.strategy_order:
-            if strategy == 'ellipse' and self._can_use_ellipse(inputs):
-                mask = self._ellipse_mask(inputs)
-            elif strategy == 'tube' and self._can_use_tube(inputs):
-                mask = self._tube_mask(inputs)
-            elif strategy == 'wedge' and self._can_use_wedge(inputs):
-                mask = self._wedge_mask(inputs)
-            else:
-                continue
-            
+                          v_robot=v_robot, c_best_hint=c_best_hint, goal_xy=goal_xy,
+                          robot_xy=robot_xy)
+
+        # Direct cone strategy (simplified - no strategy chain)
+        if self._can_use_cone(inputs):
+            # Apply reachability cone mask
+            mask = self._reachability_cone_mask(inputs)
+
             # Apply always_keep safety retention set
             mask = self._apply_always_keep(inputs, mask)
 
@@ -137,29 +139,70 @@ class ROISelector:
 
             # Apply guardrail
             if n_roi < self.cfg.guardrail_n_min:
-                # Too few points, relax and retry next strategy
+                # Too few points, relax parameters and retry
                 self._relax_parameters()
-                continue
+                # Retry with relaxed parameters
+                mask = self._reachability_cone_mask(inputs)
+                mask = self._apply_always_keep(inputs, mask)
+                sel_idx = np.flatnonzero(mask)
+                pts_roi = pts[:, sel_idx]
+                n_roi = pts_roi.shape[1]
+
+                # If still too few after relaxation, fall back to returning all points
+                if n_roi < self.cfg.guardrail_n_min:
+                    # Use fallback logic below
+                    pass
+                else:
+                    # Relaxation succeeded, check if too many
+                    if n_roi > self.cfg.guardrail_n_max:
+                        m = int(self.cfg.guardrail_n_max)
+                        ds_local = np.linspace(0, n_roi - 1, m, dtype=int)
+                        sel_idx = sel_idx[ds_local]
+                        pts_roi = pts[:, sel_idx]
+                        n_roi = pts_roi.shape[1]
+
+                    # Success after relaxation
+                    return ROIOutputs(
+                        pts=pts_roi,
+                        strategy='cone',
+                        n_in=n_in,
+                        n_roi=n_roi,
+                        relax_count=self._relax_count,
+                        tighten_count=self._tighten_count,
+                        indices=sel_idx,
+                    )
+
             elif n_roi > self.cfg.guardrail_n_max:
-                # Too many points, downsample deterministically (preserve indices)
+                # Too many points, downsample deterministically
                 m = int(self.cfg.guardrail_n_max)
                 ds_local = np.linspace(0, n_roi - 1, m, dtype=int)
                 sel_idx = sel_idx[ds_local]
                 pts_roi = pts[:, sel_idx]
                 n_roi = pts_roi.shape[1]
 
-            # Success
-            return ROIOutputs(
-                pts=pts_roi,
-                strategy=strategy,
-                n_in=n_in,
-                n_roi=n_roi,
-                relax_count=self._relax_count,
-                tighten_count=self._tighten_count,
-                indices=sel_idx,
-            )
-        
-        # Fallback: return all points (with downsampling if needed)
+                # Success
+                return ROIOutputs(
+                    pts=pts_roi,
+                    strategy='cone',
+                    n_in=n_in,
+                    n_roi=n_roi,
+                    relax_count=self._relax_count,
+                    tighten_count=self._tighten_count,
+                    indices=sel_idx,
+                )
+            else:
+                # Point count is within range, success
+                return ROIOutputs(
+                    pts=pts_roi,
+                    strategy='cone',
+                    n_in=n_in,
+                    n_roi=n_roi,
+                    relax_count=self._relax_count,
+                    tighten_count=self._tighten_count,
+                    indices=sel_idx,
+                )
+
+        # Fallback: cone requirements not met, return all points (with downsampling if needed)
         if n_in > self.cfg.guardrail_n_max:
             m = int(self.cfg.guardrail_n_max)
             sel_idx = np.linspace(0, n_in - 1, m, dtype=int)
@@ -180,157 +223,150 @@ class ROISelector:
             indices=sel_idx,
         )
     
-    def _can_use_ellipse(self, inputs: ROIInputs) -> bool:
-        """Check if ellipse strategy can be used"""
-        return (inputs.path_xy is not None and inputs.c_best_hint is not None 
-                and inputs.c_best_hint > 0)
-    
-    def _can_use_tube(self, inputs: ROIInputs) -> bool:
-        """Check if tube strategy can be used"""
-        return inputs.path_xy is not None and inputs.path_xy.shape[1] >= 2
-    
-    def _can_use_wedge(self, inputs: ROIInputs) -> bool:
-        """Check if wedge strategy can be used"""
-        return inputs.heading_rad is not None
-    
-    def _ellipse_mask(self, inputs: ROIInputs) -> np.ndarray:
+    def _can_use_cone(self, inputs: ROIInputs) -> bool:
+        """Check if reachability cone strategy can be used
+
+        Requires:
+        - robot_xy: current robot position (for cone center)
+        - heading_rad: robot heading (for cone axis)
+        - path_xy: optional, used for curvature calculation (for dynamic FOV)
         """
-        Ellipse ROI: Informed RRT* style elliptical corridor
-        
-        Uses start (first point of path), goal (last point of path), and c_best
-        to define an ellipse. Points inside the ellipse are kept.
+        return (inputs.robot_xy is not None and inputs.heading_rad is not None)
+
+    def _reachability_cone_mask(self, inputs: ROIInputs) -> np.ndarray:
         """
-        path = inputs.path_xy
-        s = path[:, 0:1]  # start (2, 1)
-        g = path[:, -1:]  # goal (2, 1)
-        c_best = inputs.c_best_hint
-        
-        # Compute ellipse parameters
-        v = g - s
-        c_min = np.linalg.norm(v) + 1e-6
-        
-        # Safety check
-        if c_best <= c_min * 1.001:
-            # c_best too close to c_min, ellipse would be degenerate
-            return np.ones(inputs.pts.shape[1], dtype=bool)
-        
-        # Ellipse center and axes
-        center = 0.5 * (s + g)  # (2, 1)
-        a = 0.5 * c_best * self._work_cfg['ellipse_safety']
-        b = 0.5 * np.sqrt(max(c_best**2 - c_min**2, 1e-6)) * self._work_cfg['ellipse_safety']
-        
-        # Rotation matrix (align major axis with s->g direction)
-        e = v / c_min  # unit vector along major axis
-        e_perp = np.array([[-e[1, 0]], [e[0, 0]]])  # perpendicular
-        R = np.hstack([e, e_perp])  # (2, 2)
-        
-        # Transform points to ellipse frame
-        X = R.T @ (inputs.pts - center)  # (2, N)
-        
-        # Ellipse equation: (x/a)^2 + (y/b)^2 <= 1
-        mask = (X[0, :]**2 / a**2 + X[1, :]**2 / b**2) <= 1.0
-        
-        return mask
-    
-    def _tube_mask(self, inputs: ROIInputs) -> np.ndarray:
+        Reachability Cone ROI: Dynamic cone based on prediction horizon reachability
+
+        Core principle: Only keep obstacle points that are within the robot's reachable
+        region during the prediction horizon, considering:
+        1. Maximum reachable distance (based on max velocity and time horizon)
+        2. Dynamic field of view (expands for curved paths)
+        3. Robot shape (safety margin)
+        4. Optional reverse motion detection
+
+        This strategy is optimized for MPC with short prediction horizons, where:
+        - Near-term predictions are accurate (narrow cone)
+        - Far-term predictions may change (wider cone via FOV expansion)
+        - Computational efficiency is critical (O(N) complexity)
+
+        Args:
+            inputs: ROIInputs containing robot state and predicted path
+
+        Returns:
+            Boolean mask (N,) indicating which points to keep
         """
-        Tube ROI: Morphological dilation around reference path
-        
-        Keeps points within adaptive radius of the path.
-        Radius = r0 + v_tau * v + kappa_gain * |kappa|
-        """
+        pts = inputs.pts  # (2, N) in global coords
+        robot_pos = inputs.robot_xy  # (2, 1)
+        heading = inputs.heading_rad  # scalar
         path = inputs.path_xy  # (2, T+1)
-        pts = inputs.pts  # (2, N)
-        
-        # Compute adaptive radius
-        r0 = self._work_cfg['tube_r0']
-        v = inputs.v_robot if inputs.v_robot is not None else 0.0
-        r = r0 + self.cfg.tube_v_tau_m * abs(v)
-        
-        # Compute distance from each point to path
-        # For each point, find minimum distance to any path segment
-        min_dist = np.full(pts.shape[1], np.inf)
-        
-        for i in range(path.shape[1] - 1):
-            p1 = path[:, i:i+1]  # (2, 1)
-            p2 = path[:, i+1:i+2]  # (2, 1)
-            
-            # Distance from pts to line segment p1-p2
-            seg_vec = p2 - p1  # (2, 1)
-            seg_len_sq = np.sum(seg_vec**2) + 1e-9
-            
-            # Project pts onto line
-            t = np.sum((pts - p1) * seg_vec, axis=0, keepdims=True) / seg_len_sq  # (1, N)
-            t = np.clip(t, 0, 1)  # clamp to segment
-            
-            # Closest point on segment
-            closest = p1 + seg_vec * t  # (2, N)
-            dist = np.linalg.norm(pts - closest, axis=0)  # (N,)
-            
-            min_dist = np.minimum(min_dist, dist)
-        
-        # Estimate curvature and adjust radius (simple approximation)
-        if path.shape[1] >= 3:
-            # Use maximum turning angle as curvature proxy
-            angles = []
+        v_robot = inputs.v_robot if inputs.v_robot is not None else 0.0
+
+        # Step 1: Calculate maximum reachable distance R_max
+        # R_max = v_max * T_horizon + r_vehicle + safety_margin
+
+        # Estimate v_max from path (if available) or use default
+        if path is not None and path.shape[1] >= 2:
+            # Estimate from path segment lengths and time
+            path_dists = np.linalg.norm(np.diff(path, axis=1), axis=0)
+            v_max_estimate = np.max(path_dists) / 0.1  # Assume 0.1s time step
+            v_max = max(v_max_estimate, 8.0)  # At least 8 m/s
+        else:
+            v_max = 8.0  # Default max velocity
+
+        # Time horizon (assume 1 second for typical MPC)
+        T_horizon = 1.0
+
+        # Vehicle radius (approximate from typical robot size)
+        # For a robot with length=1.6m, width=2.0m: r_vehicle ≈ sqrt(0.8^2 + 1.0^2) ≈ 1.28m
+        r_vehicle = 1.3  # Conservative estimate
+
+        # Total maximum reachable distance
+        R_max = v_max * T_horizon + r_vehicle + self.cfg.cone_safety_margin_m
+
+        # Override with config if explicitly set
+        if self._work_cfg['cone_r_max'] > 0:
+            R_max = self._work_cfg['cone_r_max']
+
+        # Step 2: Calculate path curvature to determine dynamic FOV
+        # Higher curvature → wider FOV to cover turning region
+
+        kappa_max = 0.0
+        if path is not None and path.shape[1] >= 3:
+            # Calculate maximum angle change between consecutive segments
             for i in range(path.shape[1] - 2):
                 v1 = path[:, i+1] - path[:, i]
                 v2 = path[:, i+2] - path[:, i+1]
+
+                # Avoid division by zero
+                norm1 = np.linalg.norm(v1)
+                norm2 = np.linalg.norm(v2)
+                if norm1 < 1e-6 or norm2 < 1e-6:
+                    continue
+
+                # Angle between vectors
                 angle = np.arctan2(v2[1], v2[0]) - np.arctan2(v1[1], v1[0])
-                angle = np.arctan2(np.sin(angle), np.cos(angle))  # wrap to [-pi, pi]
-                angles.append(abs(angle))
-            max_kappa_proxy = max(angles) if angles else 0.0
-            r += self.cfg.tube_kappa_gain * max_kappa_proxy
-        
-        mask = min_dist <= r
-        return mask
-    
-    def _wedge_mask(self, inputs: ROIInputs) -> np.ndarray:
-        """
-        Wedge ROI: Forward fan-shaped region
-        
-        Keeps points within FOV cone and max range from robot (assumed at origin in robot frame).
-        """
-        pts = inputs.pts  # (2, N) in global coords
-        heading = inputs.heading_rad
-        
-        # Transform points to robot frame (robot at origin, heading along x-axis)
-        cos_h = np.cos(heading)
-        sin_h = np.sin(heading)
-        R_inv = np.array([[cos_h, sin_h], [-sin_h, cos_h]])  # rotation from global to robot frame
-        
-        # Assume robot is at first point of path (if available) or origin
-        if inputs.path_xy is not None:
-            robot_pos = inputs.path_xy[:, 0:1]  # (2, 1)
+                # Normalize to [-pi, pi]
+                angle = np.arctan2(np.sin(angle), np.cos(angle))
+                kappa_max = max(kappa_max, abs(angle))
+
+        # Step 3: Calculate dynamic FOV
+        FOV_base = self._work_cfg['cone_fov']  # degrees
+
+        if kappa_max < 0.1:  # Straight path (< 0.1 rad ≈ 5.7 degrees)
+            FOV = FOV_base
         else:
-            robot_pos = np.zeros((2, 1))
-        
-        pts_robot = R_inv @ (pts - robot_pos)  # (2, N)
-        
-        # Wedge criteria: forward (x > 0), within FOV, within range
-        fov_rad = np.deg2rad(self._work_cfg['wedge_fov'])
-        r_max = self._work_cfg['wedge_r_max']
-        
-        x = pts_robot[0, :]
-        y = pts_robot[1, :]
-        r = np.sqrt(x**2 + y**2)
-        theta = np.arctan2(y, x)
-        
-        mask = (x > 0) & (np.abs(theta) <= fov_rad / 2) & (r <= r_max)
+            # Expand FOV for curved paths
+            FOV_expansion = kappa_max * self.cfg.cone_expansion_factor
+            FOV = min(FOV_base + FOV_expansion, 150.0)  # Cap at 150 degrees
+
+        FOV_rad = np.deg2rad(FOV)
+
+        # Step 4: Handle reverse motion (optional)
+        cone_axis = heading  # Default: forward direction
+
+        if self.cfg.cone_enable_reverse and v_robot < -0.1:  # Moving backward
+            # Reverse the cone axis by 180 degrees
+            cone_axis = heading + np.pi
+            # Normalize to [-pi, pi]
+            cone_axis = np.arctan2(np.sin(cone_axis), np.cos(cone_axis))
+            # Use narrower FOV for reverse
+            FOV_rad = np.deg2rad(self.cfg.cone_reverse_fov_deg)
+
+        # Step 5: Filter obstacle points
+        # Calculate relative position of each point
+        v = pts - robot_pos  # (2, N)
+
+        # Distance from robot
+        dist = np.linalg.norm(v, axis=0)  # (N,)
+
+        # Angle of each point relative to global x-axis
+        angle_pts = np.arctan2(v[1, :], v[0, :])  # (N,)
+
+        # Angle difference from cone axis
+        angle_diff = angle_pts - cone_axis
+        # Normalize to [-pi, pi]
+        angle_diff = np.arctan2(np.sin(angle_diff), np.cos(angle_diff))
+
+        # Keep points within cone
+        mask = (dist <= R_max) & (np.abs(angle_diff) <= FOV_rad / 2)
+
         return mask
-    
+
+
     def _apply_always_keep(self, inputs: ROIInputs, mask: np.ndarray) -> np.ndarray:
         """
         Apply safety retention set: always keep near-body and goal-vicinity points
         """
         pts = inputs.pts
-        
-        # Near-body circle (assume robot at first point of path or origin)
-        if inputs.path_xy is not None:
+
+        # Near-body circle: use robot_xy if available, otherwise fallback to path start
+        if inputs.robot_xy is not None:
+            robot_pos = inputs.robot_xy
+        elif inputs.path_xy is not None:
             robot_pos = inputs.path_xy[:, 0:1]
         else:
             robot_pos = np.zeros((2, 1))
-        
+
         dist_to_robot = np.linalg.norm(pts - robot_pos, axis=0)
         near_mask = dist_to_robot <= self.cfg.always_keep_near_radius_m
         
@@ -350,18 +386,14 @@ class ROISelector:
     
     def _relax_parameters(self):
         """Relax ROI parameters to include more points"""
-        self._work_cfg['ellipse_safety'] *= self.cfg.guardrail_relax_step
-        self._work_cfg['tube_r0'] *= self.cfg.guardrail_relax_step
-        self._work_cfg['wedge_fov'] *= self.cfg.guardrail_relax_step
-        self._work_cfg['wedge_r_max'] *= self.cfg.guardrail_relax_step
+        self._work_cfg['cone_fov'] *= self.cfg.guardrail_relax_step
+        self._work_cfg['cone_r_max'] *= self.cfg.guardrail_relax_step
         self._relax_count += 1
-    
+
     def _tighten_parameters(self):
         """Tighten ROI parameters (currently unused, for future adaptive logic)"""
-        self._work_cfg['ellipse_safety'] *= self.cfg.guardrail_tighten_step
-        self._work_cfg['tube_r0'] *= self.cfg.guardrail_tighten_step
-        self._work_cfg['wedge_fov'] *= self.cfg.guardrail_tighten_step
-        self._work_cfg['wedge_r_max'] *= self.cfg.guardrail_tighten_step
+        self._work_cfg['cone_fov'] *= self.cfg.guardrail_tighten_step
+        self._work_cfg['cone_r_max'] *= self.cfg.guardrail_tighten_step
         self._tighten_count += 1
     
     def _downsample_deterministic(self, pts: np.ndarray, m: int) -> np.ndarray:
