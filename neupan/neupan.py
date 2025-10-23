@@ -99,13 +99,13 @@ class neupan(torch.nn.Module):
             # Build ROIConfig from roi_kwargs
             roi_cfg = ROIConfig(
                 enabled=True,
-                strategy_order=roi_kwargs.get("strategy_order", ['ellipse', 'tube', 'wedge']),
-                wedge_fov_deg=roi_kwargs.get("wedge", {}).get("fov_deg", 60.0),
-                wedge_r_max_m=roi_kwargs.get("wedge", {}).get("r_max_m", 8.0),
-                ellipse_safety_scale=roi_kwargs.get("ellipse", {}).get("safety_scale", 1.08),
-                tube_r0_m=roi_kwargs.get("tube", {}).get("r0_m", 0.5),
-                tube_kappa_gain=roi_kwargs.get("tube", {}).get("kappa_gain", 0.4),
-                tube_v_tau_m=roi_kwargs.get("tube", {}).get("v_tau_m", 0.3),
+                strategy_order=roi_kwargs.get("strategy_order", ['cone']),
+                cone_fov_base_deg=roi_kwargs.get("cone", {}).get("fov_base_deg", 90.0),
+                cone_r_max_m=roi_kwargs.get("cone", {}).get("r_max_m", 8.0),
+                cone_expansion_factor=roi_kwargs.get("cone", {}).get("expansion_factor", 100.0),
+                cone_safety_margin_m=roi_kwargs.get("cone", {}).get("safety_margin_m", 0.5),
+                cone_enable_reverse=roi_kwargs.get("cone", {}).get("enable_reverse", False),
+                cone_reverse_fov_deg=roi_kwargs.get("cone", {}).get("reverse_fov_deg", 60.0),
                 guardrail_n_min=roi_kwargs.get("guardrail", {}).get("n_min", 30),
                 guardrail_n_max=roi_kwargs.get("guardrail", {}).get("n_max", 500),
                 guardrail_relax_step=roi_kwargs.get("guardrail", {}).get("relax_step", 1.15),
@@ -257,6 +257,7 @@ class neupan(torch.nn.Module):
         c_best = self._estimate_cbest(path_xy)
 
         # Extract robot state
+        robot_xy = state[:2, :]  # (2, 1) current position
         heading_rad = float(state[2, 0])
         v_robot = float(self.cur_vel_array[0, 0]) if self.cur_vel_array.shape[1] > 0 else 0.0
 
@@ -268,7 +269,8 @@ class neupan(torch.nn.Module):
             heading_rad=heading_rad,
             v_robot=v_robot,
             c_best_hint=c_best,
-            goal_xy=None  # Could extract from ipath if needed
+            goal_xy=None,  # Could extract from ipath if needed
+            robot_xy=robot_xy
         )
         try:
             self.info["roi_time_ms"] = (time.perf_counter() - _t0) * 1000.0
@@ -365,121 +367,25 @@ class neupan(torch.nn.Module):
         if strategy == "none":
             return
 
-        # Draw filtered points (ROI output) in orange for comparison
+        # Draw filtered points (ROI output) in blue for comparison
         pts_roi = self._roi_state.get("pts_roi")
         if pts_roi is not None and pts_roi.shape[1] > 0:
-            env.draw_points(pts_roi, s=18, c="orange", alpha=0.6, refresh=True)
+            env.draw_points(pts_roi, s=18, c="blue", alpha=0.6, refresh=True)
 
         # Draw ROI region boundary based on strategy
-        if strategy == "ellipse":
-            self._visualize_ellipse_roi(env)
-        elif strategy == "tube":
-            self._visualize_tube_roi(env)
-        elif strategy == "wedge":
-            self._visualize_wedge_roi(env)
+        if strategy == "cone":
+            self._visualize_cone_roi(env)
 
-    def _visualize_ellipse_roi(self, env):
-        """Visualize ellipse ROI region boundary"""
-        path_xy = self._roi_state.get("path_xy")
-        c_best = self._roi_state.get("last_c_best")
-        params = self._roi_state.get("roi_params_snapshot", {})
+    def _visualize_cone_roi(self, env):
+        """
+        Visualize reachability cone ROI region boundary with dynamic FOV and R_max
 
-        if path_xy is None or c_best is None or path_xy.shape[1] < 2:
-            return
-
-        # Ellipse parameters
-        start = path_xy[:, 0:1]  # (2, 1)
-        goal = path_xy[:, -1:]   # (2, 1)
-        c_min = np.linalg.norm(goal - start) + 1e-6
-
-        if c_best <= c_min * 1.001:
-            return  # Degenerate ellipse
-
-        safety_scale = params.get("ellipse_safety", 1.08)
-        center = 0.5 * (start + goal)
-        a = 0.5 * c_best * safety_scale
-        b = 0.5 * np.sqrt(max(c_best**2 - c_min**2, 1e-6)) * safety_scale
-
-        # Rotation matrix (align major axis with start->goal)
-        v = goal - start
-        e = v / c_min  # unit vector along major axis
-        e_perp = np.array([[-e[1, 0]], [e[0, 0]]])
-        R = np.hstack([e, e_perp])  # (2, 2)
-
-        # Sample ellipse boundary
-        angles = np.linspace(0, 2*np.pi, 100)
-        ellipse_local = np.vstack([a * np.cos(angles), b * np.sin(angles)])  # (2, 100)
-        ellipse_global = R @ ellipse_local + center  # (2, 100)
-
-        # Draw as points (yellow ellipse boundary)
-        # Convert (2, N) to list of [x, y] to avoid irsim bug
-        ellipse_list = [[ellipse_global[0, i], ellipse_global[1, i]] for i in range(ellipse_global.shape[1])]
-        env.draw_points(ellipse_list, s=8, c="yellow", alpha=0.7, refresh=True)
-
-    def _visualize_tube_roi(self, env):
-        """Visualize tube ROI region boundary"""
-        path_xy = self._roi_state.get("path_xy")
-        params = self._roi_state.get("roi_params_snapshot", {})
-
-        if path_xy is None or path_xy.shape[1] < 2:
-            return
-
-        # Tube radius
-        tube_r0 = params.get("tube_r0", 0.5)
-        v_robot = float(self.cur_vel_array[0, 0]) if self.cur_vel_array.shape[1] > 0 else 0.0
-        r = tube_r0 + self.roi_selector.cfg.tube_v_tau_m * abs(v_robot)
-
-        # Estimate curvature adjustment (simplified)
-        if path_xy.shape[1] >= 3:
-            angles = []
-            for i in range(path_xy.shape[1] - 2):
-                v1 = path_xy[:, i+1] - path_xy[:, i]
-                v2 = path_xy[:, i+2] - path_xy[:, i+1]
-                angle = np.arctan2(v2[1], v2[0]) - np.arctan2(v1[1], v1[0])
-                angle = np.arctan2(np.sin(angle), np.cos(angle))
-                angles.append(abs(angle))
-            max_kappa_proxy = max(angles) if angles else 0.0
-            r += self.roi_selector.cfg.tube_kappa_gain * max_kappa_proxy
-
-        # Generate boundary points (left and right offset)
-        left_boundary = []
-        right_boundary = []
-
-        for i in range(path_xy.shape[1] - 1):
-            p1 = path_xy[:, i]
-            p2 = path_xy[:, i+1]
-            tangent = p2 - p1
-            tangent_norm = np.linalg.norm(tangent)
-            if tangent_norm < 1e-6:
-                continue
-            tangent = tangent / tangent_norm
-            normal = np.array([-tangent[1], tangent[0]])  # perpendicular
-
-            left_boundary.append(p1 + r * normal)
-            right_boundary.append(p1 - r * normal)
-
-        # Add last point
-        if path_xy.shape[1] >= 2:
-            p_last = path_xy[:, -1]
-            tangent = path_xy[:, -1] - path_xy[:, -2]
-            tangent_norm = np.linalg.norm(tangent)
-            if tangent_norm >= 1e-6:
-                tangent = tangent / tangent_norm
-                normal = np.array([-tangent[1], tangent[0]])
-                left_boundary.append(p_last + r * normal)
-                right_boundary.append(p_last - r * normal)
-
-        if left_boundary:
-            left_pts = np.column_stack(left_boundary)  # (2, N)
-            right_pts = np.column_stack(right_boundary)
-            # Convert to list format to avoid irsim bug
-            left_list = [[left_pts[0, i], left_pts[1, i]] for i in range(left_pts.shape[1])]
-            right_list = [[right_pts[0, i], right_pts[1, i]] for i in range(right_pts.shape[1])]
-            env.draw_points(left_list, s=8, c="cyan", alpha=0.7, refresh=True)
-            env.draw_points(right_list, s=8, c="cyan", alpha=0.7, refresh=True)
-
-    def _visualize_wedge_roi(self, env):
-        """Visualize wedge ROI region boundary"""
+        Shows:
+        - Cone boundary (arc + rays) in green
+        - R_max radius annotation
+        - FOV angle annotation
+        - Base FOV in light green (if different from current FOV)
+        """
         robot_xy = self._roi_state.get("robot_xy")
         heading_rad = self._roi_state.get("heading_rad")
         params = self._roi_state.get("roi_params_snapshot", {})
@@ -487,17 +393,34 @@ class neupan(torch.nn.Module):
         if robot_xy is None or heading_rad is None:
             return
 
-        # Wedge parameters
-        fov_deg = params.get("wedge_fov", 60.0)
-        r_max = params.get("wedge_r_max", 8.0)
+        # Cone parameters (current, possibly relaxed)
+        r_max = params.get("cone_r_max", 10.0)
+        fov_deg = params.get("cone_fov", 90.0)
         fov_rad = np.deg2rad(fov_deg)
 
-        # Sample wedge boundary (arc + two rays)
-        # Arc
+        # Base parameters (for comparison)
+        base_fov_deg = self.roi_selector.cfg.cone_fov_base_deg if self.roi_selector else 90.0
+        base_r_max = self.roi_selector.cfg.cone_r_max_m if self.roi_selector else 10.0
+
+        # Check if parameters were relaxed
+        is_relaxed = (abs(fov_deg - base_fov_deg) > 1.0) or (abs(r_max - base_r_max) > 0.5)
+
+        # Draw base FOV cone in light green if relaxed (to show expansion)
+        if is_relaxed:
+            base_fov_rad = np.deg2rad(base_fov_deg)
+            base_angles = np.linspace(heading_rad - base_fov_rad/2, heading_rad + base_fov_rad/2, 30)
+            base_arc_x = robot_xy[0, 0] + base_r_max * np.cos(base_angles)
+            base_arc_y = robot_xy[1, 0] + base_r_max * np.sin(base_angles)
+            base_arc_pts = np.vstack([base_arc_x, base_arc_y])
+            base_arc_list = [[base_arc_pts[0, i], base_arc_pts[1, i]] for i in range(base_arc_pts.shape[1])]
+            env.draw_points(base_arc_list, s=5, c="lightgreen", alpha=0.3, refresh=True)
+
+        # Draw current cone boundary (arc + two rays)
+        # Arc (outer boundary)
         angles = np.linspace(heading_rad - fov_rad/2, heading_rad + fov_rad/2, 50)
         arc_x = robot_xy[0, 0] + r_max * np.cos(angles)
         arc_y = robot_xy[1, 0] + r_max * np.sin(angles)
-        arc_pts = np.vstack([arc_x, arc_y])  # (2, 50)
+        arc_pts = np.vstack([arc_x, arc_y])
 
         # Left ray
         left_angle = heading_rad - fov_rad/2
@@ -511,13 +434,36 @@ class neupan(torch.nn.Module):
         right_ray_y = np.linspace(robot_xy[1, 0], robot_xy[1, 0] + r_max * np.sin(right_angle), 20)
         right_ray_pts = np.vstack([right_ray_x, right_ray_y])
 
-        # Draw all boundary elements (convert to list format to avoid irsim bug)
+        # Draw current cone boundary (convert to list format)
         arc_list = [[arc_pts[0, i], arc_pts[1, i]] for i in range(arc_pts.shape[1])]
         left_ray_list = [[left_ray_pts[0, i], left_ray_pts[1, i]] for i in range(left_ray_pts.shape[1])]
         right_ray_list = [[right_ray_pts[0, i], right_ray_pts[1, i]] for i in range(right_ray_pts.shape[1])]
-        env.draw_points(arc_list, s=8, c="red", alpha=0.7, refresh=True)
-        env.draw_points(left_ray_list, s=8, c="red", alpha=0.7, refresh=True)
-        env.draw_points(right_ray_list, s=8, c="red", alpha=0.7, refresh=True)
+
+        # Use brighter green for current cone, thicker if relaxed
+        cone_color = "yellow" if is_relaxed else "green"
+        cone_size = 12 if is_relaxed else 8
+        env.draw_points(arc_list, s=cone_size, c=cone_color, alpha=0.7, refresh=True)
+        env.draw_points(left_ray_list, s=cone_size, c=cone_color, alpha=0.7, refresh=True)
+        env.draw_points(right_ray_list, s=cone_size, c=cone_color, alpha=0.7, refresh=True)
+
+        # Draw center axis (heading direction) for reference
+        axis_x = np.linspace(robot_xy[0, 0], robot_xy[0, 0] + r_max * np.cos(heading_rad), 15)
+        axis_y = np.linspace(robot_xy[1, 0], robot_xy[1, 0] + r_max * np.sin(heading_rad), 15)
+        axis_pts = [[axis_x[i], axis_y[i]] for i in range(len(axis_x))]
+        env.draw_points(axis_pts, s=4, c="cyan", alpha=0.5, refresh=True)
+
+        # Add text annotations (if env supports it)
+        try:
+            # Annotation position: slightly offset from robot
+            text_x = robot_xy[0, 0] + 1.5
+            text_y = robot_xy[1, 0] + 1.5
+            annotation = f"FOV:{fov_deg:.0f}° R:{r_max:.1f}m"
+            if is_relaxed:
+                annotation += " (relaxed)"
+            # Note: irsim may not support text, this is optional
+            # env.draw_text(text_x, text_y, annotation, color="green")
+        except Exception:
+            pass
 
     def scan_to_point(
         self,

@@ -57,11 +57,12 @@ def main(
         env.draw_trajectory(neupan_planner.opt_trajectory, "r", refresh=True)
         env.draw_trajectory(neupan_planner.ref_trajectory, "b", refresh=True)
 
-        env.step(action)
-        env.render()
-        # After render, overlay ROI visualization so it won't be cleared
+        # Draw ROI visualization before render (if enabled)
         if visualize_roi:
             neupan_planner.visualize_roi_region(env)
+
+        env.render()
+        env.step(action)
 
 
         if env.done():

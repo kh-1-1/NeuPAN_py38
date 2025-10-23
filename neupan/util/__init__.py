@@ -43,9 +43,21 @@ def time_it(name="Function"):
             start = time.time()
             result = func(self, *args, **kwargs)
             end = time.time()
+            elapsed = end - start
             wrapper.func_count += 1
+
+            # Print timing if enabled
             if configuration.time_print:
-                print(f"{name} execute time {(end - start):.6f} seconds")
+                print(f"{name} execute time {elapsed:.6f} seconds")
+
+            # Store timing in info dict if the result is (action, info) tuple
+            # This allows batch evaluation scripts to collect forward execution time
+            if isinstance(result, tuple) and len(result) == 2:
+                action, info = result
+                if isinstance(info, dict):
+                    # Store forward time in milliseconds
+                    info['forward_time_ms'] = elapsed * 1000.0
+
             return result
 
         wrapper.count = 0

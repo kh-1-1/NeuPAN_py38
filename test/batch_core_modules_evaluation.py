@@ -86,7 +86,8 @@ class RunMetrics:
     stop: bool
     min_distance: float
     path_length: float
-    avg_step_time_ms: float
+    avg_step_time_ms: float  # Total step time (includes env update, rendering, etc.)
+    avg_forward_time_ms: float  # Pure neupan forward execution time (from @time_it decorator)
     max_v: float
     avg_v: float
     roi_strategy_counts: Dict[str, int]
@@ -95,6 +96,7 @@ class RunMetrics:
     roi_avg_reduction_ratio: Optional[float]
     # Added totals
     total_time_ms: float = 0.0
+    total_forward_time_ms: float = 0.0  # Total forward execution time
     # Extended metrics
     avg_min_distance: Optional[float] = None
     roi_total_time_ms: Optional[float] = None
@@ -109,13 +111,18 @@ def _load_yaml(path: str) -> dict:
 
 def _build_roi_kwargs(template_path: Optional[str]) -> dict:
     if not template_path:
-        # Safe fallback template
+        # Safe fallback template with cone strategy
         return {
             'enabled': True,
-            'strategy_order': ['ellipse', 'tube', 'wedge'],
-            'wedge': {'fov_deg': 60.0, 'r_max_m': 8.0},
-            'ellipse': {'safety_scale': 1.08},
-            'tube': {'r0_m': 0.5, 'kappa_gain': 0.4, 'v_tau_m': 0.3},
+            'strategy_order': ['cone'],
+            'cone': {
+                'fov_base_deg': 90.0,
+                'r_max_m': 8.0,
+                'expansion_factor': 100.0,
+                'safety_margin_m': 0.5,
+                'enable_reverse': False,
+                'reverse_fov_deg': 60.0,
+            },
             'guardrail': {'n_min': 10, 'n_max': 500, 'relax_step': 1.15, 'tighten_step': 0.9},
             'always_keep': {'near_radius_m': 1.5, 'goal_radius_m': 1.5},
         }
@@ -164,7 +171,14 @@ def simulate_once(example: str,
         front_learned=front_cfg['front_learned'],
     )
 
-    pan_kwargs = dict(dune_checkpoint=ckpt)
+    # Read YAML config and only override checkpoint to preserve other pan parameters
+    try:
+        with open(planner_file, 'r', encoding='utf-8') as f:
+            yaml_config = yaml.safe_load(f)
+            pan_kwargs = yaml_config.get('pan', {})
+            pan_kwargs['dune_checkpoint'] = ckpt
+    except Exception:
+        pan_kwargs = dict(dune_checkpoint=ckpt)
 
     # ROI kwargs
     roi_kwargs = None
@@ -179,11 +193,8 @@ def simulate_once(example: str,
     )
 
     # Step loop with metrics
-    stuck_threshold = 0.01
-    stuck_count = 0
-    stuck_count_thresh = 5
-
     step_times = []
+    forward_times = []  # NEW: collect pure forward execution times
     v_list = []
     path_length = 0.0
     roi_nin = []
@@ -203,11 +214,20 @@ def simulate_once(example: str,
 
         robot_state = env.get_robot_state()
         lidar_scan = env.get_lidar_scan()
-        # Prefer velocity-aware scan; do not fall back to points-only
+        # Prefer velocity-aware scan; fall back to points-only if velocity not available
         try:
             points, point_velocities = planner.scan_to_point_velocity(robot_state, lidar_scan)
         except Exception:
-            points, point_velocities = None, None
+            # Fallback: use scan_to_point without velocity information
+            try:
+                points = planner.scan_to_point(robot_state, lidar_scan)
+                point_velocities = None
+                if not quiet and step == 0:
+                    print(f"[INFO] Velocity not available, using scan_to_point fallback")
+            except Exception as e:
+                points, point_velocities = None, None
+                if not quiet:
+                    print(f"[ERROR] Failed to convert scan to points: {e}")
         action, info = planner(robot_state, points, point_velocities)
 
         # Metrics: ROI
@@ -233,6 +253,11 @@ def simulate_once(example: str,
         # Timings
         step_time_ms = (time.perf_counter() - t0) * 1000.0
         step_times.append(step_time_ms)
+
+        # NEW: Collect forward execution time from info dict
+        forward_time = info.get('forward_time_ms', 0.0)
+        if forward_time > 0:
+            forward_times.append(forward_time)
 
         # Velocity metrics (assume plain v in [0]-th row)
         try:
@@ -288,31 +313,23 @@ def simulate_once(example: str,
                         env.draw_trajectory(planner.initial_path, '-k', refresh=True)
                     except Exception:
                         pass
+
+            # Draw ROI region visualization every step (if enabled)
+            try:
+                if CONFIG_TO_FRONT.get(config_id, {}).get('roi', False):
+                    planner.visualize_roi_region(env)
+            except Exception:
+                pass
+
             env.render()
 
-        # Stuck detection
-        pre_pos = robot_state[0:2]
         env.step(action)
-        cur_pos2 = env.get_robot_state()[0:2]
-        if np.linalg.norm(cur_pos2 - pre_pos) < stuck_threshold:
-            stuck_count += 1
-        else:
-            stuck_count = 0
-        if stuck_count > stuck_count_thresh:
-            if not quiet:
-                print(f"stuck: True, diff_distance < {stuck_threshold}")
-            break
 
         if info.get('arrive') or info.get('stop') or env.done():
             break
 
-    # Optional: overlay ROI region before final save
-    try:
-        if CONFIG_TO_FRONT.get(config_id, {}).get('roi', False):
-            planner.visualize_roi_region(env)
-            env.render()
-    except Exception:
-        pass
+    # ROI visualization already drawn every step above (if not no_display)
+    # No need to draw again at the end
 
     gif_target = None
     frames_dir: Optional[Path] = None
@@ -369,6 +386,9 @@ def simulate_once(example: str,
     steps = len(step_times)
     avg_ms = float(np.mean(step_times)) if step_times else 0.0
     total_time_ms = float(np.sum(step_times)) if step_times else 0.0
+    # NEW: Calculate forward time statistics
+    avg_forward_ms = float(np.mean(forward_times)) if forward_times else 0.0
+    total_forward_time_ms = float(np.sum(forward_times)) if forward_times else 0.0
     max_v = float(np.max(v_list)) if v_list else 0.0
     avg_v = float(np.mean(v_list)) if v_list else 0.0
     roi_avg_in = float(np.mean(roi_nin)) if roi_nin else None
@@ -386,7 +406,9 @@ def simulate_once(example: str,
         min_distance=run_min_dist,
         path_length=path_length,
         avg_step_time_ms=avg_ms,
+        avg_forward_time_ms=avg_forward_ms,  # NEW
         total_time_ms=total_time_ms,
+        total_forward_time_ms=total_forward_time_ms,  # NEW
         max_v=max_v,
         avg_v=avg_v,
         roi_strategy_counts=roi_counts,
@@ -435,6 +457,7 @@ def simulate_once(example: str,
                         'min_distance': metrics.min_distance,
                         'path_length': metrics.path_length,
                         'avg_step_time_ms': metrics.avg_step_time_ms,
+                        'avg_forward_time_ms': metrics.avg_forward_time_ms,  # NEW
                         'max_velocity': metrics.max_v,
                         'avg_velocity': metrics.avg_v,
                         'roi_strategy_counts': metrics.roi_strategy_counts,
@@ -446,6 +469,7 @@ def simulate_once(example: str,
                         'dual_violation_rate': metrics.dual_violation_rate,
                         'dual_p95_norm': metrics.dual_p95_norm,
                         'total_compute_time_ms': float(np.sum(step_times)) if step_times else 0.0,
+                        'total_forward_time_ms': metrics.total_forward_time_ms,  # NEW
                     }
                 }, f, indent=2)
     except Exception:
@@ -468,7 +492,9 @@ def aggregate_runs(runs: List[RunMetrics]) -> Dict[str, Any]:
         'path_length_mean': float(arr(lambda r: r.path_length).mean()),
         'min_distance_mean': float(arr(lambda r: r.min_distance).mean()),
         'avg_step_time_ms_mean': float(arr(lambda r: r.avg_step_time_ms).mean()),
+        'avg_forward_time_ms_mean': float(arr(lambda r: r.avg_forward_time_ms).mean()),  # NEW
         'total_time_ms_mean': float(arr(lambda r: r.total_time_ms).mean()),
+        'total_forward_time_ms_mean': float(arr(lambda r: r.total_forward_time_ms).mean()),  # NEW
         'max_v_mean': float(arr(lambda r: r.max_v).mean()),
         'avg_v_mean': float(arr(lambda r: r.avg_v).mean()),
         'success_rate': float(np.mean([1.0 if r.arrive else 0.0 for r in runs])),
@@ -633,11 +659,11 @@ def save_summary(batch: Dict[str, Any], out_dir: Path) -> Path:
     lines = [
         '# Core Modules Evaluation Summary',
         '',
-        '| Example | Kin | Config | Runs | Success | Stop | Steps | PathLen | MinDist | AvgStep(ms) | TotalTime(s) | MaxV | AvgV | ROI n_in | ROI n_roi | ROI ratio |',
-        '|---------|-----|--------|------|---------|------|-------|---------|---------|-------------|--------------|------|------|---------|-----------|-----------|',
+        '| Example | Kin | Config | Runs | Success | Stop | Steps | PathLen | MinDist | AvgStep(ms) | AvgFwd(ms) | TotalTime(s) | MaxV | AvgV | ROI n_in | ROI n_roi | ROI ratio |',
+        '|---------|-----|--------|------|---------|------|-------|---------|---------|-------------|------------|--------------|------|------|---------|-----------|-----------|',
     ]
     csv_lines = [
-        'example,kin,config,runs,success,stop,steps,path_length,min_distance,avg_step_ms,total_time_s,max_v,avg_v,roi_n_in,roi_n_roi,roi_ratio'
+        'example,kin,config,runs,success,stop,steps,path_length,min_distance,avg_step_ms,avg_forward_ms,total_time_s,max_v,avg_v,roi_n_in,roi_n_roi,roi_ratio'
     ]
 
     for ex, mp in batch.items():
@@ -645,11 +671,13 @@ def save_summary(batch: Dict[str, Any], out_dir: Path) -> Path:
             for cfg, aggr in kp.items():
                 _tt_ms = aggr.get('total_time_ms_mean', 0.0)
                 _tt_s = (_tt_ms / 1000.0) if isinstance(_tt_ms, (int, float)) else 0.0
+                _avg_fwd_ms = aggr.get('avg_forward_time_ms_mean', 0.0)
                 lines.append(
                     f"| {ex} | {kin} | {cfg} | {aggr.get('runs','')} | "
                     f"{aggr.get('success_rate',''):.2f} | {aggr.get('stop_rate',''):.2f} | "
                     f"{aggr.get('steps_mean',''):.1f} | {aggr.get('path_length_mean',''):.2f} | "
                     f"{aggr.get('min_distance_mean',''):.2f} | {aggr.get('avg_step_time_ms_mean',''):.2f} | "
+                    f"{_avg_fwd_ms:.2f} | "  # NEW: avg forward time
                     f"{_tt_s:.2f} | "
                     f"{aggr.get('max_v_mean',''):.2f} | {aggr.get('avg_v_mean',''):.2f} | "
                     f"{aggr.get('roi_avg_n_in_mean','') if 'roi_avg_n_in_mean' in aggr else 'NA'} | "
@@ -659,7 +687,7 @@ def save_summary(batch: Dict[str, Any], out_dir: Path) -> Path:
                 csv_lines.append(
                     f"{ex},{kin},{cfg},{aggr.get('runs','')},{aggr.get('success_rate','')},{aggr.get('stop_rate','')},"
                     f"{aggr.get('steps_mean','')},{aggr.get('path_length_mean','')},{aggr.get('min_distance_mean','')},"
-                    f"{aggr.get('avg_step_time_ms_mean','')},{_tt_s:.2f},{aggr.get('max_v_mean','')},{aggr.get('avg_v_mean','')},"
+                    f"{aggr.get('avg_step_time_ms_mean','')},{_avg_fwd_ms:.2f},{_tt_s:.2f},{aggr.get('max_v_mean','')},{aggr.get('avg_v_mean','')},"  # NEW: added avg_forward_ms
                     f"{aggr.get('roi_avg_n_in_mean','') if 'roi_avg_n_in_mean' in aggr else ''},"
                     f"{aggr.get('roi_avg_n_roi_mean','') if 'roi_avg_n_roi_mean' in aggr else ''},"
                     f"{aggr.get('roi_reduction_ratio_mean','') if 'roi_reduction_ratio_mean' in aggr else ''}"
