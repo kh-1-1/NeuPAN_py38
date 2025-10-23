@@ -193,6 +193,10 @@ def simulate_once(example: str,
     )
 
     # Step loop with metrics
+    stuck_threshold = 0.01
+    stuck_count = 0
+    stuck_count_thresh = 5
+
     step_times = []
     forward_times = []  # NEW: collect pure forward execution times
     v_list = []
@@ -323,7 +327,18 @@ def simulate_once(example: str,
 
             env.render()
 
+        # Stuck detection
+        pre_pos = robot_state[0:2]
         env.step(action)
+        cur_pos2 = env.get_robot_state()[0:2]
+        if np.linalg.norm(cur_pos2 - pre_pos) < stuck_threshold:
+            stuck_count += 1
+        else:
+            stuck_count = 0
+        if stuck_count > stuck_count_thresh:
+            if not quiet:
+                print(f"stuck: True, diff_distance < {stuck_threshold}")
+            break
 
         if info.get('arrive') or info.get('stop') or env.done():
             break
