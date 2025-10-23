@@ -14,7 +14,7 @@ configurations:
     front_type: obs_point
     front_learned: false
     roi_enabled: false
-    ckpt_diff: example/model/diff_CLARABEL_robot/model_5000.pth
+    ckpt_diff: example/model/diff_robot_default/model_5000.pth #example/model/diff_CLARABEL_robot/model_5000.pth
     ckpt_acker: example/model/acker_CLARABEL_robot/model_5000.pth
   
   flex_no_learned:
