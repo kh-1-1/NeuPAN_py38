@@ -2,7 +2,7 @@
 Core modules closed-loop batch evaluation (final version).
 
 Runs a matrix over configurations (baseline/flex_no_learned/flex_learned/flex_roi),
-examples (corridor, pf_obs, dyna_obs, convex_obs), and kinematics (diff, acker).
+examples (corridor, pf_obs, non_obs, convex_obs, dyna_non_obs), and kinematics (diff, acker).
 
 Notes
 - No front_J: we do not pass PDHG unroll steps here.
@@ -726,7 +726,7 @@ def main():
                         help='YAML file defining configurations (overrides --config)')
 
     # Matrix selection
-    parser.add_argument('-e', '--examples', dest='examples', type=str, default='corridor,pf_obs,non_obs,convex_obs',
+    parser.add_argument('-e', '--examples', dest='examples', type=str, default='corridor,pf_obs,non_obs,convex_obs,dyna_non_obs',
                         help="comma-separated example names or 'all'")
     parser.add_argument('-k', '--kinematics', dest='kinematics', type=str, default='diff,acker',
                         help='comma-separated robot types')
