@@ -81,6 +81,12 @@ class PAN(torch.nn.Module):
         self.nrmp_max_num = nrmp_max_num
         self.dune_max_num = dune_max_num
 
+        # Directional sampling configuration
+        directional_config = kwargs.get('directional_sampling', {})
+        use_directional_sampling = directional_config.get('enabled', False)
+        key_directions = directional_config.get('key_directions', [])
+        nearest_num = directional_config.get('nearest_num', 2)
+
         if not self.no_obs:
             self.dune_layer = DUNE(
                 receding,
@@ -88,6 +94,9 @@ class PAN(torch.nn.Module):
                 robot,
                 dune_max_num,
                 train_kwargs,
+                use_directional_sampling=use_directional_sampling,
+                key_directions=key_directions,
+                nearest_num=nearest_num,
             )
         else:
             self.dune_layer = None
