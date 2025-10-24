@@ -498,8 +498,10 @@ class neupan(torch.nn.Module):
             scan_range = ranges[i]
             angle = angles[i]
 
-            if scan_range < (scan["range_max"] - 0.02) and scan_range > scan["range_min"]:
-                if angle > angle_range[0] and angle < angle_range[1]:
+            # Check if angle is within range
+            if angle > angle_range[0] and angle < angle_range[1]:
+                # If scan_range is valid (within sensor range)
+                if scan_range < (scan["range_max"] - 0.02) and scan_range > scan["range_min"]:
                     point = np.array(
                         [[scan_range * cos(angle)], [scan_range * sin(angle)]]
                     )
@@ -509,6 +511,18 @@ class neupan(torch.nn.Module):
                         v = np.asarray(scan["velocity"])  # expect shape (2, N)
                         if v.ndim == 2 and v.shape[1] == len(ranges):
                             velocity_points.append(v[:, i : i + 1])
+                # If scan_range is infinite (no obstacle), fill with virtual point at 10m
+                elif scan_range >= (scan["range_max"] - 0.02):
+                    virtual_range = 10.0  # Virtual point at 10m
+                    point = np.array(
+                        [[virtual_range * cos(angle)], [virtual_range * sin(angle)]]
+                    )
+                    point_cloud.append(point)
+                    # Add zero velocity for virtual points
+                    if "velocity" in scan:
+                        v = np.asarray(scan["velocity"])
+                        if v.ndim == 2 and v.shape[1] == len(ranges):
+                            velocity_points.append(np.zeros((2, 1)))
 
         if len(point_cloud) == 0:
             # Clear cache when no points
@@ -569,13 +583,23 @@ class neupan(torch.nn.Module):
             scan_range = ranges[i]
             angle = angles[i]
 
-            if scan_range < (scan["range_max"] - 0.02) and scan_range >= scan["range_min"]:
-                if angle > angle_range[0] and angle < angle_range[1]:
+            # Check if angle is within range
+            if angle > angle_range[0] and angle < angle_range[1]:
+                # If scan_range is valid (within sensor range)
+                if scan_range < (scan["range_max"] - 0.02) and scan_range >= scan["range_min"]:
                     point = np.array(
                         [[scan_range * cos(angle)], [scan_range * sin(angle)]]
                     )
                     point_cloud.append(point)
                     velocity_points.append(scan_velocity[:, i : i + 1])
+                # If scan_range is infinite (no obstacle), fill with virtual point at 10m
+                elif scan_range >= (scan["range_max"] - 0.02):
+                    virtual_range = 10.0  # Virtual point at 10m
+                    point = np.array(
+                        [[virtual_range * cos(angle)], [virtual_range * sin(angle)]]
+                    )
+                    point_cloud.append(point)
+                    velocity_points.append(np.zeros((2, 1)))  # Zero velocity for virtual points
 
         if len(point_cloud) == 0:
             return None, None

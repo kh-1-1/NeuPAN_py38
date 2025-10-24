@@ -32,9 +32,10 @@ from typing import Optional
 import sys
 class DUNE(torch.nn.Module):
 
-    def __init__(self, receding: int=10, checkpoint =None, robot=None, dune_max_num: int=100, train_kwargs: dict=dict()) -> None:
+    def __init__(self, receding: int=10, checkpoint =None, robot=None, dune_max_num: int=100, train_kwargs: dict=dict(),
+                 use_directional_sampling: bool=False, key_directions: list=None, nearest_num: int=2) -> None:
         super(DUNE, self).__init__()
-  
+
         self.T = receding
         self.max_num = dune_max_num
 
@@ -44,6 +45,11 @@ class DUNE(torch.nn.Module):
         self.h = np_to_tensor(robot.h)
         self.edge_dim = self.G.shape[0]
         self.state_dim = self.G.shape[1]
+
+        # Directional sampling configuration
+        self.use_directional_sampling = use_directional_sampling
+        self.key_directions = key_directions if key_directions else []
+        self.nearest_num = nearest_num
 
         # configuration flags (with safe defaults)
         train_kwargs = train_kwargs or dict()
@@ -210,10 +216,62 @@ class DUNE(torch.nn.Module):
 
             distance = self.cal_objective_distance(mu, p0)
 
-            if index == 0: 
-                self.min_distance = torch.min(distance) 
-            
-            sort_indices = torch.argsort(distance)
+            if index == 0:
+                self.min_distance = torch.min(distance)
+
+            # Directional sampling: key directions + nearest points
+            if self.use_directional_sampling and num_points > 0:
+                # Step 1: Extract points from all key directions
+                key_indices_list = []
+                for key_dir in self.key_directions:
+                    center_idx = key_dir.get('center_index', 50)
+                    window_size = key_dir.get('window_size', 5)
+
+                    # Calculate window range (centered around center_idx)
+                    # For window_size=5, we want: center-1, center, center+1, center+2, center+3
+                    # Example: center=25, window_size=5 -> [24, 25, 26, 27, 28]
+                    half_before = (window_size - 1) // 2
+                    half_after = window_size - 1 - half_before
+                    start_idx = max(0, center_idx - half_before)
+                    end_idx = min(num_points, center_idx + half_after + 1)
+
+                    # Ensure exactly window_size points
+                    window_indices = torch.arange(start_idx, end_idx, dtype=torch.long)
+                    if len(window_indices) > window_size:
+                        # If exceeds, take centered subset
+                        offset = (len(window_indices) - window_size) // 2
+                        window_indices = window_indices[offset:offset + window_size]
+
+                    key_indices_list.append(window_indices)
+
+                # Concatenate all key direction indices
+                if key_indices_list:
+                    key_indices = torch.cat(key_indices_list)
+                else:
+                    key_indices = torch.tensor([], dtype=torch.long)
+
+                # Step 2: Select nearest points from remaining points
+                remaining_mask = torch.ones(num_points, dtype=torch.bool)
+                remaining_mask[key_indices] = False
+                remaining_indices = torch.where(remaining_mask)[0]
+
+                if len(remaining_indices) > 0 and self.nearest_num > 0:
+                    remaining_distances = distance[remaining_indices]
+                    sorted_remaining = torch.argsort(remaining_distances)
+                    nearest_indices = remaining_indices[sorted_remaining[:self.nearest_num]]
+                else:
+                    nearest_indices = torch.tensor([], dtype=torch.long)
+
+                # Step 3: Concatenate (key direction points + nearest points)
+                sort_indices = torch.cat([key_indices, nearest_indices])
+
+                # Limit to max_num if needed
+                if len(sort_indices) > self.max_num:
+                    sort_indices = sort_indices[:self.max_num]
+            else:
+                # Original logic: sort all points by distance
+                sort_indices = torch.argsort(distance)
+                sort_indices = sort_indices[:self.max_num]
 
             mu_list.append(mu[:, sort_indices])
             lam_list.append(lam[:, sort_indices])
