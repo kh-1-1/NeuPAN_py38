@@ -20,6 +20,9 @@ def main(
     env = irsim.make(env_file, save_ani=save_animation, full=full, display=no_display)
     neupan_planner = neupan.init_from_yaml(planner_file)
 
+    # 设置 IR-SIM 环境引用，用于统一碰撞检测
+    neupan_planner.set_env_reference(env)
+
     # neupan_planner.update_adjust_parameters(q_s=0.5, p_u=1.0, eta=10.0, d_max=1.0, d_min=0.1)
     # neupan_planner.set_reference_speed(5)
     # neupan_planner.update_initial_path_from_waypoints([np.array([0, 0, 0]).reshape(3, 1), np.array([100, 100, 0]).reshape(3, 1)])
@@ -52,14 +55,15 @@ def main(
             print("NeuPAN arrives at the target")
             break
 
+        # Draw ROI visualization first (底层 - 浅蓝色点和绿色圆锥边界)
+        if visualize_roi:
+            neupan_planner.visualize_roi_region(env)
+
+        # Draw DUNE and NRMP points on top (上层 - 绿色和红色点)
         env.draw_points(neupan_planner.dune_points, s=25, c="g", refresh=True)
         env.draw_points(neupan_planner.nrmp_points, s=13, c="r", refresh=True)
         env.draw_trajectory(neupan_planner.opt_trajectory, "r", refresh=True)
         env.draw_trajectory(neupan_planner.ref_trajectory, "b", refresh=True)
-
-        # Draw ROI visualization before render (if enabled)
-        if visualize_roi:
-            neupan_planner.visualize_roi_region(env)
 
         env.render()
         env.step(action)

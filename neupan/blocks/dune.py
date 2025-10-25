@@ -217,14 +217,23 @@ class DUNE(torch.nn.Module):
             distance = self.cal_objective_distance(mu, p0)
 
             if index == 0:
-                self.min_distance = torch.min(distance)
+                # Handle empty point cloud case
+                if distance.numel() > 0:
+                    self.min_distance = torch.min(distance)
+                else:
+                    # No points - set to a large value (no collision)
+                    self.min_distance = torch.tensor(float('inf'), device=distance.device)
 
             # Directional sampling: key directions + nearest points
             if self.use_directional_sampling and num_points > 0:
                 # Step 1: Extract points from all key directions
                 key_indices_list = []
                 for key_dir in self.key_directions:
-                    center_idx = key_dir.get('center_index', 50)
+                    # Get center_index from config, but clamp it to valid range
+                    center_idx_config = key_dir.get('center_index', 50)
+                    # Dynamically adjust center_idx if it exceeds num_points
+                    center_idx = min(center_idx_config, num_points - 1) if num_points > 0 else 0
+
                     window_size = key_dir.get('window_size', 5)
 
                     # Calculate window range (centered around center_idx)
@@ -234,6 +243,12 @@ class DUNE(torch.nn.Module):
                     half_after = window_size - 1 - half_before
                     start_idx = max(0, center_idx - half_before)
                     end_idx = min(num_points, center_idx + half_after + 1)
+
+                    # Ensure start_idx <= end_idx (handle edge case when num_points is very small)
+                    if start_idx >= end_idx:
+                        # If window is invalid, use all available points
+                        start_idx = 0
+                        end_idx = num_points
 
                     # Ensure exactly window_size points
                     window_indices = torch.arange(start_idx, end_idx, dtype=torch.long)

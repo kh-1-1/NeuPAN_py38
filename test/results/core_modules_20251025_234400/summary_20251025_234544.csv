@@ -1,0 +1,2 @@
+example,kin,config,runs,success,stop,steps,path_length,min_distance,avg_step_ms,avg_forward_ms,total_time_s,max_v,avg_v,roi_n_in,roi_n_roi,roi_ratio
+dyna_non_obs,acker,flex_roi,1,1.0,0.0,159.0,56.30780481547116,inf,109.14749937136028,105.88,17.35,5.387500762939453,3.554847076535225,100.0,47.35220125786164,2.228812734852597

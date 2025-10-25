@@ -193,8 +193,11 @@ class NRMP(torch.nn.Module):
                     fa_list[t][:pn, :] = fa[:pn, :]
                     fb_list[t][:pn, :] = fb[:pn, :]
 
-                    fa_list[t][pn:, :] = fa[0, :]
-                    fb_list[t][pn:, :] = fb[0, :]
+                    # Handle empty point cloud case
+                    if fa.shape[0] > 0:
+                        fa_list[t][pn:, :] = fa[0, :]
+                        fb_list[t][pn:, :] = fb[0, :]
+                    # else: keep zeros for remaining slots
 
             return fa_list + fb_list
 
