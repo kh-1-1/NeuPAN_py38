@@ -224,27 +224,23 @@ class DUNE(torch.nn.Module):
                 # Step 1: Extract points from all key directions
                 key_indices_list = []
                 for key_dir in self.key_directions:
-                    center_idx = int(key_dir.get('center_index', 50))
-                    window_size = int(key_dir.get('window_size', 5))
+                    center_idx = key_dir.get('center_index', 50)
+                    window_size = key_dir.get('window_size', 5)
 
-                    # Robust clamping: ensure center and window are valid for num_points
-                    if window_size <= 0:
-                        continue
-                    window_size = min(window_size, int(num_points))
-                    if window_size <= 0:
-                        continue
-
-                    # Clamp center into valid index range
-                    center_idx = max(0, min(int(center_idx), int(num_points) - 1))
-
+                    # Calculate window range (centered around center_idx)
+                    # For window_size=5, we want: center-1, center, center+1, center+2, center+3
+                    # Example: center=25, window_size=5 -> [24, 25, 26, 27, 28]
                     half_before = (window_size - 1) // 2
-                    # Choose start so that we get exactly window_size points and stay in bounds
-                    start_idx = center_idx - half_before
-                    start_idx = max(0, min(start_idx, int(num_points) - window_size))
-                    end_idx = start_idx + window_size
+                    half_after = window_size - 1 - half_before
+                    start_idx = max(0, center_idx - half_before)
+                    end_idx = min(num_points, center_idx + half_after + 1)
 
-                    # Now construct contiguous window [start_idx, end_idx)
-                    window_indices = torch.arange(int(start_idx), int(end_idx), dtype=torch.long)
+                    # Ensure exactly window_size points
+                    window_indices = torch.arange(start_idx, end_idx, dtype=torch.long)
+                    if len(window_indices) > window_size:
+                        # If exceeds, take centered subset
+                        offset = (len(window_indices) - window_size) // 2
+                        window_indices = window_indices[offset:offset + window_size]
 
                     key_indices_list.append(window_indices)
 
