@@ -752,7 +752,7 @@ def main():
     parser.add_argument('-nd', '--no-display', dest='no_display', action='store_true', help='disable rendering')
     parser.add_argument('-q', '--quiet', dest='quiet', action='store_true', help='suppress prints')
     parser.add_argument('-o', '--output-dir', dest='output_dir', type=str, default='', help='results folder')
-    parser.add_argument('--save_results', dest='save_results', action='store_true',
+    parser.add_argument('-sr', '--sr', dest='sr', action='store_true',
                         help='save per-run JSON details and last-frame images')
 
     # ROI template
@@ -818,10 +818,11 @@ def main():
     if not kins:
         kins = ['diff', 'acker']
 
-    # Results dir
+    # Results dir - only create if sr flag is set
     stamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     out_dir = Path(args.output_dir) if args.output_dir else Path('test/results') / f'core_modules_{stamp}'
-    out_dir.mkdir(parents=True, exist_ok=True)
+    if args.sr:
+        out_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"Examples: {examples}")
     print(f"Kinematics: {kins}")
@@ -860,21 +861,23 @@ def main():
                         max_steps=args.max_steps,
                         no_display=args.no_display,
                         quiet=args.quiet,
-                        save_last_frame=bool(args.save_results),
-                        results_dir=(out_dir if args.save_results else None),
+                        save_last_frame=bool(args.sr),
+                        results_dir=(out_dir if args.sr else None),
                         run_idx=i+1,
                     )
                     runs.append(m)
 
                 aggr = aggregate_runs(runs)
-                # Save per-config JSON
-                cfg_json = out_dir / f"{ex}_{kin}_{cfg_id}_summary.json"
-                with open(cfg_json, 'w', encoding='utf-8') as f:
-                    json.dump(aggr, f, indent=2)
+                # Save per-config JSON only if sr flag is set
+                if args.sr:
+                    cfg_json = out_dir / f"{ex}_{kin}_{cfg_id}_summary.json"
+                    with open(cfg_json, 'w', encoding='utf-8') as f:
+                        json.dump(aggr, f, indent=2)
                 batch[ex][kin][cfg_id] = aggr
 
-    md_path = save_summary(batch, out_dir)
-    print(f"\nSummary saved to: {md_path}")
+    if args.sr:
+        md_path = save_summary(batch, out_dir)
+        print(f"\nSummary saved to: {md_path}")
 
 
 if __name__ == '__main__':

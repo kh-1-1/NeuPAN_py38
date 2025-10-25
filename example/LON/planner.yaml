@@ -29,19 +29,9 @@ ipath:
 pan:
   iter_num: 2
   dune_max_num: 100
-  nrmp_max_num: 15  # 12 points (10 key directions + 2 nearest) + margin
+  nrmp_max_num: 10
   iter_threshold: 0.5
   dune_checkpoint: 'example/model/diff_robot_default/model_5000.pth'
-
-  # Directional sampling configuration
-  directional_sampling:
-    enabled: true  # Enable directional sampling
-    key_directions:
-      - center_index: 25    # -45 degree direction
-        window_size: 5      # 5 points around center (indices 24, 25, 26, 27, 28)
-      - center_index: 75    # +45 degree direction
-        window_size: 5      # 5 points around center (indices 74, 75, 76, 77, 78)
-    nearest_num: 5          # 2 nearest points for precise obstacle avoidance
 
 # adjust parameters
 adjust:
