@@ -213,7 +213,10 @@ def simulate(example_name: str,
             print(f"stuck: True, diff_distance < {stuck_threshold}")
             break
 
-        if info.get('arrive') or info.get('stop') or env.done():
+        done = env.done()
+        if done and not info.get('arrive'):
+            info['arrive'] = True
+        if info.get('arrive') or info.get('stop') or done:
             break
 
     env.end(0)

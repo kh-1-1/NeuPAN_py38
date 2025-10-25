@@ -340,7 +340,11 @@ def simulate_once(example: str,
                 print(f"stuck: True, diff_distance < {stuck_threshold}")
             break
 
-        if info.get('arrive') or info.get('stop') or env.done():
+        done = env.done()
+        if done and not info.get('arrive'):
+            # Align success semantics: treat env goal reached as arrival
+            info['arrive'] = True
+        if info.get('arrive') or info.get('stop') or done:
             break
 
     # ROI visualization already drawn every step above (if not no_display)
