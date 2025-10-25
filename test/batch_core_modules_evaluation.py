@@ -117,7 +117,7 @@ def _build_roi_kwargs(template_path: Optional[str]) -> dict:
             'strategy_order': ['cone'],
             'cone': {
                 'fov_base_deg': 90.0,
-                'r_max_m': 8.0,
+                'r_max_m': 10.0,
                 'expansion_factor': 100.0,
                 'safety_margin_m': 0.5,
                 'enable_reverse': False,
@@ -191,6 +191,9 @@ def simulate_once(example: str,
         train=train_kwargs,
         roi=roi_kwargs,
     )
+
+    # 设置 IR-SIM 环境引用，用于统一碰撞检测
+    planner.set_env_reference(env)
 
     # Step loop with metrics
     stuck_threshold = 0.01
@@ -303,6 +306,14 @@ def simulate_once(example: str,
             pass
 
         if not no_display:
+            # Draw ROI region visualization first (底层 - 浅蓝色点和绿色圆锥边界)
+            try:
+                if CONFIG_TO_FRONT.get(config_id, {}).get('roi', False):
+                    planner.visualize_roi_region(env)
+            except Exception:
+                pass
+
+            # Draw DUNE and NRMP points on top (上层 - 绿色和红色点)
             env.draw_points(planner.dune_points, s=25, c='g', refresh=True)
             env.draw_points(planner.nrmp_points, s=13, c='r', refresh=True)
             # draw optimized and reference trajectories
@@ -317,13 +328,6 @@ def simulate_once(example: str,
                         env.draw_trajectory(planner.initial_path, '-k', refresh=True)
                     except Exception:
                         pass
-
-            # Draw ROI region visualization every step (if enabled)
-            try:
-                if CONFIG_TO_FRONT.get(config_id, {}).get('roi', False):
-                    planner.visualize_roi_region(env)
-            except Exception:
-                pass
 
             env.render()
 

@@ -7,18 +7,19 @@ roi:
   # Reachability Cone 参数
   cone:
     fov_base_deg: 90.0           # 基础视野角度（度）
-    r_max_m: 8.0                 # 最大可达距离（米）
+    r_max_m: 7.0                 # 最大可达距离（米）
     expansion_factor: 100.0      # 曲线路径的 FOV 扩展因子
     safety_margin_m: 0.5         # 安全边距（米）
     enable_reverse: false        # 是否启用倒退检测
     reverse_fov_deg: 60.0        # 倒退时的视野角度（度）
 
-  # Guardrail 参数（自适应放松/收紧）
+  # Guardrail 参数（自适应放松）
   guardrail:
-    n_min: 10
-    n_max: 500
-    relax_step: 1.15
-    tighten_step: 0.9
+    n_min: 15                 # 最少点数要求
+    n_max: 500                # 最多点数限制
+    relax_step: 1.15          # 每次放松倍数
+    fov_max_deg: 180.0        # FOV 最大值（度）
+    r_max_max_m: 10.0         # R_max 最大值（米）
 
   # Always keep 参数（安全保留集）
   always_keep:

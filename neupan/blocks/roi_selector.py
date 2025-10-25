@@ -27,17 +27,18 @@ class ROIConfig:
 
     # Reachability Cone parameters (optimized for MPC prediction horizon)
     cone_fov_base_deg: float = 90.0          # Base field of view (degrees)
-    cone_r_max_m: float = 8.0                # Maximum reachable distance (meters)
+    cone_r_max_m: float = 10.0               # Maximum reachable distance (meters)
     cone_expansion_factor: float = 100.0     # FOV expansion factor for curved paths
     cone_safety_margin_m: float = 0.5        # Safety margin added to R_max (meters)
     cone_enable_reverse: bool = False        # Enable reverse cone for backward motion
     cone_reverse_fov_deg: float = 60.0       # FOV for reverse cone (degrees)
 
-    # Guardrail (adaptive relaxation/tightening)
+    # Guardrail (adaptive relaxation)
     guardrail_n_min: int = 30
     guardrail_n_max: int = 500
     guardrail_relax_step: float = 1.15
-    guardrail_tighten_step: float = 0.9
+    guardrail_fov_max_deg: float = 180.0      # Maximum FOV angle (degrees)
+    guardrail_r_max_max_m: float = 10.0       # Maximum reachable distance (meters)
 
     # Always keep (safety retention set)
     always_keep_near_radius_m: float = 1.5
@@ -48,12 +49,11 @@ class ROIConfig:
 class ROIInputs:
     """Inputs for ROI selection"""
     pts: np.ndarray  # (2, N) global coordinates
-    path_xy: Optional[np.ndarray] = None  # (2, T+1) reference path in global coords
-    heading_rad: Optional[float] = None  # robot heading for cone/wedge
-    v_robot: Optional[float] = None  # robot velocity (for cone radius and reverse detection)
-    c_best_hint: Optional[float] = None  # current best path length
+    path_xy: Optional[np.ndarray] = None  # (2, T+1) reference path for curvature
+    heading_rad: Optional[float] = None  # robot heading for cone axis
+    v_robot: Optional[float] = None  # robot velocity (for reverse detection)
     goal_xy: Optional[np.ndarray] = None  # (2, 1) goal position
-    robot_xy: Optional[np.ndarray] = None  # (2, 1) current robot position (for cone/always-keep)
+    robot_xy: Optional[np.ndarray] = None  # (2, 1) current robot position
 
 
 @dataclass
@@ -77,11 +77,22 @@ class ROISelector:
     Uses Reachability Cone strategy optimized for MPC prediction horizon with automatic
     parameter adaptation via guardrail mechanism.
     """
-    
-    def __init__(self, cfg: ROIConfig):
+
+    def __init__(self, cfg: ROIConfig, robot=None):
+        """
+        初始化 ROI Selector
+
+        Args:
+            cfg: ROI 配置对象
+            robot: 机器人对象（可选），用于动态计算 near_radius_m
+        """
         self.cfg = cfg
         self._relax_count = 0
         self._tighten_count = 0
+
+        # 动态计算 near_radius_m（基于机器人尺寸 + 1m 安全余量）
+        self._calculate_and_update_near_radius(robot)
+
         # Working copy of parameters (can be relaxed/tightened)
         self._work_cfg = {
             'cone_fov': cfg.cone_fov_base_deg,
@@ -90,18 +101,17 @@ class ROISelector:
     
     def select(self, pts: np.ndarray, path_xy: Optional[np.ndarray] = None,
                heading_rad: Optional[float] = None, v_robot: Optional[float] = None,
-               c_best_hint: Optional[float] = None, goal_xy: Optional[np.ndarray] = None,
+               goal_xy: Optional[np.ndarray] = None,
                robot_xy: Optional[np.ndarray] = None) -> ROIOutputs:
         """
-        Select ROI from obstacle points
+        Select ROI from obstacle points using reachability cone strategy
 
         Args:
             pts: (2, N) obstacle points in global coordinates
-            path_xy: (2, T+1) reference path in global coordinates
+            path_xy: (2, T+1) reference path for curvature calculation (optional)
             heading_rad: robot heading in radians
             v_robot: robot velocity (m/s)
-            c_best_hint: current best path length (m)
-            goal_xy: (2, 1) goal position in global coordinates
+            goal_xy: (2, 1) goal position in global coordinates (optional)
             robot_xy: (2, 1) current robot position in global coordinates
 
         Returns:
@@ -122,8 +132,7 @@ class ROISelector:
 
         n_in = pts.shape[1]
         inputs = ROIInputs(pts=pts, path_xy=path_xy, heading_rad=heading_rad,
-                          v_robot=v_robot, c_best_hint=c_best_hint, goal_xy=goal_xy,
-                          robot_xy=robot_xy)
+                          v_robot=v_robot, goal_xy=goal_xy, robot_xy=robot_xy)
 
         # Direct cone strategy (simplified - no strategy chain)
         if self._can_use_cone(inputs):
@@ -137,40 +146,48 @@ class ROISelector:
             pts_roi = pts[:, sel_idx]
             n_roi = pts_roi.shape[1]
 
-            # Apply guardrail
-            if n_roi < self.cfg.guardrail_n_min:
-                # Too few points, relax parameters and retry
+            # Apply guardrail: infinite adaptive relaxation until n_min is met or both FOV and R_max reach max
+            # Relaxation stops when:
+            # 1. n_roi >= n_min (sufficient points), OR
+            # 2. BOTH cone_fov >= fov_max AND cone_r_max >= r_max_max (reached maximum physical limits)
+
+            while n_roi < self.cfg.guardrail_n_min:
+                # Check if both FOV and R_max have reached their maximum values
+                fov_at_max = self._work_cfg['cone_fov'] >= self.cfg.guardrail_fov_max_deg
+                r_max_at_max = self._work_cfg['cone_r_max'] >= self.cfg.guardrail_r_max_max_m
+
+                if fov_at_max and r_max_at_max:
+                    # Both parameters at maximum, stop relaxation
+                    break
+
+                # Too few points and haven't reached both limits, relax parameters and retry
                 self._relax_parameters()
-                # Retry with relaxed parameters
                 mask = self._reachability_cone_mask(inputs)
                 mask = self._apply_always_keep(inputs, mask)
                 sel_idx = np.flatnonzero(mask)
                 pts_roi = pts[:, sel_idx]
                 n_roi = pts_roi.shape[1]
 
-                # If still too few after relaxation, fall back to returning all points
-                if n_roi < self.cfg.guardrail_n_min:
-                    # Use fallback logic below
-                    pass
-                else:
-                    # Relaxation succeeded, check if too many
-                    if n_roi > self.cfg.guardrail_n_max:
-                        m = int(self.cfg.guardrail_n_max)
-                        ds_local = np.linspace(0, n_roi - 1, m, dtype=int)
-                        sel_idx = sel_idx[ds_local]
-                        pts_roi = pts[:, sel_idx]
-                        n_roi = pts_roi.shape[1]
+            # Check if relaxation succeeded
+            if n_roi >= self.cfg.guardrail_n_min:
+                # Relaxation succeeded, check if too many points
+                if n_roi > self.cfg.guardrail_n_max:
+                    m = int(self.cfg.guardrail_n_max)
+                    ds_local = np.linspace(0, n_roi - 1, m, dtype=int)
+                    sel_idx = sel_idx[ds_local]
+                    pts_roi = pts[:, sel_idx]
+                    n_roi = pts_roi.shape[1]
 
-                    # Success after relaxation
-                    return ROIOutputs(
-                        pts=pts_roi,
-                        strategy='cone',
-                        n_in=n_in,
-                        n_roi=n_roi,
-                        relax_count=self._relax_count,
-                        tighten_count=self._tighten_count,
-                        indices=sel_idx,
-                    )
+                # Success after relaxation
+                return ROIOutputs(
+                    pts=pts_roi,
+                    strategy='cone',
+                    n_in=n_in,
+                    n_roi=n_roi,
+                    relax_count=self._relax_count,
+                    tighten_count=self._tighten_count,
+                    indices=sel_idx,
+                )
 
             elif n_roi > self.cfg.guardrail_n_max:
                 # Too many points, downsample deterministically
@@ -202,7 +219,22 @@ class ROISelector:
                     indices=sel_idx,
                 )
 
-        # Fallback: cone requirements not met, return all points (with downsampling if needed)
+        # Fallback: cone requirements not met, but both FOV and R_max are at maximum
+        # Return all points (with downsampling if needed)
+        # This is a safe fallback when physical limits are reached
+        if n_in == 0:
+            # No points at all - return empty
+            return ROIOutputs(
+                pts=pts,
+                strategy='none',
+                n_in=0,
+                n_roi=0,
+                relax_count=self._relax_count,
+                tighten_count=self._tighten_count,
+                indices=np.array([], dtype=int),
+            )
+
+        # Return all points with downsampling if necessary
         if n_in > self.cfg.guardrail_n_max:
             m = int(self.cfg.guardrail_n_max)
             sel_idx = np.linspace(0, n_in - 1, m, dtype=int)
@@ -223,6 +255,15 @@ class ROISelector:
             indices=sel_idx,
         )
     
+    def _calculate_and_update_near_radius(self, robot):
+        """动态计算 near_radius_m = sqrt(length² + width²) / 2 + 1.0"""
+        if robot is not None and hasattr(robot, 'length') and hasattr(robot, 'width'):
+            length = robot.length
+            width = robot.width
+            near_radius = np.sqrt(length**2 + width**2) / 2.0 + 1.0
+            self.cfg.always_keep_near_radius_m = near_radius
+            print(f"[ROI] near_radius_m = {near_radius:.2f}m (机器人 {length:.2f}m x {width:.2f}m)")
+
     def _can_use_cone(self, inputs: ROIInputs) -> bool:
         """Check if reachability cone strategy can be used
 
@@ -390,12 +431,6 @@ class ROISelector:
         self._work_cfg['cone_r_max'] *= self.cfg.guardrail_relax_step
         self._relax_count += 1
 
-    def _tighten_parameters(self):
-        """Tighten ROI parameters (currently unused, for future adaptive logic)"""
-        self._work_cfg['cone_fov'] *= self.cfg.guardrail_tighten_step
-        self._work_cfg['cone_r_max'] *= self.cfg.guardrail_tighten_step
-        self._tighten_count += 1
-    
     def _downsample_deterministic(self, pts: np.ndarray, m: int) -> np.ndarray:
         """
         Downsample points deterministically using uniform decimation

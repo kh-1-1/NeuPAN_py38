@@ -21,6 +21,7 @@ along with NeuPAN planner. If not, see <https://www.gnu.org/licenses/>.
 import yaml
 import torch
 import time
+from typing import Optional
 from neupan.robot import robot
 from neupan.blocks import InitialPath, PAN
 from neupan import configuration
@@ -44,7 +45,7 @@ class neupan(torch.nn.Module):
         adjust_kwargs: dict, the keyword arguments for the adjust class
         train_kwargs: dict, the keyword arguments for the train class
         time_print: bool, whether to print the forward time of the algorithm.
-        collision_threshold: float, the threshold for the collision detection. If collision, the algorithm will stop.
+
     """
 
     def __init__(
@@ -69,7 +70,6 @@ class neupan(torch.nn.Module):
 
         configuration.device = torch.device(device)
         configuration.time_print = kwargs.get("time_print", False)
-        self.collision_threshold = kwargs.get("collision_threshold", 0.1)
 
         # initialization
         self.cur_vel_array = np.zeros((2, self.T))
@@ -89,11 +89,14 @@ class neupan(torch.nn.Module):
         # Cache last scan-derived obstacle point velocities (auto-used when caller doesn't pass them)
         self._last_point_velocities = None
 
+        # IR-SIM environment reference for collision detection
+        self._env = None
+
         # ROI/Neural Focusing configuration
         roi_kwargs = kwargs.get("roi_kwargs", {})
         self.roi_enabled = bool(roi_kwargs.get("enabled", False))
         self.roi_selector = None
-        self._roi_state = {"last_c_best": None}
+        self._roi_state = {}
 
         if self.roi_enabled:
             # Build ROIConfig from roi_kwargs
@@ -101,7 +104,7 @@ class neupan(torch.nn.Module):
                 enabled=True,
                 strategy_order=roi_kwargs.get("strategy_order", ['cone']),
                 cone_fov_base_deg=roi_kwargs.get("cone", {}).get("fov_base_deg", 90.0),
-                cone_r_max_m=roi_kwargs.get("cone", {}).get("r_max_m", 8.0),
+                cone_r_max_m=roi_kwargs.get("cone", {}).get("r_max_m", 10.0),
                 cone_expansion_factor=roi_kwargs.get("cone", {}).get("expansion_factor", 100.0),
                 cone_safety_margin_m=roi_kwargs.get("cone", {}).get("safety_margin_m", 0.5),
                 cone_enable_reverse=roi_kwargs.get("cone", {}).get("enable_reverse", False),
@@ -109,11 +112,13 @@ class neupan(torch.nn.Module):
                 guardrail_n_min=roi_kwargs.get("guardrail", {}).get("n_min", 30),
                 guardrail_n_max=roi_kwargs.get("guardrail", {}).get("n_max", 500),
                 guardrail_relax_step=roi_kwargs.get("guardrail", {}).get("relax_step", 1.15),
-                guardrail_tighten_step=roi_kwargs.get("guardrail", {}).get("tighten_step", 0.9),
+                guardrail_fov_max_deg=roi_kwargs.get("guardrail", {}).get("fov_max_deg", 180.0),
+                guardrail_r_max_max_m=roi_kwargs.get("guardrail", {}).get("r_max_max_m", 10.0),
                 always_keep_near_radius_m=roi_kwargs.get("always_keep", {}).get("near_radius_m", 1.5),
                 always_keep_goal_radius_m=roi_kwargs.get("always_keep", {}).get("goal_radius_m", 1.5),
             )
-            self.roi_selector = ROISelector(roi_cfg)
+            # 传递机器人对象给 ROISelector，用于动态计算 near_radius
+            self.roi_selector = ROISelector(roi_cfg, robot=self.robot)
 
     @classmethod
     def init_from_yaml(cls, yaml_file, **kwargs):
@@ -161,6 +166,12 @@ class neupan(torch.nn.Module):
 
         assert state.shape[0] >= 3
 
+        # 优先级 1: IR-SIM 到达判断（优先级高）
+        if self._check_ir_sim_arrive():
+            self.info["arrive"] = True
+            return np.zeros((2, 1)), self.info
+
+        # 优先级 2: NeuPAN 自己的到达判断（优先级低）
         if self.ipath.check_arrive(state):
             self.info["arrive"] = True
             return np.zeros((2, 1)), self.info
@@ -235,26 +246,27 @@ class neupan(torch.nn.Module):
 
         return action, self.info
 
+    def set_env_reference(self, env):
+        """设置 IR-SIM 环境引用"""
+        self._env = env
+
+    def _check_ir_sim_arrive(self):
+        """检查 IR-SIM 是否判断到达（优先级高）"""
+        if self._env is None:
+            return False
+        try:
+            return self._env.done()
+        except Exception:
+            return False
+
     def check_stop(self):
-        return self.min_distance < self.collision_threshold
+        """检查是否需要停止规划（使用 IR-SIM 碰撞检测）"""
+        return self._env.done() if self._env else False
 
     def _apply_roi(self, points: np.ndarray, nom_input_np: list, state: np.ndarray) -> np.ndarray:
-        """
-        Apply ROI filtering to obstacle points
-
-        Args:
-            points: (2, N) obstacle points in global coordinates
-            nom_input_np: list of nominal inputs [nom_s, nom_u, ref_s, ref_us]
-            state: (3, 1) current robot state [x, y, theta]
-
-        Returns:
-            (2, N_roi) filtered obstacle points in global coordinates
-        """
-        # Select reference path (prioritize previous optimized trajectory)
+        """Apply ROI filtering to obstacle points"""
+        # Select reference path (use optimized trajectory only)
         path_xy = self._select_path(nom_input_np)
-
-        # Estimate c_best from path
-        c_best = self._estimate_cbest(path_xy)
 
         # Extract robot state
         robot_xy = state[:2, :]  # (2, 1) current position
@@ -268,8 +280,6 @@ class neupan(torch.nn.Module):
             path_xy=path_xy,
             heading_rad=heading_rad,
             v_robot=v_robot,
-            c_best_hint=c_best,
-            goal_xy=None,  # Could extract from ipath if needed
             robot_xy=robot_xy
         )
         try:
@@ -287,7 +297,6 @@ class neupan(torch.nn.Module):
         }
 
         # Update state for visualization
-        self._roi_state["last_c_best"] = c_best
         self._roi_state["path_xy"] = path_xy
         self._roi_state["robot_xy"] = state[:2, :].copy()
         self._roi_state["heading_rad"] = heading_rad
@@ -301,57 +310,13 @@ class neupan(torch.nn.Module):
 
         return roi_output.pts
 
-    def _select_path(self, nom_input_np: list) -> np.ndarray:
-        """
-        Select reference path for ROI
-
-        Priority:
-        1. Previous cycle optimized trajectory (if available)
-        2. Current cycle reference trajectory
-
-        Args:
-            nom_input_np: list of nominal inputs [nom_s, nom_u, ref_s, ref_us]
-
-        Returns:
-            (2, T+1) reference path in global coordinates
-        """
-        # Try previous optimized trajectory first
+    def _select_path(self, nom_input_np: list) -> Optional[np.ndarray]:
+        """选择 ROI 参考路径（仅使用优化轨迹）"""
         if "opt_state_list" in self.info and self.info["opt_state_list"]:
-            opt_states = self.info["opt_state_list"]
-            # Extract x, y from state list (each state is (3, 1))
-            path_xy = np.hstack([s[:2, :] for s in opt_states])  # (2, T+1)
-            return path_xy
+            return np.hstack([s[:2, :] for s in self.info["opt_state_list"]])
+        return None
 
-        # Fallback to current reference trajectory
-        ref_s = nom_input_np[2]  # (3, T+1)
-        path_xy = ref_s[:2, :]  # (2, T+1)
-        return path_xy
 
-    def _estimate_cbest(self, path_xy: np.ndarray) -> float:
-        """
-        Estimate c_best (current best path length) from reference path
-
-        Uses geometric arc length of the path with safety margin.
-
-        Args:
-            path_xy: (2, T+1) reference path in global coordinates
-
-        Returns:
-            c_best: estimated path length (meters)
-        """
-        if path_xy is None or path_xy.shape[1] < 2:
-            return None
-
-        # Compute arc length
-        diffs = np.diff(path_xy, axis=1)  # (2, T)
-        seg_lengths = np.linalg.norm(diffs, axis=0)  # (T,)
-        arc_length = np.sum(seg_lengths)
-
-        # Apply safety margin and lower bound
-        c_min = np.linalg.norm(path_xy[:, -1] - path_xy[:, 0])  # straight-line distance
-        c_best = max(arc_length, c_min * 1.001)  # ensure c_best > c_min
-
-        return float(c_best)
 
     def visualize_roi_region(self, env):
         """
@@ -367,10 +332,10 @@ class neupan(torch.nn.Module):
         if strategy == "none":
             return
 
-        # Draw filtered points (ROI output) in blue for comparison
+        # Draw filtered points (ROI output) in light blue (底层，不遮挡其他点)
         pts_roi = self._roi_state.get("pts_roi")
         if pts_roi is not None and pts_roi.shape[1] > 0:
-            env.draw_points(pts_roi, s=18, c="blue", alpha=0.6, refresh=True)
+            env.draw_points(pts_roi, s=12, c="lightblue", alpha=0.4, refresh=True)
 
         # Draw ROI region boundary based on strategy
         if strategy == "cone":
@@ -400,7 +365,7 @@ class neupan(torch.nn.Module):
 
         # Base parameters (for comparison)
         base_fov_deg = self.roi_selector.cfg.cone_fov_base_deg if self.roi_selector else 90.0
-        base_r_max = self.roi_selector.cfg.cone_r_max_m if self.roi_selector else 10.0
+        base_r_max = self.roi_selector.cfg.cone_r_max_m if self.roi_selector else 10.0  # 已更新为 10.0 米
 
         # Check if parameters were relaxed
         is_relaxed = (abs(fov_deg - base_fov_deg) > 1.0) or (abs(r_max - base_r_max) > 0.5)
@@ -693,9 +658,7 @@ class neupan(torch.nn.Module):
 
         self.pan.nrmp_layer.update_adjust_parameters_value(**kwargs)
 
-    @property
-    def min_distance(self):
-        return self.pan.min_distance
+
 
     @property
     def dune_points(self):
