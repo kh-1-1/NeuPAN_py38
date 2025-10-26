@@ -17,12 +17,12 @@ configurations:
     ckpt_diff: example/model/diff_robot_default/model_5000.pth #example/model/diff_CLARABEL_robot/model_5000.pth
     ckpt_acker: example/model/acker_CLARABEL_robot/model_5000.pth
   
-  flex_no_learned:
-    front_type: flex_pdhg
-    front_learned: false
-    roi_enabled: false
-    ckpt_diff: example/model/diff_flex_pdhg-nolearned_robot/model_best.pth
-    ckpt_acker: example/model/acker_flex_pdhg-nolearned_robot/model_best.pth
+  # flex_no_learned:
+  #  front_type: flex_pdhg
+    # front_learned: false
+   #  roi_enabled: false
+  #  ckpt_diff: example/model/diff_flex_pdhg-nolearned_robot/model_best.pth
+   # ckpt_acker: example/model/acker_flex_pdhg-nolearned_robot/model_best.pth
   
   flex_learned:
     front_type: flex_pdhg
