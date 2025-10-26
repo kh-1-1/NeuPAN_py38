@@ -34,7 +34,7 @@ pan:
 
   # Directional sampling configuration
   directional_sampling:
-    enabled: true  # Enable directional sampling
+    enabled: false  # Enable directional sampling
     key_directions:
       - center_index: 47    # -5 degree direction
         window_size: 2      # 2 points around center (indices 46, 47)
@@ -48,6 +48,6 @@ adjust:
   p_u: 1.0
   eta: 15.0
   d_max: 1.0
-  d_min: 0.1
-  bk: 1.0
+  d_min: 0.2
+  bk: 0.1
 

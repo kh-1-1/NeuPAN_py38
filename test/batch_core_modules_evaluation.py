@@ -56,10 +56,10 @@ DEFAULT_CKPT = {
 
 
 CONFIG_TO_FRONT = {
-    'baseline':        dict(front='obs_point', front_learned=False, roi=False),
-    'flex_no_learned': dict(front='flex_pdhg',  front_learned=False, roi=False),
-    'flex_learned':    dict(front='flex_pdhg',  front_learned=True,  roi=False),
-    'flex_roi':        dict(front='flex_pdhg',  front_learned=True,  roi=True),
+    'baseline':        dict(front='obs_point', front_learned=False, front_J=1, roi=False),
+    'flex_no_learned': dict(front='flex_pdhg',  front_learned=False, front_J=2, roi=False),
+    'flex_learned':    dict(front='flex_pdhg',  front_learned=True,  front_J=2, roi=False),
+    'flex_roi':        dict(front='flex_pdhg',  front_learned=True,  front_J=2, roi=True),
 }
 
 
@@ -153,7 +153,9 @@ def simulate_once(example: str,
                   quiet: bool,
                   results_dir: Optional[Path] = None,
                   run_idx: Optional[int] = None,
-                  save_last_frame: bool = True) -> RunMetrics:
+                  save_last_frame: bool = True,
+                  front_J: Optional[int] = None,
+                  use_virtual_points: Optional[bool] = None) -> RunMetrics:
 
     env_file = f"example/{example}/{kin}/env.yaml"
     planner_file = f"example/{example}/{kin}/planner.yaml"
@@ -163,12 +165,15 @@ def simulate_once(example: str,
 
     # Train/front params
     front_cfg = CONFIG_TO_FRONT[config_id]
+    # Use provided front_J if specified, otherwise use config default
+    front_J_value = front_J if front_J is not None else front_cfg.get('front_J', 2)
     train_kwargs = dict(
         projection='hard',        # keep DUNE hard projection
         monitor_dual_norm=True,
         direct_train=True,        # do not trigger training
         front=front_cfg['front'],
         front_learned=front_cfg['front_learned'],
+        front_J=front_J_value,  # number of PDHG unroll steps
     )
 
     # Read YAML config and only override checkpoint to preserve other pan parameters
@@ -185,12 +190,18 @@ def simulate_once(example: str,
     if front_cfg.get('roi', False):
         roi_kwargs = _build_roi_kwargs(roi_template)
 
-    planner = neupan.init_from_yaml(
-        planner_file,
+    # Build init_from_yaml kwargs
+    init_kwargs = dict(
         pan=pan_kwargs,
         train=train_kwargs,
         roi=roi_kwargs,
     )
+
+    # Add use_virtual_points if specified
+    if use_virtual_points is not None:
+        init_kwargs['use_virtual_points'] = use_virtual_points
+
+    planner = neupan.init_from_yaml(planner_file, **init_kwargs)
 
     # 设置 IR-SIM 环境引用，用于统一碰撞检测
     planner.set_env_reference(env)
@@ -198,7 +209,7 @@ def simulate_once(example: str,
     # Step loop with metrics
     stuck_threshold = 0.01
     stuck_count = 0
-    stuck_count_thresh = 5
+    stuck_count_thresh = 50
 
     step_times = []
     forward_times = []  # NEW: collect pure forward execution times
@@ -767,11 +778,22 @@ def main():
     parser.add_argument('--roi-template', dest='roi_template', type=str, default='test/configs/roi_config_template.yaml',
                         help='ROI config template path (used when ROI enabled)')
 
+    # Front-end parameters
+    parser.add_argument('--front-J', dest='front_J', type=int, default=None,
+                        help='Number of PDHG unroll steps (overrides config default). E.g., 1 or 2')
+
+    # Virtual points control
+    parser.add_argument('--use-virtual-points', dest='use_virtual_points', type=lambda x: x.lower() == 'true', default=None,
+                        help='Enable/disable virtual points generation (true/false, overrides config default)')
+
     args = parser.parse_args()
 
     # Build configuration map
+    use_virtual_points_cfg = None
     if args.config_file:
         file_cfg = _load_yaml(args.config_file)
+        # Read global use_virtual_points setting
+        use_virtual_points_cfg = file_cfg.get('use_virtual_points', None)
         if 'configurations' in file_cfg:
             cfg_map = file_cfg['configurations']
         else:
@@ -783,6 +805,7 @@ def main():
             'baseline': {
                 'front_type': 'obs_point',
                 'front_learned': False,
+                'front_J': 1,
                 'roi_enabled': False,
                 'ckpt_diff': DEFAULT_CKPT['baseline']['diff'],
                 'ckpt_acker': DEFAULT_CKPT['baseline']['acker'],
@@ -790,6 +813,7 @@ def main():
             'flex_no_learned': {
                 'front_type': 'flex_pdhg',
                 'front_learned': False,
+                'front_J': 2,
                 'roi_enabled': False,
                 'ckpt_diff': DEFAULT_CKPT['flex_no_learned']['diff'],
                 'ckpt_acker': DEFAULT_CKPT['flex_no_learned']['acker'],
@@ -797,6 +821,7 @@ def main():
             'flex_learned': {
                 'front_type': 'flex_pdhg',
                 'front_learned': True,
+                'front_J': 2,
                 'roi_enabled': False,
                 'ckpt_diff': DEFAULT_CKPT['flex_learned']['diff'],
                 'ckpt_acker': DEFAULT_CKPT['flex_learned']['acker'],
@@ -804,6 +829,7 @@ def main():
             'flex_roi': {
                 'front_type': 'flex_pdhg',
                 'front_learned': True,
+                'front_J': 2,
                 'roi_enabled': True,
                 'ckpt_diff': DEFAULT_CKPT['flex_roi']['diff'],
                 'ckpt_acker': DEFAULT_CKPT['flex_roi']['acker'],
@@ -846,6 +872,7 @@ def main():
                 cfg = cfg_map[cfg_id]
                 front_type = cfg.get('front_type', 'obs_point')
                 front_learned = bool(cfg.get('front_learned', False))
+                front_J_cfg = cfg.get('front_J', None)  # Read front_J from config
                 roi_enabled = bool(cfg.get('roi_enabled', False))
                 ckpt = cfg.get('ckpt_diff' if kin == 'diff' else 'ckpt_acker')
 
@@ -857,6 +884,10 @@ def main():
                 tmp_cfg_id = 'baseline' if front_type == 'obs_point' else ('flex_roi' if roi_enabled else ('flex_learned' if front_learned else 'flex_no_learned'))
 
                 runs: List[RunMetrics] = []
+                # Use command-line front_J if provided, otherwise use config value
+                front_J_to_use = args.front_J if args.front_J is not None else front_J_cfg
+                # Use command-line use_virtual_points if provided, otherwise use config value
+                use_virtual_points_to_use = args.use_virtual_points if args.use_virtual_points is not None else use_virtual_points_cfg
                 for i in range(args.runs):
                     if not args.quiet:
                         print(f"Run {i+1}/{args.runs} | {ex} | {kin} | {cfg_id}")
@@ -872,6 +903,8 @@ def main():
                         save_last_frame=bool(args.sr),
                         results_dir=(out_dir if args.sr else None),
                         run_idx=i+1,
+                        front_J=front_J_to_use,
+                        use_virtual_points=use_virtual_points_to_use,
                     )
                     runs.append(m)
 

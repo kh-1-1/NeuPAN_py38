@@ -5,6 +5,11 @@ no_display: true
 save_results: true
 quiet: false
 
+# 虚拟点控制参数
+# use_virtual_points: true   # 启用虚拟点 - 当激光雷达检测不到障碍物时，在10m处生成虚拟点
+# use_virtual_points: false  # 禁用虚拟点（默认）- 不生成虚拟点，只使用真实检测到的障碍物
+use_virtual_points: false
+
 # 测试场景	examples: corridor,pf_obs,non_obs,convex_obs,dyna_non_obs
 # 机器人	support: diff,acker
 
@@ -13,6 +18,7 @@ configurations:
   baseline:
     front_type: obs_point
     front_learned: false
+    front_J: 2
     roi_enabled: false
     ckpt_diff: example/model/diff_robot_default/model_5000.pth #example/model/diff_CLARABEL_robot/model_5000.pth
     ckpt_acker: example/model/acker_CLARABEL_robot/model_5000.pth
@@ -27,6 +33,7 @@ configurations:
   flex_learned:
     front_type: flex_pdhg
     front_learned: true
+    front_J: 2
     roi_enabled: false
     ckpt_diff: example/model/diff_flex_pdhg_robot/model_5000.pth
     ckpt_acker: example/model/acker_flex_pdhg_robot/model_5000.pth
@@ -34,6 +41,7 @@ configurations:
   flex_roi:
     front_type: flex_pdhg
     front_learned: true
+    front_J: 2
     roi_enabled: true
     roi_strategies: ['ellipse', 'tube', 'wedge']
     ckpt_diff: example/model/diff_flex_pdhg_robot/model_5000.pth

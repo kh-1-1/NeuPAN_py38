@@ -59,6 +59,7 @@ class neupan(torch.nn.Module):
         pan_kwargs: dict = None,
         adjust_kwargs: dict = None,
         train_kwargs: dict = None,
+        use_virtual_points: bool = False,
         **kwargs,
     ) -> None:
         super(neupan, self).__init__()
@@ -67,6 +68,7 @@ class neupan(torch.nn.Module):
         self.T = receding
         self.dt = step_time
         self.ref_speed = ref_speed
+        self.use_virtual_points = use_virtual_points  # Control virtual point generation
 
         configuration.device = torch.device(device)
         configuration.time_print = kwargs.get("time_print", False)
@@ -476,8 +478,8 @@ class neupan(torch.nn.Module):
                         v = np.asarray(scan["velocity"])  # expect shape (2, N)
                         if v.ndim == 2 and v.shape[1] == len(ranges):
                             velocity_points.append(v[:, i : i + 1])
-                # If scan_range is infinite (no obstacle), fill with virtual point at 10m
-                elif scan_range >= (scan["range_max"] - 0.02):
+                # If scan_range is infinite (no obstacle), fill with virtual point at 10m (if enabled)
+                elif scan_range >= (scan["range_max"] - 0.02) and self.use_virtual_points:
                     virtual_range = 10.0  # Virtual point at 10m
                     point = np.array(
                         [[virtual_range * cos(angle)], [virtual_range * sin(angle)]]
@@ -557,8 +559,8 @@ class neupan(torch.nn.Module):
                     )
                     point_cloud.append(point)
                     velocity_points.append(scan_velocity[:, i : i + 1])
-                # If scan_range is infinite (no obstacle), fill with virtual point at 10m
-                elif scan_range >= (scan["range_max"] - 0.02):
+                # If scan_range is infinite (no obstacle), fill with virtual point at 10m (if enabled)
+                elif scan_range >= (scan["range_max"] - 0.02) and self.use_virtual_points:
                     virtual_range = 10.0  # Virtual point at 10m
                     point = np.array(
                         [[virtual_range * cos(angle)], [virtual_range * sin(angle)]]
