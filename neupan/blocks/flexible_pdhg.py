@@ -37,12 +37,7 @@ class FlexiblePDHGFront(nn.Module):
         residual_scale: float = 0.5,
         tau: float = 0.5,
         sigma: float = 0.5,
-        use_precond: bool = False,
-        learnable_steps: bool = False,
-        tau_min: float = 0.05,
-        tau_max: float = 0.99,
-        sigma_min: float = 0.05,
-        sigma_max: float = 0.99,
+        # Preconditioning and adaptive/learnable step sizes are removed.
     ) -> None:
         super().__init__()
 
@@ -51,8 +46,7 @@ class FlexiblePDHGFront(nn.Module):
         self.se2_embed = bool(se2_embed)
         self.use_learned_prox = bool(use_learned_prox)
         self.residual_scale = float(residual_scale)
-        self.use_precond = bool(use_precond)
-        self.learnable_steps = bool(learnable_steps)
+        # No row preconditioning or adaptive step sizes in current design.
 
         # Register geometry as buffers to keep them on the right device and avoid grads
         base_G = G.detach().clone()
@@ -60,7 +54,7 @@ class FlexiblePDHGFront(nn.Module):
         self.register_buffer("G", base_G)
         self.register_buffer("h", base_h)
 
-        # Removed row preconditioning: operate directly on G/h
+        # Operate directly on fixed geometry G/h
 
         actual_in = 3 if self.se2_embed else input_dim
 

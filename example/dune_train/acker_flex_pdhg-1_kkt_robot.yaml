@@ -1,0 +1,47 @@
+robot:
+  kinematics: 'acker'
+  length: 4.6
+  width: 1.6
+  wheelbase: 3
+
+device: cuda
+
+# Start from the converged learned-prox checkpoint, then KKT fine-tune
+pan:
+  dune_checkpoint: example/dune_train/model/acker_flex_pdhg-1_robot/model_5000.pth
+  
+
+train:
+  # Use new FlexiblePDHG front-end; disable legacy PDHG
+  direct_train: true
+  model_name: acker_flex_pdhg-1_kkt_robot
+  front: flex_pdhg
+  front_J: 1              # per-step learned-prox + hard projection
+  front_hidden: 32
+  front_learned: true
+  front_tau: 0.5
+  front_sigma: 0.5
+  front_residual_scale: 0.5
+  # Removed: preconditioning/adaptive-steps options (now unused)
+  unroll_J: 0             # do not instantiate legacy PDHGUnroll in DUNE
+  projection: hard        # keep DUNE hard projection as idempotent fallback
+  se2_embed: false
+
+  # Regularizers (kept off for clean comparison)
+  use_lconstr: true
+  w_constr: 0.10
+  use_kkt: true
+  w_kkt: 1e-3
+  kkt_rho: 0.50
+
+  # Data/training schedule
+  data_size: 150000
+  data_range: [-25, -25, 25, 25]
+  batch_size: 256
+  epoch: 2500
+  valid_freq: 1
+  save_freq: 500
+  lr: 5e-5
+  lr_decay: 0.5
+  decay_freq: 300
+

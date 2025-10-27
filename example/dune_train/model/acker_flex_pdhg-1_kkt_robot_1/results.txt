@@ -1,0 +1,8 @@
+model_name: acker_flex_pdhg-1_kkt_robot_1 | data_size: 150000, data_range: [-25, -25, 25, 25], batch_size: 256, epoch: 2500, valid_freq: 1, save_freq: 500, lr: 5e-5, lr_decay: 0.5, decay_freq: 300, robot_G: tensor([[ 0.0000, -4.6000],
+        [ 1.6000, -0.0000],
+        [ 0.0000,  4.6000],
+        [-1.6000, -0.0000]], device='cuda:0'), robot_h: tensor([[3.6800],
+        [6.0800],
+        [3.6800],
+        [1.2800]], device='cuda:0')
+

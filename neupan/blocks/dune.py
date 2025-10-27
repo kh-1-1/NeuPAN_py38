@@ -70,14 +70,12 @@ class DUNE(torch.nn.Module):
             front_tau = float(train_kwargs.get('front_tau', 0.5))
             front_sigma = float(train_kwargs.get('front_sigma', 0.5))
             residual_scale = float(train_kwargs.get('front_residual_scale', 0.5))
-            front_precond = str(train_kwargs.get('front_precond', 'none')).lower()
-            use_precond = front_precond in ('row', 'rows', 'true', 'yes', '1')
-            learn_steps = bool(train_kwargs.get('front_learn_steps',
-                                                train_kwargs.get('front_learnable_steps', False)))
-            front_tau_min = float(train_kwargs.get('front_tau_min', 0.05))
-            front_tau_max = float(train_kwargs.get('front_tau_max', 0.99))
-            front_sigma_min = float(train_kwargs.get('front_sigma_min', 0.05))
-            front_sigma_max = float(train_kwargs.get('front_sigma_max', 0.99))
+            # Deprecated/removed options (no-op in current implementation):
+            # - front_precond / use_precond
+            # - front_learn_steps / front_learnable_steps
+            # - front_tau_min/max, front_sigma_min/max
+            # These were part of earlier prototypes (row preconditioning, per-step/learned steps).
+            # The current front keeps simple scalar steps (tau, sigma) and operates directly on G/h.
 
             self.model = to_device(FlexiblePDHGFront(
                 input_dim=2,
@@ -91,12 +89,6 @@ class DUNE(torch.nn.Module):
                 residual_scale=residual_scale,
                 tau=front_tau,
                 sigma=front_sigma,
-                use_precond=use_precond,
-                learnable_steps=learn_steps,
-                tau_min=front_tau_min,
-                tau_max=front_tau_max,
-                sigma_min=front_sigma_min,
-                sigma_max=front_sigma_max,
             ))
         else:
             # Default: ObsPointNet with optional SE(2) embedding

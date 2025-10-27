@@ -8,7 +8,7 @@ device: cuda
 
 # Start from the converged learned-prox checkpoint, then KKT fine-tune
 pan:
-  dune_checkpoint: example/dune_train/model/acker_flex_pdhg_robot/model_5000.pth
+  dune_checkpoint: example/dune_train/model/acker_flex_pdhg-1_robot/model_5000.pth
   
 
 train:
