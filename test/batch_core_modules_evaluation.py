@@ -809,15 +809,28 @@ def main():
 
     args = parser.parse_args()
 
-    # Build configuration map and read examples/kinematics from config file
+    # Build configuration map and read options from config file
     use_virtual_points_cfg = None
     examples_from_cfg = None
     kinematics_from_cfg = None
+    runs_from_cfg: Optional[int] = None
+    max_steps_from_cfg: Optional[int] = None
+    no_display_from_cfg: Optional[bool] = None
+    quiet_from_cfg: Optional[bool] = None
+    save_results_from_cfg: Optional[bool] = None
+    roi_template_from_cfg: Optional[str] = None
 
     if args.config_file:
         file_cfg = _load_yaml(args.config_file)
         # Read global use_virtual_points setting
         use_virtual_points_cfg = file_cfg.get('use_virtual_points', None)
+        # Behavior overrides from YAML (CLI still has the highest priority)
+        runs_from_cfg = file_cfg.get('runs', None)
+        max_steps_from_cfg = file_cfg.get('max_steps', None)
+        no_display_from_cfg = file_cfg.get('no_display', None)
+        quiet_from_cfg = file_cfg.get('quiet', None)
+        save_results_from_cfg = file_cfg.get('save_results', None)
+        roi_template_from_cfg = file_cfg.get('roi_template', None)
         # Read examples and kinematics from config file
         examples_from_cfg = file_cfg.get('examples', None)
         kinematics_from_cfg = file_cfg.get('kinematics', None)
@@ -863,6 +876,27 @@ def main():
                 'ckpt_acker': DEFAULT_CKPT['flex_roi']['acker'],
             },
         }
+
+    # Apply YAML-derived behavior if CLI left defaults
+    # Priority: command line > YAML > script defaults
+    if runs_from_cfg is not None and args.runs == 10:
+        try:
+            args.runs = int(runs_from_cfg)
+        except Exception:
+            pass
+    if max_steps_from_cfg is not None and args.max_steps == 800:
+        try:
+            args.max_steps = int(max_steps_from_cfg)
+        except Exception:
+            pass
+    if no_display_from_cfg is not None and args.no_display is False:
+        args.no_display = bool(no_display_from_cfg)
+    if quiet_from_cfg is not None and args.quiet is False:
+        args.quiet = bool(quiet_from_cfg)
+    if save_results_from_cfg is not None and args.sr is False:
+        args.sr = bool(save_results_from_cfg)
+    if roi_template_from_cfg and (not getattr(args, 'roi_template', None)):
+        args.roi_template = str(roi_template_from_cfg)
 
     # Determine which config IDs to run
     cfg_ids = [args.config] if not args.config_file else list(cfg_map.keys())
@@ -938,7 +972,7 @@ def main():
                         kin=kin,
                         config_id=tmp_cfg_id,
                         ckpt=ckpt,
-                        roi_template=args.roi_template if roi_enabled else None,
+                        roi_template=(args.roi_template if roi_enabled else None),
                         max_steps=args.max_steps,
                         no_display=args.no_display,
                         quiet=args.quiet,
