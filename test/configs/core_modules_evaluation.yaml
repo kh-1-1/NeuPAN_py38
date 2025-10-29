@@ -10,8 +10,12 @@ quiet: false
 # use_virtual_points: false  # 禁用虚拟点（默认）- 不生成虚拟点，只使用真实检测到的障碍物
 use_virtual_points: false
 
-# 测试场景	examples: non_obs,convex_obs,dyna_non_obs,dyna_obs
-# 机器人	support: diff,acker
+# 测试场景和运动学
+# 可选场景: corridor, convex_obs, non_obs, dyna_non_obs, dyna_obs, pf, pf_obs, reverse, polygon_robot
+# 或使用 'all' 自动发现所有可用场景
+examples: non_obs,convex_obs,dyna_non_obs,dyna_obs
+# 可选运动学: diff, acker
+kinematics: diff,acker
 
 # 测试配置
 configurations:
