@@ -160,7 +160,8 @@ def simulate_once(example: str,
     env_file = f"example/{example}/{kin}/env.yaml"
     planner_file = f"example/{example}/{kin}/planner.yaml"
 
-    # Enable frame saving when requested (similar to example/run_exp.py)
+    # Enable animation saving when requested (same as run_exp.py)
+    # Use full=False to keep consistent window size and avoid frame size mismatch
     env = irsim.make(env_file, save_ani=bool(save_last_frame), full=False, display=not no_display)
 
     # Train/front params
@@ -374,12 +375,27 @@ def simulate_once(example: str,
         ani_basename = f"{example}_{kin}_{config_id}{ani_suffix}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
         # Trigger animation export preserving the final frame (mimic run_exp behavior).
-        # Use ending_time=0 to close immediately after saving
+        # Use ending_time=3 to wait 3 seconds before closing
         try:
-            env.end(0, ani_name=ani_basename)
-        except Exception:
-            env.end(0)
-        else:
+            env.end(3, ani_name=ani_basename)
+        except ValueError as e:
+            # Handle frame size mismatch error
+            if "all input arrays must have the same shape" in str(e):
+                if not quiet:
+                    print(f"Warning: Animation frame size mismatch, skipping GIF save")
+                # Close without saving animation
+                try:
+                    import matplotlib.pyplot as plt
+                    plt.close('all')
+                except Exception:
+                    pass
+                # Set ani_basename to None to skip GIF processing
+                ani_basename = None
+            else:
+                raise
+
+        # Only process GIF if animation was successfully saved
+        if ani_basename is not None:
             generated_gif = Path('animation') / f"{ani_basename}.gif"
             if results_dir is not None:
                 frames_dir = Path(results_dir) / 'frames'
@@ -395,7 +411,7 @@ def simulate_once(example: str,
             else:
                 gif_target = generated_gif if generated_gif.exists() else None
     else:
-        env.end(0)
+        env.end(3)
 
     if gif_target is not None and frames_dir is not None:
         # Extract the final frame into a PNG snapshot when Pillow is available.
