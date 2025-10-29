@@ -374,8 +374,9 @@ def simulate_once(example: str,
         ani_basename = f"{example}_{kin}_{config_id}{ani_suffix}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
         # Trigger animation export preserving the final frame (mimic run_exp behavior).
+        # Use ending_time=0 to close immediately after saving
         try:
-            env.end(3, ani_name=ani_basename)
+            env.end(0, ani_name=ani_basename)
         except Exception:
             env.end(0)
         else:
@@ -520,20 +521,37 @@ def aggregate_runs(runs: List[RunMetrics]) -> Dict[str, Any]:
     def arr(fn):
         return np.array([fn(r) for r in runs], dtype=float)
 
+    # Separate successful and failed runs
+    successful_runs = [r for r in runs if r.arrive]
+
     agg: Dict[str, Any] = {
         'runs': len(runs),
         'steps_mean': float(arr(lambda r: r.steps).mean()),
         'path_length_mean': float(arr(lambda r: r.path_length).mean()),
         'min_distance_mean': float(arr(lambda r: r.min_distance).mean()),
-        'avg_step_time_ms_mean': float(arr(lambda r: r.avg_step_time_ms).mean()),
-        'avg_forward_time_ms_mean': float(arr(lambda r: r.avg_forward_time_ms).mean()),  # NEW
-        'total_time_ms_mean': float(arr(lambda r: r.total_time_ms).mean()),
-        'total_forward_time_ms_mean': float(arr(lambda r: r.total_forward_time_ms).mean()),  # NEW
-        'max_v_mean': float(arr(lambda r: r.max_v).mean()),
-        'avg_v_mean': float(arr(lambda r: r.avg_v).mean()),
         'success_rate': float(np.mean([1.0 if r.arrive else 0.0 for r in runs])),
         'stop_rate': float(np.mean([1.0 if r.stop else 0.0 for r in runs])),
     }
+
+    # Only compute timing metrics for successful runs
+    if successful_runs:
+        def arr_success(fn):
+            return np.array([fn(r) for r in successful_runs], dtype=float)
+
+        agg['avg_step_time_ms_mean'] = float(arr_success(lambda r: r.avg_step_time_ms).mean())
+        agg['avg_forward_time_ms_mean'] = float(arr_success(lambda r: r.avg_forward_time_ms).mean())
+        agg['total_time_ms_mean'] = float(arr_success(lambda r: r.total_time_ms).mean())
+        agg['total_forward_time_ms_mean'] = float(arr_success(lambda r: r.total_forward_time_ms).mean())
+        agg['max_v_mean'] = float(arr_success(lambda r: r.max_v).mean())
+        agg['avg_v_mean'] = float(arr_success(lambda r: r.avg_v).mean())
+    else:
+        # No successful runs, set timing metrics to 0 or None
+        agg['avg_step_time_ms_mean'] = 0.0
+        agg['avg_forward_time_ms_mean'] = 0.0
+        agg['total_time_ms_mean'] = 0.0
+        agg['total_forward_time_ms_mean'] = 0.0
+        agg['max_v_mean'] = 0.0
+        agg['avg_v_mean'] = 0.0
 
     # ROI aggregation
     roi_in = [r.roi_avg_n_in for r in runs if r.roi_avg_n_in is not None]
@@ -693,27 +711,28 @@ def save_summary(batch: Dict[str, Any], out_dir: Path) -> Path:
     lines = [
         '# Core Modules Evaluation Summary',
         '',
-        '| Example | Kin | Config | Runs | Success | Stop | Steps | PathLen | MinDist | AvgStep(ms) | AvgFwd(ms) | TotalTime(s) | MaxV | AvgV | ROI n_in | ROI n_roi | ROI ratio |',
-        '|---------|-----|--------|------|---------|------|-------|---------|---------|-------------|------------|--------------|------|------|---------|-----------|-----------|',
+        '| Example | Kin | Config | Runs | Success | Stop | Steps | PathLen | MinDist | AvgStep(ms) | AvgFwd(ms) | TotalTime(ms) | MaxV | AvgV | DualViolRate | DualP95Norm | ROI n_in | ROI n_roi | ROI ratio |',
+        '|---------|-----|--------|------|---------|------|-------|---------|---------|-------------|------------|---------------|------|------|--------------|-------------|---------|-----------|-----------|',
     ]
     csv_lines = [
-        'example,kin,config,runs,success,stop,steps,path_length,min_distance,avg_step_ms,avg_forward_ms,total_time_s,max_v,avg_v,roi_n_in,roi_n_roi,roi_ratio'
+        'example,kin,config,runs,success,stop,steps,path_length,min_distance,avg_step_ms,avg_forward_ms,total_time_ms,max_v,avg_v,dual_violation_rate_mean,dual_p95_norm_mean,roi_n_in,roi_n_roi,roi_ratio'
     ]
 
     for ex, mp in batch.items():
         for kin, kp in mp.items():
             for cfg, aggr in kp.items():
                 _tt_ms = aggr.get('total_time_ms_mean', 0.0)
-                _tt_s = (_tt_ms / 1000.0) if isinstance(_tt_ms, (int, float)) else 0.0
                 _avg_fwd_ms = aggr.get('avg_forward_time_ms_mean', 0.0)
                 lines.append(
                     f"| {ex} | {kin} | {cfg} | {aggr.get('runs','')} | "
                     f"{aggr.get('success_rate',''):.2f} | {aggr.get('stop_rate',''):.2f} | "
                     f"{aggr.get('steps_mean',''):.1f} | {aggr.get('path_length_mean',''):.2f} | "
                     f"{aggr.get('min_distance_mean',''):.2f} | {aggr.get('avg_step_time_ms_mean',''):.2f} | "
-                    f"{_avg_fwd_ms:.2f} | "  # NEW: avg forward time
-                    f"{_tt_s:.2f} | "
+                    f"{_avg_fwd_ms:.2f} | "
+                    f"{_tt_ms:.2f} | "
                     f"{aggr.get('max_v_mean',''):.2f} | {aggr.get('avg_v_mean',''):.2f} | "
+                    f"{aggr.get('dual_violation_rate_mean','') if 'dual_violation_rate_mean' in aggr else 'NA'} | "
+                    f"{aggr.get('dual_p95_norm_mean','') if 'dual_p95_norm_mean' in aggr else 'NA'} | "
                     f"{aggr.get('roi_avg_n_in_mean','') if 'roi_avg_n_in_mean' in aggr else 'NA'} | "
                     f"{aggr.get('roi_avg_n_roi_mean','') if 'roi_avg_n_roi_mean' in aggr else 'NA'} | "
                     f"{aggr.get('roi_reduction_ratio_mean','') if 'roi_reduction_ratio_mean' in aggr else 'NA'} |"
@@ -721,7 +740,9 @@ def save_summary(batch: Dict[str, Any], out_dir: Path) -> Path:
                 csv_lines.append(
                     f"{ex},{kin},{cfg},{aggr.get('runs','')},{aggr.get('success_rate','')},{aggr.get('stop_rate','')},"
                     f"{aggr.get('steps_mean','')},{aggr.get('path_length_mean','')},{aggr.get('min_distance_mean','')},"
-                    f"{aggr.get('avg_step_time_ms_mean','')},{_avg_fwd_ms:.2f},{_tt_s:.2f},{aggr.get('max_v_mean','')},{aggr.get('avg_v_mean','')},"  # NEW: added avg_forward_ms
+                    f"{aggr.get('avg_step_time_ms_mean','')},{_avg_fwd_ms:.2f},{_tt_ms:.2f},{aggr.get('max_v_mean','')},{aggr.get('avg_v_mean','')},"
+                    f"{aggr.get('dual_violation_rate_mean','') if 'dual_violation_rate_mean' in aggr else ''},"
+                    f"{aggr.get('dual_p95_norm_mean','') if 'dual_p95_norm_mean' in aggr else ''},"
                     f"{aggr.get('roi_avg_n_in_mean','') if 'roi_avg_n_in_mean' in aggr else ''},"
                     f"{aggr.get('roi_avg_n_roi_mean','') if 'roi_avg_n_roi_mean' in aggr else ''},"
                     f"{aggr.get('roi_reduction_ratio_mean','') if 'roi_reduction_ratio_mean' in aggr else ''}"
@@ -762,7 +783,7 @@ def main():
     # Matrix selection
     parser.add_argument('-e', '--examples', dest='examples', type=str, default='corridor,pf_obs,non_obs,convex_obs,dyna_non_obs',
                         help="comma-separated example names or 'all'")
-    parser.add_argument('-k', '--kinematics', dest='kinematics', type=str, default='diff,acker',
+    parser.add_argument('-d', '--kinematics', dest='kinematics', type=str, default='diff,acker',
                         help='comma-separated robot types')
     parser.add_argument('-r', '--runs', dest='runs', type=int, default=10, help='runs per combo')
     parser.add_argument('-ms', '--max-steps', dest='max_steps', type=int, default=800, help='max steps per run')
@@ -788,12 +809,19 @@ def main():
 
     args = parser.parse_args()
 
-    # Build configuration map
+    # Build configuration map and read examples/kinematics from config file
     use_virtual_points_cfg = None
+    examples_from_cfg = None
+    kinematics_from_cfg = None
+
     if args.config_file:
         file_cfg = _load_yaml(args.config_file)
         # Read global use_virtual_points setting
         use_virtual_points_cfg = file_cfg.get('use_virtual_points', None)
+        # Read examples and kinematics from config file
+        examples_from_cfg = file_cfg.get('examples', None)
+        kinematics_from_cfg = file_cfg.get('kinematics', None)
+
         if 'configurations' in file_cfg:
             cfg_map = file_cfg['configurations']
         else:
@@ -839,15 +867,29 @@ def main():
     # Determine which config IDs to run
     cfg_ids = [args.config] if not args.config_file else list(cfg_map.keys())
 
-    # Examples and kinematics
+    # Examples and kinematics - priority: command line > config file > default
     all_examples = discover_examples('example', ('diff', 'acker'))
-    req_examples = [s.strip() for s in args.examples.split(',') if s.strip()]
-    examples = all_examples if args.examples == 'all' else [e for e in all_examples if e in set(req_examples)]
+
+    # Determine examples source (command line has priority)
+    # Check if command line examples is different from default
+    examples_str = args.examples
+    if examples_from_cfg and args.examples == 'corridor,pf_obs,non_obs,convex_obs,dyna_non_obs':
+        # Command line is using default, use config file value
+        examples_str = examples_from_cfg
+
+    req_examples = [s.strip() for s in examples_str.split(',') if s.strip()]
+    examples = all_examples if examples_str == 'all' else [e for e in all_examples if e in set(req_examples)]
     if not examples:
         print('No valid examples found.')
         return
 
-    kins = [s.strip() for s in args.kinematics.split(',') if s.strip()]
+    # Determine kinematics source (command line has priority)
+    kinematics_str = args.kinematics
+    if kinematics_from_cfg and args.kinematics == 'diff,acker':
+        # Command line is using default, use config file value
+        kinematics_str = kinematics_from_cfg
+
+    kins = [s.strip() for s in kinematics_str.split(',') if s.strip()]
     kins = [k for k in kins if k in ('diff', 'acker')]
     if not kins:
         kins = ['diff', 'acker']
