@@ -1,0 +1,39 @@
+{
+  "config": {
+    "example": "dyna_non_obs",
+    "kinematics": "acker",
+    "config_id": "baseline",
+    "env_file": "example/dyna_non_obs/acker/env.yaml",
+    "planner_file": "example/dyna_non_obs/acker/planner.yaml",
+    "checkpoint": "example/model/acker_CLARABEL_robot/model_5000.pth",
+    "front_type": "obs_point",
+    "front_learned": false,
+    "roi_enabled": false,
+    "roi_template": null,
+    "receding": 10,
+    "step_time": 0.1,
+    "robot": "acker_robot_default",
+    "max_steps": 800
+  },
+  "metrics": {
+    "steps": 168,
+    "arrive": true,
+    "stop": false,
+    "min_distance": Infinity,
+    "path_length": 62.34728260040278,
+    "avg_step_time_ms": 51.58147976631188,
+    "avg_forward_time_ms": 51.15681460925511,
+    "max_velocity": 5.396767616271973,
+    "avg_velocity": 3.7348274233795347,
+    "roi_strategy_counts": {},
+    "roi_avg_n_in": null,
+    "roi_avg_n_roi": null,
+    "roi_reduction_ratio": null,
+    "avg_min_distance": 0.0,
+    "roi_total_time_ms": null,
+    "dual_violation_rate": 0.4905484527349472,
+    "dual_p95_norm": 1.008054992556572,
+    "total_compute_time_ms": 8665.688600740395,
+    "total_forward_time_ms": 8594.344854354858
+  }
+}

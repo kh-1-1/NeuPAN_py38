@@ -1,0 +1,41 @@
+{
+  "config": {
+    "example": "dyna_obs",
+    "kinematics": "diff",
+    "config_id": "flex_roi",
+    "env_file": "example/dyna_obs/diff/env.yaml",
+    "planner_file": "example/dyna_obs/diff/planner.yaml",
+    "checkpoint": "example/model/diff_flex_pdhg_robot/model_5000.pth",
+    "front_type": "flex_pdhg",
+    "front_learned": true,
+    "roi_enabled": true,
+    "roi_template": "test/configs/roi_config_template.yaml",
+    "receding": 10,
+    "step_time": 0.1,
+    "robot": "diff_robot_default",
+    "max_steps": 800
+  },
+  "metrics": {
+    "steps": 674,
+    "arrive": true,
+    "stop": false,
+    "min_distance": Infinity,
+    "path_length": 136.60356499243068,
+    "avg_step_time_ms": 36.979660977165906,
+    "avg_forward_time_ms": 36.668043079914696,
+    "max_velocity": 6.3137383460998535,
+    "avg_velocity": 1.8390729423983365,
+    "roi_strategy_counts": {
+      "cone": 672
+    },
+    "roi_avg_n_in": 23.836309523809526,
+    "roi_avg_n_roi": 17.796130952380953,
+    "roi_reduction_ratio": 1.3452669271909852,
+    "avg_min_distance": 0.0,
+    "roi_total_time_ms": 407.4990010121837,
+    "dual_violation_rate": 0.0,
+    "dual_p95_norm": 0.9791666666666666,
+    "total_compute_time_ms": 24924.29149860982,
+    "total_forward_time_ms": 24677.592992782593
+  }
+}

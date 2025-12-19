@@ -1,0 +1,41 @@
+{
+  "config": {
+    "example": "dyna_obs",
+    "kinematics": "acker",
+    "config_id": "flex_roi",
+    "env_file": "example/dyna_obs/acker/env.yaml",
+    "planner_file": "example/dyna_obs/acker/planner.yaml",
+    "checkpoint": "example/model/acker_flex_pdhg_robot/model_5000.pth",
+    "front_type": "flex_pdhg",
+    "front_learned": true,
+    "roi_enabled": true,
+    "roi_template": "test/configs/roi_config_template.yaml",
+    "receding": 10,
+    "step_time": 0.2,
+    "robot": "acker_robot_default",
+    "max_steps": 800
+  },
+  "metrics": {
+    "steps": 89,
+    "arrive": true,
+    "stop": false,
+    "min_distance": Infinity,
+    "path_length": 32.394101357460016,
+    "avg_step_time_ms": 57.425669658657036,
+    "avg_forward_time_ms": 57.03334058268686,
+    "max_velocity": 8.000043869018555,
+    "avg_velocity": 3.703434834319554,
+    "roi_strategy_counts": {
+      "cone": 72
+    },
+    "roi_avg_n_in": 16.98611111111111,
+    "roi_avg_n_roi": 14.347222222222221,
+    "roi_reduction_ratio": 1.1369714240923376,
+    "avg_min_distance": 0.0,
+    "roi_total_time_ms": 56.94830045104027,
+    "dual_violation_rate": 0.0,
+    "dual_p95_norm": 1.0,
+    "total_compute_time_ms": 5110.884599620476,
+    "total_forward_time_ms": 5075.967311859131
+  }
+}

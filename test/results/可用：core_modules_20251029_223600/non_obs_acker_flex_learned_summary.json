@@ -1,0 +1,17 @@
+{
+  "runs": 50,
+  "steps_mean": 145.9,
+  "path_length_mean": 44.761041279623335,
+  "min_distance_mean": Infinity,
+  "success_rate": 0.6,
+  "stop_rate": 0.0,
+  "avg_step_time_ms_mean": 34.24791693525062,
+  "avg_forward_time_ms_mean": 34.10659333004898,
+  "total_time_ms_mean": 4669.597496585145,
+  "total_forward_time_ms_mean": 4622.373247146606,
+  "max_v_mean": 5.03999220530192,
+  "avg_v_mean": 3.6518531294037246,
+  "avg_min_distance_mean": 0.0,
+  "dual_violation_rate_mean": 5.157962639598137e-07,
+  "dual_p95_norm_mean": 1.0
+}

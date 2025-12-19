@@ -1,0 +1,39 @@
+{
+  "config": {
+    "example": "dyna_non_obs",
+    "kinematics": "diff",
+    "config_id": "baseline",
+    "env_file": "example/dyna_non_obs/diff/env.yaml",
+    "planner_file": "example/dyna_non_obs/diff/planner.yaml",
+    "checkpoint": "example/model/diff_robot_default/model_5000.pth",
+    "front_type": "obs_point",
+    "front_learned": false,
+    "roi_enabled": false,
+    "roi_template": null,
+    "receding": 10,
+    "step_time": 0.1,
+    "robot": "diff_robot_default",
+    "max_steps": 800
+  },
+  "metrics": {
+    "steps": 158,
+    "arrive": true,
+    "stop": false,
+    "min_distance": Infinity,
+    "path_length": 61.73607256412506,
+    "avg_step_time_ms": 31.275263290463275,
+    "avg_forward_time_ms": 30.71159350721142,
+    "max_velocity": 4.848324775695801,
+    "avg_velocity": 3.927424267877506,
+    "roi_strategy_counts": {},
+    "roi_avg_n_in": null,
+    "roi_avg_n_roi": null,
+    "roi_reduction_ratio": null,
+    "avg_min_distance": 0.0,
+    "roi_total_time_ms": null,
+    "dual_violation_rate": 0.5072090365704457,
+    "dual_p95_norm": 1.007873984658794,
+    "total_compute_time_ms": 4941.491599893197,
+    "total_forward_time_ms": 4852.431774139404
+  }
+}

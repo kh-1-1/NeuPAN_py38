@@ -1,0 +1,24 @@
+{
+  "runs": 50,
+  "steps_mean": 107.66,
+  "path_length_mean": 38.071363455137174,
+  "min_distance_mean": Infinity,
+  "success_rate": 1.0,
+  "stop_rate": 0.0,
+  "avg_step_time_ms_mean": 39.942975004608705,
+  "avg_forward_time_ms_mean": 39.53227361138009,
+  "total_time_ms_mean": 4219.972593977582,
+  "total_forward_time_ms_mean": 4175.520224571228,
+  "max_v_mean": 4.6096575069427494,
+  "avg_v_mean": 3.5072683732071783,
+  "roi_avg_n_in_mean": 27.906139244010745,
+  "roi_avg_n_roi_mean": 20.590575696584406,
+  "roi_reduction_ratio_mean": 1.3744686551249794,
+  "roi_strategy_counts": {
+    "cone": 5095
+  },
+  "avg_min_distance_mean": 0.0,
+  "roi_total_time_ms_mean": 57.04023587051779,
+  "dual_violation_rate_mean": 2.6245922898718935e-06,
+  "dual_p95_norm_mean": 0.9910395465983881
+}
