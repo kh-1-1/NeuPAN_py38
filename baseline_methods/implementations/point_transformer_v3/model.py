@@ -19,12 +19,13 @@ import torch.nn as nn
 from typing import Tuple
 
 # Add Point Transformer V3 path
-ptv3_path = os.path.join(os.path.dirname(__file__), '../../PointTransformerV3')
-if ptv3_path not in sys.path:
-    sys.path.insert(0, ptv3_path)
+ptv3_root = os.path.join(os.path.dirname(__file__), "../../")
+ptv3_path = os.path.join(ptv3_root, "PointTransformerV3")
+if ptv3_root not in sys.path:
+    sys.path.insert(0, ptv3_root)
 
 try:
-    from model import PointTransformerV3 as PTv3_Model, Point
+    from PointTransformerV3.model import PointTransformerV3 as PTv3_Model, Point
     PTV3_AVAILABLE = True
 except ImportError:
     PTV3_AVAILABLE = False
@@ -47,56 +48,50 @@ class PointTransformerV3(nn.Module):
         self.edge_dim = edge_dim
         self.state_dim = state_dim
 
-        if PTV3_AVAILABLE:
-            # Use original Point Transformer V3 backbone
-            # Configuration for classification mode (we'll use encoder only)
-            self.backbone = PTv3_Model(
-                in_channels=3,  # xyz coordinates (we'll pad z=0)
-                order=("z", "z-trans"),  # Simplified order
-                stride=(2, 2, 2, 2),
-                enc_depths=(2, 2, 2, 6, 2),
-                enc_channels=(32, 64, 128, 256, 512),
-                enc_num_head=(2, 4, 8, 16, 32),
-                enc_patch_size=(48, 48, 48, 48, 48),
-                dec_depths=(2, 2, 2, 2),
-                dec_channels=(64, 64, 128, 256),
-                dec_num_head=(4, 4, 8, 16),
-                dec_patch_size=(48, 48, 48, 48),
-                mlp_ratio=4,
-                qkv_bias=True,
-                qk_scale=None,
-                attn_drop=0.0,
-                proj_drop=0.0,
-                drop_path=0.3,
-                pre_norm=True,
-                shuffle_orders=True,
-                enable_rpe=False,
-                enable_flash=False,  # Disable flash attention for compatibility
-                upcast_attention=False,
-                upcast_softmax=False,
-                cls_mode=True,  # Use classification mode (encoder only)
-            )
+        if not PTV3_AVAILABLE:
+            raise ImportError("Point Transformer V3 not available.")
+        if not torch.cuda.is_available():
+            raise RuntimeError("Point Transformer V3 requires CUDA.")
 
-            # Output head (replace classification head)
-            # PTv3 encoder outputs 512-dim features
-            self.output_head = nn.Sequential(
-                nn.Linear(512, 256),
-                nn.ReLU(),
-                nn.Dropout(0.3),
-                nn.Linear(256, edge_dim + state_dim),
-            )
+        # Use original Point Transformer V3 backbone
+        # Configuration for classification mode (we'll use encoder only)
+        self.backbone = PTv3_Model(
+            in_channels=3,  # xyz coordinates (we'll pad z=0)
+            order=("z", "z-trans"),  # Simplified order
+            stride=(2, 2, 2, 2),
+            enc_depths=(2, 2, 2, 6, 2),
+            enc_channels=(32, 64, 128, 256, 512),
+            enc_num_head=(2, 4, 8, 16, 32),
+            enc_patch_size=(48, 48, 48, 48, 48),
+            dec_depths=(2, 2, 2, 2),
+            dec_channels=(64, 64, 128, 256),
+            dec_num_head=(4, 4, 8, 16),
+            dec_patch_size=(48, 48, 48, 48),
+            mlp_ratio=4,
+            qkv_bias=True,
+            qk_scale=None,
+            attn_drop=0.0,
+            proj_drop=0.0,
+            drop_path=0.3,
+            pre_norm=True,
+            shuffle_orders=True,
+            enable_rpe=False,
+            enable_flash=False,  # Disable flash attention for compatibility
+            upcast_attention=False,
+            upcast_softmax=False,
+            cls_mode=True,  # Use classification mode (encoder only)
+        )
 
-            self.use_ptv3 = True
-        else:
-            # Fallback: simple MLP
-            self.encoder = nn.Sequential(
-                nn.Linear(2, 128),
-                nn.ReLU(),
-                nn.Linear(128, 256),
-                nn.ReLU(),
-            )
-            self.output_head = nn.Linear(256, edge_dim + state_dim)
-            self.use_ptv3 = False
+        # Output head (replace classification head)
+        # PTv3 encoder outputs 512-dim features
+        self.ptv3_head = nn.Sequential(
+            nn.Linear(512, 256),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(256, edge_dim + state_dim),
+        )
+
+        self.use_ptv3 = True
 
     def forward(self, point_cloud: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """
@@ -112,6 +107,11 @@ class PointTransformerV3(nn.Module):
         N = point_cloud.shape[0]
 
         if self.use_ptv3:
+            if point_cloud.device.type != "cuda":
+                raise RuntimeError("Point Transformer V3 requires CUDA tensors.")
+            if not next(self.parameters()).is_cuda:
+                raise RuntimeError("Point Transformer V3 model must be on CUDA.")
+
             # Prepare data for Point Transformer V3
             # PTv3 expects a Point dictionary with specific format
 
@@ -140,14 +140,10 @@ class PointTransformerV3(nn.Module):
             features = features.mean(dim=0, keepdim=True)  # (1, 512)
 
             # Output head
-            output = self.output_head(features)  # (1, E+3)
+            output = self.ptv3_head(features)  # (1, E+3)
 
             # Expand to all points
             output = output.expand(N, -1)  # (N, E+3)
-        else:
-            # Fallback MLP
-            features = self.encoder(point_cloud)  # (N, 256)
-            output = self.output_head(features)  # (N, E+3)
 
         # Split into mu and lam
         mu = output[:, :self.edge_dim].T  # (E, N)

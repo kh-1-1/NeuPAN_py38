@@ -18,8 +18,9 @@ Key principles:
 - Only adapt input/output interface for our problem
 - NO modifications to the core algorithm
 """
-import sys
+import importlib.util
 import os
+import sys
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -27,15 +28,24 @@ from typing import Tuple, Optional
 import numpy as np
 
 # Add kkthpinn path
-kkthpinn_path = os.path.join(os.path.dirname(__file__), '../../kkthpinn')
+kkthpinn_path = os.path.join(os.path.dirname(__file__), "../../kkthpinn")
 if kkthpinn_path not in sys.path:
     sys.path.insert(0, kkthpinn_path)
 
-try:
-    from models import NNOPT
-    KKTHPINN_AVAILABLE = True
-except ImportError:
-    KKTHPINN_AVAILABLE = False
+KKTHPINN_AVAILABLE = False
+NNOPT = None
+models_path = os.path.join(kkthpinn_path, "models.py")
+if os.path.isfile(models_path):
+    try:
+        spec = importlib.util.spec_from_file_location("kkthpinn_models", models_path)
+        kkthpinn_models = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(kkthpinn_models)
+        NNOPT = kkthpinn_models.NNOPT
+        KKTHPINN_AVAILABLE = True
+    except Exception:
+        KKTHPINN_AVAILABLE = False
+
+if not KKTHPINN_AVAILABLE:
     print("Warning: KKThPINN not available")
 
 
@@ -52,7 +62,10 @@ class PhysicsInformedHardProj(nn.Module):
                  state_dim: int = 3,
                  hidden_dim: int = 128,
                  hidden_num: int = 3,
-                 G: Optional[np.ndarray] = None):
+                 G: Optional[np.ndarray] = None,
+                 A: Optional[np.ndarray] = None,
+                 B: Optional[np.ndarray] = None,
+                 b: Optional[np.ndarray] = None):
         """
         Initialize Physics-Informed model using KKThPINN.
 
@@ -62,11 +75,16 @@ class PhysicsInformedHardProj(nn.Module):
             hidden_dim (int): Hidden layer dimension
             hidden_num (int): Number of hidden layers
             G (np.ndarray): Edge constraint matrix (E x 3)
+            A (np.ndarray): Constraint matrix for input (m x 2)
+            B (np.ndarray): Constraint matrix for output (m x (E+3))
+            b (np.ndarray): Constraint vector (m x 1 or m,)
         """
         super().__init__()
 
         self.edge_dim = edge_dim
         self.state_dim = state_dim
+        if not KKTHPINN_AVAILABLE:
+            raise ImportError("KKThPINN not available.")
 
         # Default G matrix (square robot)
         if G is None:
@@ -79,42 +97,25 @@ class PhysicsInformedHardProj(nn.Module):
 
         self.G = torch.from_numpy(G).float()  # (E, 3)
 
-        if KKTHPINN_AVAILABLE:
-            # Use original KKThPINN NNOPT
-            # We need to define constraint matrices A, B, b
-            # For our problem: we don't have explicit equality constraints
-            # So we use a simple identity constraint: B @ z = 0
+        if A is None or B is None or b is None:
+            raise ValueError("KKThPINN requires constraint matrices A, B, b.")
 
-            input_dim = 2  # point cloud (x, y)
-            z0_dim = edge_dim + state_dim  # output dimension
+        input_dim = 2  # point cloud (x, y)
+        z0_dim = edge_dim + state_dim  # output dimension
 
-            # Dummy constraint matrices (no actual constraints)
-            # A @ input + B @ z = b
-            device = "cuda" if torch.cuda.is_available() else "cpu"
-            A = torch.zeros(1, input_dim, device=device)
-            B = torch.zeros(1, z0_dim, device=device)
-            b = torch.zeros(1, 1, device=device)
+        A_t = torch.as_tensor(A, dtype=torch.float32)
+        B_t = torch.as_tensor(B, dtype=torch.float32)
+        b_t = torch.as_tensor(b, dtype=torch.float32)
 
-            self.kkthpinn_model = NNOPT(
-                input_dim=input_dim,
-                hidden_dim=hidden_dim,
-                hidden_num=hidden_num,
-                z0_dim=z0_dim,
-                A=A,
-                B=B,
-                b=b
-            )
-            self.use_kkthpinn = True
-        else:
-            # Fallback: simple MLP
-            self.encoder = nn.Sequential(
-                nn.Linear(2, hidden_dim),
-                nn.ReLU(),
-                nn.Linear(hidden_dim, hidden_dim),
-                nn.ReLU(),
-                nn.Linear(hidden_dim, edge_dim + state_dim),
-            )
-            self.use_kkthpinn = False
+        self.kkthpinn_model = NNOPT(
+            input_dim=input_dim,
+            hidden_dim=hidden_dim,
+            hidden_num=hidden_num,
+            z0_dim=z0_dim,
+            A=A_t,
+            B=B_t,
+            b=b_t
+        )
 
     def forward(self, point_cloud: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """
@@ -129,12 +130,8 @@ class PhysicsInformedHardProj(nn.Module):
         """
         N = point_cloud.shape[0]
 
-        if self.use_kkthpinn:
-            # Use original KKThPINN NNOPT
-            output = self.kkthpinn_model(point_cloud)  # (N, E+3)
-        else:
-            # Fallback MLP
-            output = self.encoder(point_cloud)  # (N, E+3)
+        # Use original KKThPINN NNOPT
+        output = self.kkthpinn_model(point_cloud)  # (N, E+3)
 
         # Split into mu and lam
         mu = output[:, :self.edge_dim].T  # (E, N)

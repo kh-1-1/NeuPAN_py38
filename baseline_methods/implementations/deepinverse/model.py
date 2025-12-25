@@ -175,3 +175,29 @@ class FISTAUnrolling(nn.Module):
 
         return mu, lam
 
+
+class DeepInverseUnrolling(FISTAUnrolling):
+    """
+    DeepInverse-style unrolling baseline.
+
+    This is a lightweight wrapper around the FISTA unrolling model to provide
+    a stable baseline interface even when the external DeepInverse library is
+    not installed.
+    """
+
+    def __init__(self,
+                 edge_dim: int = 4,
+                 state_dim: int = 3,
+                 num_layers: int = 8,
+                 hidden_dim: int = 64,
+                 a: float = 3.0,
+                 learnable_step: bool = True):
+        super().__init__(
+            edge_dim=edge_dim,
+            state_dim=state_dim,
+            num_layers=num_layers,
+            hidden_dim=hidden_dim,
+            a=a,
+            learnable_step=learnable_step,
+        )
+

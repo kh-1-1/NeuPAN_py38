@@ -197,17 +197,15 @@ class ADMMUnrollingWithDeepInverse(nn.Module):
         # Try to import DeepInverse
         try:
             from deepinv.unfolded import ADMM as DeepInverseADMM
-            self.admm_net = DeepInverseADMM(
-                num_layers=num_layers,
-                input_dim=hidden_dim,
-                output_dim=self.output_dim,
-                rho=rho,
-            )
-            self.use_deepinverse = True
-        except ImportError:
-            print("Warning: DeepInverse not installed, using fallback implementation")
-            self.use_deepinverse = False
-            self.admm_net = None
+        except ImportError as exc:
+            raise ImportError("DeepInverse is required for ADMMUnrollingWithDeepInverse.") from exc
+
+        self.admm_net = DeepInverseADMM(
+            num_layers=num_layers,
+            input_dim=hidden_dim,
+            output_dim=self.output_dim,
+            rho=rho,
+        )
         
         # Feature encoder
         self.encoder = nn.Sequential(
@@ -246,11 +244,7 @@ class ADMMUnrollingWithDeepInverse(nn.Module):
         features = self.encoder(point_cloud)  # (N, hidden_dim)
         
         # Apply ADMM unrolling
-        if self.use_deepinverse and self.admm_net is not None:
-            output = self.admm_net(features)  # (N, E+3)
-        else:
-            # Fallback: use simple linear layer
-            output = features  # (N, hidden_dim)
+        output = self.admm_net(features)  # (N, E+3)
         
         # Ensure output has correct shape
         if output.shape[1] != self.output_dim:

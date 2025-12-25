@@ -1,0 +1,86 @@
+﻿# Unified training config for point-level dual baselines (DUNETrain style).
+# Run:
+#   python -m test.train_dual_baselines --config test/configs/dual_baselines_train.yaml
+
+device: cuda
+seed: 42
+
+edge_dim: 4
+state_dim: 3
+
+# Ground-truth backend:
+# - cvxpy: most consistent with GT definition, slower
+# - cvxpylayers: usually faster, still solves the same per-point problem
+gt_backend: cvxpy
+gt_solver: CLARABEL
+
+# GT generation chunking + progress
+gt_chunk: 256
+gt_progress_interval: 10000
+
+# Optional dataset cache (reused across baselines/runs). Supports {timestamp}/{date}/{time}.
+dataset_cache: test/datasets/dual_points_{date}.pt
+
+robot:
+  length: 4.6
+  width: 1.6
+  wheelbase: 3.0
+
+train:
+  data_size: 100000
+  data_range: [-25, -25, 25, 25]
+  batch_size: 256
+  epoch: 2500
+  valid_freq: 50
+  save_freq: 500
+  lr: 5.0e-5
+  lr_decay: 0.5
+  decay_freq: 1500
+
+  use_lconstr: false
+  w_constr: 0.10
+  use_kkt: false
+  w_kkt: 1.0e-3
+  kkt_rho: 0.50
+  projection: none
+
+  # Set lam_weight > 0.0 to train lam outputs (baseline models that predict lam).
+  lam_weight: 0.0
+
+  # Early stopping
+  early_stop: false
+  early_stop_patience: 500
+  early_stop_min_delta: 1.0e-7
+  early_stop_min_epoch: 0
+  early_stop_metric: val_total
+
+# Output directory for weights (supports placeholders)
+output_dir: test/weights/dual_baselines/{timestamp}
+
+baselines:
+  - name: mlp
+    config:
+      hidden_dim: 32
+      num_layers: 4
+      dropout: 0.0
+  - name: ista
+    config:
+      num_layers: 10
+      hidden_dim: 32
+      learnable_step: true
+  - name: admm
+    config:
+      num_layers: 8
+      hidden_dim: 32
+      rho: 1.0
+      learnable_rho: false
+  - name: deepinverse
+    config:
+      num_layers: 8
+      hidden_dim: 64
+      a: 3.0
+      learnable_step: true
+  - name: point_transformer_v3
+    config: {}
+  - name: pointnet_plusplus
+    config: {}

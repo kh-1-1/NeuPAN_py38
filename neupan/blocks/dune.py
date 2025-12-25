@@ -53,7 +53,7 @@ class DUNE(torch.nn.Module):
 
         # configuration flags (with safe defaults)
         train_kwargs = train_kwargs or dict()
-        self.projection = train_kwargs.get('projection', 'hard')  # 'hard' | 'none' | 'learned'
+        self.projection = train_kwargs.get('projection', 'none')  # 'hard' | 'none' | 'learned'
         self.monitor_dual_norm = train_kwargs.get('monitor_dual_norm', True)
         self.se2_embed = bool(train_kwargs.get('se2_embed', False))
 

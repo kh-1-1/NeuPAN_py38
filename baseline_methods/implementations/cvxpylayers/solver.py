@@ -1,74 +1,81 @@
 """CvxpyLayers Solver for Dual Variable Prediction"""
-import sys
 import os
+import sys
+from typing import Tuple
+
+import numpy as np
 import torch
 import torch.nn as nn
-from typing import Tuple
-import numpy as np
 
 # Add cvxpylayers path
-cvxpy_path = os.path.join(os.path.dirname(__file__), '../../cvxpylayers')
+cvxpy_path = os.path.join(os.path.dirname(__file__), "../../cvxpylayers")
 if cvxpy_path not in sys.path:
     sys.path.insert(0, cvxpy_path)
 
 try:
     import cvxpy as cp
+    CVXPY_AVAILABLE = True
+except ImportError:
+    cp = None
+    CVXPY_AVAILABLE = False
+
+try:
     from cvxpylayers.torch import CvxpyLayer
     CVXPYLAYERS_AVAILABLE = True
 except ImportError:
+    CvxpyLayer = None
     CVXPYLAYERS_AVAILABLE = False
 
 
 class CvxpyLayersSolver(nn.Module):
     """Differentiable convex optimization using CvxpyLayers"""
-    
-    def __init__(self, edge_dim: int = 4, state_dim: int = 3):
+
+    def __init__(self,
+                 edge_dim: int = 4,
+                 state_dim: int = 3,
+                 G: np.ndarray = None,
+                 h: np.ndarray = None):
         super().__init__()
-        
-        if not CVXPYLAYERS_AVAILABLE:
-            raise ImportError("cvxpylayers not available")
-        
+
         self.edge_dim = edge_dim
         self.state_dim = state_dim
-        
-        # Define G matrix (robot geometry)
-        self.G = torch.tensor([
-            [1.0, 0.0, 0.0],
-            [-1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, -1.0, 0.0],
-        ], dtype=torch.float32)
-        
-        # Create cvxpy problem
-        self.mu_var = cp.Variable(edge_dim)
-        self.lam_var = cp.Variable(state_dim)
-        
-        # Parameters (will be set during forward)
-        self.distance_param = cp.Parameter(1)
-        
-        # Objective
-        objective = cp.Minimize(
-            cp.sum_squares(self.mu_var) + cp.sum_squares(self.lam_var)
-        )
-        
-        # Constraints
-        G_np = self.G.numpy()
+
+        # Default G/h for a square robot
+        if G is None:
+            G = np.array([
+                [1.0, 0.0, 0.0],
+                [-1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, -1.0, 0.0],
+            ], dtype=np.float32)
+        if h is None:
+            h = np.ones(edge_dim, dtype=np.float32)
+
+        self.G = torch.from_numpy(np.asarray(G, dtype=np.float32))
+        self.h = torch.from_numpy(np.asarray(h, dtype=np.float32))
+
+        if not CVXPY_AVAILABLE or not CVXPYLAYERS_AVAILABLE:
+            raise ImportError("cvxpylayers and cvxpy are required for CvxpyLayersSolver.")
+
+        G_np = self.G.cpu().numpy()
+        h_np = self.h.cpu().numpy()
+
+        mu_var = cp.Variable(edge_dim)
+        p_param = cp.Parameter(state_dim)
+
+        objective = cp.Maximize(mu_var.T @ (G_np @ p_param - h_np))
         constraints = [
-            self.mu_var >= 0,
-            cp.norm(G_np.T @ self.mu_var, 2) <= 1.0,
-            cp.norm(self.lam_var, 2) <= 1.0,
+            mu_var >= 0,
+            cp.norm(G_np.T @ mu_var, 2) <= 1.0,
         ]
-        
-        # Create problem
+
         problem = cp.Problem(objective, constraints)
-        
-        # Create differentiable layer
         self.cvxpy_layer = CvxpyLayer(
-            problem, 
-            parameters=[self.distance_param],
-            variables=[self.mu_var, self.lam_var]
+            problem,
+            parameters=[p_param],
+            variables=[mu_var],
         )
-        
+
     def forward(self, point_cloud: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Args:
@@ -79,31 +86,26 @@ class CvxpyLayersSolver(nn.Module):
         """
         N = point_cloud.shape[0]
         device = point_cloud.device
-        
-        # Initialize outputs
+        point_cloud_cpu = point_cloud.to("cpu")
+        G_cpu = self.G.to("cpu")
+
         mu_list = []
         lam_list = []
-        
-        # Solve for each point
         for i in range(N):
-            # Compute distance parameter
-            dist = torch.norm(point_cloud[i]).unsqueeze(0)
-            
-            # Solve
-            try:
-                mu_i, lam_i = self.cvxpy_layer(dist)
-                mu_list.append(mu_i)
-                lam_list.append(lam_i)
-            except:
-                # Fallback
-                mu_i = torch.zeros(self.edge_dim, device=device)
-                lam_i = torch.zeros(self.state_dim, device=device)
-                mu_list.append(mu_i)
-                lam_list.append(lam_i)
-        
-        # Stack
-        mu = torch.stack(mu_list, dim=1)  # (E, N)
-        lam = torch.stack(lam_list, dim=1)  # (3, N)
-        
+            p_i = point_cloud_cpu[i]
+            if self.state_dim > 2:
+                p_aug = torch.zeros(self.state_dim, dtype=p_i.dtype)
+                p_aug[:2] = p_i[:2]
+            else:
+                p_aug = p_i[: self.state_dim]
+
+            mu_i = self.cvxpy_layer(p_aug)[0]
+            lam_i = -G_cpu.t().mv(mu_i)
+
+            mu_list.append(mu_i)
+            lam_list.append(lam_i)
+
+        mu = torch.stack(mu_list, dim=1).to(device)
+        lam = torch.stack(lam_list, dim=1).to(device)
         return mu, lam
 

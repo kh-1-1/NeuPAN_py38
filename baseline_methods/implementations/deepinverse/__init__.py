@@ -1,4 +1,4 @@
 """DeepInverse Wrapper"""
-from .model import FISTAUnrolling
-__all__ = ['FISTAUnrolling']
+from .model import FISTAUnrolling, DeepInverseUnrolling
+__all__ = ['FISTAUnrolling', 'DeepInverseUnrolling']
 

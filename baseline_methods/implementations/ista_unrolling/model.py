@@ -188,16 +188,14 @@ class ISTAUnrollingWithDeepInverse(nn.Module):
         # Try to import DeepInverse
         try:
             from deepinv.unfolded import ISTA as DeepInverseISTA
-            self.ista_net = DeepInverseISTA(
-                num_layers=num_layers,
-                input_dim=hidden_dim,
-                output_dim=self.output_dim,
-            )
-            self.use_deepinverse = True
-        except ImportError:
-            print("Warning: DeepInverse not installed, using fallback implementation")
-            self.use_deepinverse = False
-            self.ista_net = None
+        except ImportError as exc:
+            raise ImportError("DeepInverse is required for ISTAUnrollingWithDeepInverse.") from exc
+
+        self.ista_net = DeepInverseISTA(
+            num_layers=num_layers,
+            input_dim=hidden_dim,
+            output_dim=self.output_dim,
+        )
         
         # Feature encoder
         self.encoder = nn.Sequential(
@@ -236,11 +234,7 @@ class ISTAUnrollingWithDeepInverse(nn.Module):
         features = self.encoder(point_cloud)  # (N, hidden_dim)
         
         # Apply ISTA unrolling
-        if self.use_deepinverse and self.ista_net is not None:
-            output = self.ista_net(features)  # (N, E+3)
-        else:
-            # Fallback: use simple linear layer
-            output = features  # (N, hidden_dim)
+        output = self.ista_net(features)  # (N, E+3)
         
         # Ensure output has correct shape
         if output.shape[1] != self.output_dim:

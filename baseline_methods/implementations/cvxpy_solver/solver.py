@@ -112,10 +112,9 @@ class CVXPYSolver:
         Solve optimization problem for a single point.
         
         Problem:
-            minimize: ||mu||^2 + ||lambda||^2
+            maximize: mu^T (G p - h)
             subject to: mu >= 0
                        ||G^T @ mu||_2 <= 1
-                       distance_constraint(lambda, point)
         
         Args:
             point (np.ndarray): Single point, shape (2,)
@@ -126,50 +125,44 @@ class CVXPYSolver:
         """
         # Define variables
         mu = cp.Variable(self.edge_dim)
-        lam = cp.Variable(self.state_dim)
-        
-        # Objective: minimize ||mu||^2 + ||lambda||^2
-        objective = cp.Minimize(cp.sum_squares(mu) + cp.sum_squares(lam))
+
+        # Pad point to match state_dim if needed (z/theta = 0)
+        if self.state_dim > 2:
+            p_aug = np.zeros(self.state_dim, dtype=np.float32)
+            p_aug[:2] = point[:2]
+        else:
+            p_aug = point[: self.state_dim]
+        p_aug = p_aug.reshape((self.state_dim, 1))
+
+        # Objective: maximize mu^T (G p - h)
+        objective = cp.Maximize(mu.T @ (self.G @ p_aug - self.h.reshape(-1, 1)))
         
         # Constraints
         constraints = [
             mu >= 0,  # mu >= 0
             cp.norm(self.G.T @ mu, 2) <= 1,  # ||G^T @ mu||_2 <= 1
         ]
-        
-        # Distance constraint: ||lam - point||_2 <= 0.1 (soft constraint via penalty)
-        # For now, we use a simple constraint that lam should be close to point
-        # This can be adjusted based on your specific problem
-        
+
         # Solve problem
         problem = cp.Problem(objective, constraints)
         
-        try:
-            problem.solve(
-                solver=getattr(cp, self.solver_name),
-                verbose=self.verbose,
-                max_iter=1000
-            )
-        except Exception as e:
-            if self.verbose:
-                print(f"Solver failed: {e}, using fallback solution")
-            # Fallback: return zero solution
-            return np.zeros(self.edge_dim), np.zeros(self.state_dim)
-        
-        if problem.status != cp.OPTIMAL:
-            if self.verbose:
-                print(f"Problem status: {problem.status}")
-            # Return current solution even if not optimal
-        
-        mu_opt = np.asarray(mu.value, dtype=np.float32)
-        lam_opt = np.asarray(lam.value, dtype=np.float32)
-        
-        # Handle None values
-        if mu_opt is None:
-            mu_opt = np.zeros(self.edge_dim, dtype=np.float32)
-        if lam_opt is None:
-            lam_opt = np.zeros(self.state_dim, dtype=np.float32)
-        
+        problem.solve(
+            solver=getattr(cp, self.solver_name),
+            verbose=self.verbose,
+            max_iter=1000
+        )
+
+        if problem.status not in (cp.OPTIMAL, cp.OPTIMAL_INACCURATE):
+            raise RuntimeError(f"CVXPY solver status: {problem.status}")
+
+        mu_value = mu.value
+        if mu_value is None:
+            raise RuntimeError("CVXPY solver returned no solution.")
+
+        mu_opt = np.asarray(mu_value, dtype=np.float32).reshape(-1)
+        # Derive lambda from mu (consistent with single-point dual relation)
+        lam_opt = -self.G.T @ mu_opt
+
         return mu_opt, lam_opt
     
     def __call__(self, point_cloud: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:

@@ -6,10 +6,9 @@ the dual variable prediction problem. It serves as a ground truth baseline
 for comparing other methods.
 
 The solver solves the following optimization problem:
-    minimize: ||mu||^2 + ||lambda||^2
+    maximize: mu^T (G p - h)
     subject to: mu >= 0
                 ||G^T @ mu||_2 <= 1
-                distance_constraint(lambda, point_cloud)
 """
 
 from .solver import CVXPYSolver
