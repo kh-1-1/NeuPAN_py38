@@ -1,0 +1,18 @@
+# LON (Learning Optimization Network) Configuration
+# 用于自动调整 PDPL-Net (KKT) 在 Ackermann 走廊环境下的 MPC 参数
+
+# --- 1. 实验场景 ---
+env_file: "example/corridor/acker/env.yaml"
+planner_file: "example/corridor/acker/planner.yaml"
+
+# --- 2. 模型权重 ---
+# 指向你的 PDPL-Net (KKT) 模型
+checkpoint: "example/model/acker_flex_pdhg-1_kkt_robot/model_500.pth"
+
+# --- 3. 训练超参数 ---
+epochs: 150
+learning_rate: 0.005
+max_steps_per_epoch: 400
+
+# --- 4. 显示设置 ---
+no_render: false

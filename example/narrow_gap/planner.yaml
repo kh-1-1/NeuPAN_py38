@@ -1,0 +1,36 @@
+# mpc
+receding: 10
+step_time: 0.1
+ref_speed: 2.0  # 窄道降速
+device: 'cpu'
+time_print: False
+collision_threshold: 0.05 # 提高精度
+
+robot:
+  kinematics: 'acker'
+  max_speed: [2, 0.6]
+  max_acce: [2, 0.5]
+  length: 4.6
+  width: 1.6
+  wheelbase: 3
+
+ipath:
+  waypoints: [[0, 20, 0], [40, 20, 0]] # 占位，脚本会自动覆盖
+  curve_style: 'dubins'
+  min_radius: 3.0
+  loop: False
+  arrive_threshold: 0.5
+
+pan:
+  iter_num: 2
+  dune_max_num: 100
+  nrmp_max_num: 10
+  dune_checkpoint: 'example/model/acker_robot_default/model_5000.pth'
+  iter_threshold: 0.1
+
+adjust:
+  q_s: 1.0
+  p_u: 1.0
+  eta: 20.0 # 提高避障权重
+  d_max: 1.0
+  d_min: 0.05 # 允许贴得更近

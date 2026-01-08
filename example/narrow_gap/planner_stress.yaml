@@ -1,0 +1,41 @@
+# 极限窄缝场景 - 用于体现前端改进的差异
+# 设计思路：
+# 1. 连续多个窄缝，间隙逐渐变小
+# 2. 提高速度，缩短反应时间
+# 3. 增加NRMP点数，让更多点参与约束
+
+receding: 15          # 更长预测horizon
+step_time: 0.1
+ref_speed: 3.0        # 比原来2.0更快
+device: 'cpu'
+time_print: False
+collision_threshold: 0.05
+
+robot:
+  kinematics: 'acker'
+  max_speed: [4, 0.6]
+  max_acce: [3, 0.5]
+  length: 4.6
+  width: 1.6
+  wheelbase: 3
+
+ipath:
+  waypoints: [[0, 20, 0], [40, 20, 0]]
+  curve_style: 'dubins'
+  min_radius: 3.0
+  loop: False
+  arrive_threshold: 0.5
+
+pan:
+  iter_num: 3         # 更多PAN迭代
+  dune_max_num: 200   # 更多点给DUNE
+  nrmp_max_num: 30    # 关键：更多点参与NRMP约束
+  iter_threshold: 0.05
+
+adjust:
+  q_s: 1.0
+  p_u: 0.5            # 降低速度权重，更关注避障
+  eta: 30.0           # 更高避障权重
+  d_max: 0.8
+  d_min: 0.02         # 允许贴得更近
+  ro_obs: 600         # 更高惩罚

@@ -15,10 +15,11 @@ def main(
     max_steps=1000,
     reverse=False,
     visualize_roi=False,
+    time_print=False,
 ):
 
     env = irsim.make(env_file, save_ani=save_animation, full=full, display=no_display)
-    neupan_planner = neupan.init_from_yaml(planner_file)
+    neupan_planner = neupan.init_from_yaml(planner_file, time_print=bool(time_print))
 
     # 设置 IR-SIM 环境引用，用于统一碰撞检测
     neupan_planner.set_env_reference(env)
@@ -101,6 +102,7 @@ if __name__ == "__main__":
     parser.set_defaults(point_vel=True)
     parser.add_argument("-m", "--max_steps", type=int, default=1000, help="max steps")
     parser.add_argument("-vr", "--visualize_roi", dest="visualize_roi", action="store_true", help="visualize ROI region (ellipse/tube/wedge)")
+    parser.add_argument("--time_print", action="store_true", help="print per-module forward execution time (debug)")
 
     args = parser.parse_args()
 
@@ -112,4 +114,4 @@ if __name__ == "__main__":
 
     reverse = (args.example == "reverse" and args.kinematics == "diff")
 
-    main(env_path_file, planner_path_file, args.save_animation, ani_name, args.full, args.no_display, args.point_vel, args.max_steps, reverse, args.visualize_roi)
+    main(env_path_file, planner_path_file, args.save_animation, ani_name, args.full, args.no_display, args.point_vel, args.max_steps, reverse, args.visualize_roi, args.time_print)

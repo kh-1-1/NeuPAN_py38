@@ -1,0 +1,33 @@
+# mpc
+receding: 15 # 复杂环境需要看更远
+step_time: 0.1
+ref_speed: 3.0
+device: 'cpu'
+time_print: False
+collision_threshold: 0.2
+
+robot:
+  kinematics: 'acker'
+  max_speed: [4, 0.8]
+  max_acce: [3, 0.5]
+  length: 4.6
+  width: 1.6
+  wheelbase: 3
+
+ipath:
+  waypoints: [[5, 5, 0.78], [70, 70, 0.78]]
+  curve_style: 'dubins'
+
+pan:
+  iter_num: 3 # 增加迭代次数以应对复杂性
+  dune_max_num: 120
+  nrmp_max_num: 15
+  dune_checkpoint: 'example/model/acker_robot_default/model_5000.pth'
+  iter_threshold: 0.05
+
+adjust:
+  q_s: 1.0
+  p_u: 1.0
+  eta: 12.0
+  d_max: 1.5
+  d_min: 0.1

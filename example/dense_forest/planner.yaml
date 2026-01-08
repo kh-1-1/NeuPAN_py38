@@ -1,0 +1,38 @@
+# 高密度障碍物场景 - 展示前端改进在复杂环境中的优势
+# 核心策略：大量近距离障碍物 + 高NRMP点数 + 严格安全距离
+
+receding: 12
+step_time: 0.1
+ref_speed: 2.5
+device: 'cpu'
+time_print: False
+collision_threshold: 0.05
+
+robot:
+  kinematics: 'acker'
+  max_speed: [4, 0.6]
+  max_acce: [3, 0.5]
+  length: 4.6
+  width: 1.6
+  wheelbase: 3
+
+ipath:
+  waypoints: [[5, 25, 0], [45, 25, 0]]
+  curve_style: 'dubins'
+  min_radius: 3.0
+  loop: False
+  arrive_threshold: 0.5
+
+pan:
+  iter_num: 3
+  dune_max_num: 300   # 处理大量点
+  nrmp_max_num: 50    # 关键：让50个点参与约束
+  iter_threshold: 0.05
+
+adjust:
+  q_s: 0.8
+  p_u: 0.5
+  eta: 25.0
+  d_max: 1.0
+  d_min: 0.05
+  ro_obs: 500

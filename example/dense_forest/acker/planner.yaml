@@ -1,0 +1,38 @@
+# Dense forest scenario for front-end comparison
+# Sparse obstacles requiring precise navigation
+
+receding: 12
+step_time: 0.1
+ref_speed: 2.5
+device: 'cpu'
+time_print: False
+collision_threshold: 0.05
+
+robot:
+  kinematics: 'acker'
+  max_speed: [4, 0.6]
+  max_acce: [3, 0.5]
+  length: 4.6
+  width: 1.6
+  wheelbase: 3
+
+ipath:
+  waypoints: [[5, 25, 0], [45, 25, 0]]
+  curve_style: 'dubins'
+  min_radius: 3.0
+  loop: False
+  arrive_threshold: 1.0
+
+pan:
+  iter_num: 2
+  dune_max_num: 150
+  nrmp_max_num: 20
+  iter_threshold: 0.1
+
+adjust:
+  q_s: 1.0
+  p_u: 1.0
+  eta: 15.0
+  d_max: 1.0
+  d_min: 0.1
+  ro_obs: 400

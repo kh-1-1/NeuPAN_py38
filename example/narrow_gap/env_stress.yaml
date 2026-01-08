@@ -1,0 +1,43 @@
+world:
+  height: 40
+  width: 40
+  step_time: 0.1
+  sample_time: 0.1
+  offset: [0, 0]
+  collision_mode: 'stop'
+
+robot:
+  - kinematics: {name: 'acker'}
+    shape: {name: 'rectangle', length: 4.6, width: 1.6, wheelbase: 3}
+    state: [0, 20, 0, 0]
+    goal: [40, 20, 0]
+    vel_min: [-4, -0.6]
+    vel_max: [4, 0.6]
+
+    sensors:
+      - type: 'lidar2d'
+        range_min: 0
+        range_max: 20
+        angle_range: 3.1415926
+        number: 200  # 更多点 -> 更能体现前端差异
+        noise: False
+
+obstacle:
+  # 连续三个窄缝，间隙逐渐变小
+  # Gap 1: 2.0m (clearance 0.4m)
+  - shape: {name: 'rectangle', length: 3, width: 18}
+    state: [10, 30, 0]
+  - shape: {name: 'rectangle', length: 3, width: 18}
+    state: [10, 10, 0]
+
+  # Gap 2: 1.8m (clearance 0.2m) - 极限
+  - shape: {name: 'rectangle', length: 3, width: 18.1}
+    state: [20, 29.95, 0]
+  - shape: {name: 'rectangle', length: 3, width: 18.1}
+    state: [20, 10.05, 0]
+
+  # Gap 3: 1.7m (clearance 0.1m) - 接近不可通过
+  - shape: {name: 'rectangle', length: 3, width: 18.15}
+    state: [30, 29.925, 0]
+  - shape: {name: 'rectangle', length: 3, width: 18.15}
+    state: [30, 10.075, 0]

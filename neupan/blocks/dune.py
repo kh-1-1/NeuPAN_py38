@@ -21,6 +21,7 @@ along with NeuPAN planner. If not, see <https://www.gnu.org/licenses/>.
 
 import torch
 import os
+import inspect
 from math import inf
 from neupan.blocks.learned_prox import ProxHead
 from neupan.blocks.obs_point_net import ObsPointNet
@@ -90,6 +91,114 @@ class DUNE(torch.nn.Module):
                 tau=front_tau,
                 sigma=front_sigma,
             ))
+        elif front_name in (
+            'mlp',
+            'ista',
+            'admm',
+            'deepinverse',
+            'pointnet_plusplus',
+            'point_transformer_v3',
+        ):
+            # Baseline front-ends from baseline_methods (mu-only adapter for NeuPAN MPC).
+            #
+            # NOTE: Those baselines are trained in a point-level setting and usually output (mu, lam),
+            # where lam may have state_dim=3 in the standalone benchmark. In NeuPAN MPC, we only need mu;
+            # lam is re-derived inside DUNE as: lam = -R @ G^T @ mu (2D), so we discard baseline lam.
+            #
+            # To load existing weights (often trained with state_dim=3), we keep a separate
+            # front_state_dim that controls the baseline model head sizes. It is independent from
+            # the MPC lam dimension (which is always 2 in this repo).
+            self.front_type = front_name
+            self.unroll_J = 0  # keep legacy field for compatibility
+
+            front_cfg = train_kwargs.get('front_config', {}) or {}
+            if not isinstance(front_cfg, dict):
+                raise ValueError(f"train.front_config must be a dict, got {type(front_cfg)}")
+
+            front_state_dim = int(train_kwargs.get('front_state_dim', train_kwargs.get('state_dim', 3)))
+            if front_state_dim < 2:
+                raise ValueError("train.front_state_dim must be >= 2")
+
+            # Pad robot geometry to match front_state_dim when needed (for loading benchmark weights).
+            G2 = self.G.detach().cpu().numpy()
+            h2 = self.h.detach().cpu().numpy().reshape(-1)
+            if front_state_dim > 2:
+                import numpy as _np
+
+                pad = _np.zeros((G2.shape[0], front_state_dim - 2), dtype=G2.dtype)
+                G_full = _np.hstack((G2, pad))
+            else:
+                G_full = G2
+
+            # Lazy import to avoid hard dependency when unused.
+            try:
+                from baseline_methods.implementations import (
+                    ADMMUnrolling,
+                    DeepInverseUnrolling,
+                    ISTAUnrolling,
+                    MLPBaseline,
+                    PointNetPlusPlus,
+                    PointTransformerV3,
+                )
+            except Exception as exc:
+                raise ImportError(
+                    "baseline_methods is required for train.front in "
+                    "{mlp, ista, admm, deepinverse, pointnet_plusplus, point_transformer_v3}"
+                ) from exc
+
+            cls_map = {
+                'mlp': MLPBaseline,
+                'ista': ISTAUnrolling,
+                'admm': ADMMUnrolling,
+                'deepinverse': DeepInverseUnrolling,
+                'pointnet_plusplus': PointNetPlusPlus,
+                'point_transformer_v3': PointTransformerV3,
+            }
+            cls = cls_map.get(front_name)
+            if cls is None:
+                raise ValueError(f"Unknown baseline front: {front_name}")
+
+            # Build kwargs: edge_dim, state_dim, and optionally G/h if supported.
+            kwargs = {"edge_dim": self.edge_dim, "state_dim": front_state_dim}
+            sig = inspect.signature(cls.__init__)
+            if "G" in sig.parameters:
+                kwargs["G"] = G_full
+            if "h" in sig.parameters:
+                kwargs["h"] = h2
+            # Merge user config (e.g., hidden_dim/num_layers)
+            kwargs.update(front_cfg)
+
+            backend = cls(**kwargs)
+
+            class _MuOnlyAdapter(torch.nn.Module):
+                def __init__(self, inner: torch.nn.Module, edge_dim: int) -> None:
+                    super().__init__()
+                    self.inner = inner
+                    self.edge_dim = int(edge_dim)
+
+                def load_state_dict(self, state_dict, strict: bool = True):  # type: ignore[override]
+                    # Delegate raw baseline checkpoints to inner module
+                    return self.inner.load_state_dict(state_dict, strict=strict)
+
+                def forward(self, x: torch.Tensor) -> torch.Tensor:
+                    out = self.inner(x)
+                    mu = out[0] if isinstance(out, tuple) else out
+                    if not isinstance(mu, torch.Tensor) or mu.dim() != 2:
+                        raise ValueError(
+                            f"{front_name} must return mu as a 2D tensor, got {type(mu)}"
+                        )
+                    # Accept both (E, N) and (N, E) layouts.
+                    if mu.shape[0] == self.edge_dim:
+                        mu_row = mu.t().contiguous()
+                    elif mu.shape[1] == self.edge_dim:
+                        mu_row = mu.contiguous()
+                    else:
+                        raise ValueError(
+                            f"{front_name} mu shape mismatch: expected edge_dim={self.edge_dim}, got {tuple(mu.shape)}"
+                        )
+                    return mu_row
+
+            self.model = to_device(_MuOnlyAdapter(backend, self.edge_dim))
         else:
             # Default: ObsPointNet with optional SE(2) embedding
             self.model = to_device(ObsPointNet(2, self.edge_dim, se2_embed=self.se2_embed))

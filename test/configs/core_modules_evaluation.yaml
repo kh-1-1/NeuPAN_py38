@@ -1,52 +1,149 @@
-# 核心模块闭环测试配置（最终版）
-runs: 10
-max_steps: 800
-no_display: true
-save_results: true
-quiet: false
+## 核心模块闭环评测配置（统一测试入口 / 扩展版）
+#
+# 说明：
+# - 这是“扩展版”配置：在原有 baseline/flex 的基础上，额外加入 baseline_methods 的点级前端（mlp/ista/admm/deepinverse/pointnet_plusplus/point_transformer_v3）。
+# - 为了不影响你原来已经调好的闭环配置，原来的 `test/configs/core_modules_evaluation.yaml` 会保留为“原版配置”。
+#
+# 运行方法：
+#   1) 跑本 YAML 全矩阵：
+#      python -m test.batch_core_modules_evaluation --config-file test/configs/core_modules_evaluation_unified.yaml
+#   2) 临时覆盖运行次数/步数：
+#      python -m test.batch_core_modules_evaluation --config-file test/configs/core_modules_evaluation_unified.yaml -r 3 -ms 400
+#   3) 临时覆盖场景/运动学：
+#      python -m test.batch_core_modules_evaluation --config-file test/configs/core_modules_evaluation_unified.yaml -e non_obs,dyna_obs -d acker
+#
+# 重要：
+# - 本批量评测脚本会强制 `time_print=False`（不再打印 “* execute time ...”），但仍会在 info 里记录 forward_time_ms。
 
-# 虚拟点控制参数
-# use_virtual_points: true   # 启用虚拟点 - 当激光雷达检测不到障碍物时，在10m处生成虚拟点
-# use_virtual_points: false  # 禁用虚拟点（默认）- 不生成虚拟点，只使用真实检测到的障碍物
+## 全局运行参数
+device: cuda          # 可选：cpu/cuda（仅覆盖 neupan 的 torch device；若某 planner 依赖 CPU 求解器，请改为 cpu）
+runs: 10               # 每个 (example, kinematics, configuration) 重复次数
+max_steps: 800        # 每次仿真最大步数（超时即结束）
+no_display: true      # true：不弹窗渲染（更快）；false：可视化运行
+quiet: false          # true：少打印；false：打印每次 run 的进度
+save_results: true    # true：保存 summary + runs/*.json + frames/*.gif(如可用)
+output_dir: ""        # 为空则写入 test/results/core_modules_{timestamp}/
+roi_template: test/configs/roi_config_template.yaml
 use_virtual_points: false
 
-# 测试场景和运动学
-# 可选场景: corridor, convex_obs, non_obs, dyna_non_obs, dyna_obs, pf, pf_obs, reverse, polygon_robot
-# 或使用 'all' 自动发现所有可用场景
-examples: non_obs,convex_obs,dyna_non_obs,dyna_obs
-# 可选运动学: diff, acker
-kinematics: diff,acker
+# 媒体保存（仅 save_results=true 时生效）
+# - 默认不保存（避免在 no_display=true 时因无帧导致保存失败；需要时手动打开）
+save_media: true     # 总开关：是否保存 GIF/PNG
+save_gif: true       # 保存 GIF（需要每步渲染采集帧）
+save_png: false       # 保存关键帧 PNG（若仅保存 PNG，会在结束时渲染一次）
 
-# 测试配置
+# 随机障碍物“动态注入”（每次 run 生成一份派生 env.yaml，不改原始 example/*/*/env.yaml）
+# - enabled: true 才启用
+# - apply_to: 'all' 或逗号分隔场景名（建议对 corridor 关闭）
+random_obstacles:
+  enabled: true
+  seed: 0
+  apply_to: non_obs,convex_obs  # 只对静态场景随机化；dyna_* 保留原本的动态障碍物
+  replace: true                # true: 用随机障碍物替换原 obstacle；false: 在原 obstacle 后追加
+
+  # 采样范围（全局坐标）
+  x_range: [5.0, 50.0]
+
+  # 路径中心线：
+  # - null：从 planner.yaml 的 ipath.waypoints 自动提取折线路径并沿法向撒点（推荐）
+  # - 数值：强制使用 y=path_y 的水平路径（适合非复杂直线路径）
+  path_y: null
+
+  # 起点/终点附近不放障碍物（欧氏距离阈值）
+  goal_margin: 5.0     # 终点前 5m 不放（你之前提的要求）
+  start_margin: 0.0
+
+  # 最小间隔（用于避免“黏在一起”）
+  buffer: 3.0
+
+  # 路径两侧障碍物（离开中心线的两侧带状区域）
+  side:
+    count: 30         # 总数（会在左右两侧分布）
+    gap: 0.1           # 中心线两侧的“空走廊”宽度（越大越不贴路）
+    width: 12         # 侧向带宽（越大越分散）
+
+  # 路径附近/路径上的障碍物（更“卡路”的部分）
+  path:
+    count: 0          # 总数
+    half_width: 0.4
+
+## 场景与运动学（逗号分隔；也支持 'all' 自动发现 example 下的场景）
+examples: non_obs,convex_obs,dyna_non_obs,dyna_obs,corridor,
+kinematics: acker #diff
+
+## 评测配置矩阵（每个条目只替换前端 + 权重）
 configurations:
+  # 1) 原版 NeuPAN 前端（ObsPointNet）
   baseline:
     front_type: obs_point
-    front_learned: false
-    front_J: 2
     roi_enabled: false
-    ckpt_diff: example/model/diff_robot_default/model_5000.pth #example/model/diff_CLARABEL_robot/model_5000.pth
+    ckpt_diff: example/model/diff_robot_default/model_5000.pth
     ckpt_acker: example/model/acker_CLARABEL_robot/model_5000.pth
-  
-  # flex_no_learned:
-  #  front_type: flex_pdhg
-    # front_learned: false
-   #  roi_enabled: false
-  #  ckpt_diff: example/model/diff_flex_pdhg-nolearned_robot/model_best.pth
-   # ckpt_acker: example/model/acker_flex_pdhg-nolearned_robot/model_best.pth
-  
+
+  # 2) 你的 PDHG 展开前端（flex_pdhg）
   flex_learned:
     front_type: flex_pdhg
     front_learned: true
-    front_J: 2
+    front_J: 1
+    projection: hard
     roi_enabled: false
     ckpt_diff: example/model/diff_flex_pdhg_robot/model_5000.pth
-    ckpt_acker: example/model/acker_flex_pdhg_robot/model_5000.pth
-  
-  flex_roi:
-    front_type: flex_pdhg
-    front_learned: true
-    front_J: 2
-    roi_enabled: true
-    roi_strategies: ['ellipse', 'tube', 'wedge']
-    ckpt_diff: example/model/diff_flex_pdhg_robot/model_5000.pth
-    ckpt_acker: example/model/acker_flex_pdhg_robot/model_5000.pth
+    ckpt_acker: example/model/acker_flex_pdhg-1_kkt_robot/model_500.pth
+
+  # 3) baseline_methods：MLP / ISTA / ADMM / DeepInverse / PointNet++ / PTv3
+  #    注意：这些权重来自点级训练（test/train_dual_baselines.py），默认 front_state_dim=3。
+  #    在 NeuPAN MPC 中只使用 mu；lam 由 DUNE 用 2D 几何重新计算（lam = -R @ G^T @ mu）。
+
+  mlp:
+    front_type: mlp
+    front_state_dim: 3
+    front_config: { hidden_dim: 32, num_layers: 4, dropout: 0.0 }
+    projection: hard
+    roi_enabled: false
+    ckpt_diff: ""  # 若你训练了 diff 对应权重，在此填入路径
+    ckpt_acker: test/configs/test/weights/dual_baselines/20251223_012416/mlp/model_best.pth
+
+  ista:
+    front_type: ista
+    front_state_dim: 3
+    front_config: { num_layers: 10, hidden_dim: 32, learnable_step: true }
+    projection: hard
+    roi_enabled: false
+    ckpt_diff: ""
+    ckpt_acker: test/configs/test/weights/dual_baselines/20251223_012416/ista/model_best.pth
+
+  admm:
+    front_type: admm
+    front_state_dim: 3
+    front_config: { num_layers: 8, hidden_dim: 32, rho: 1.0, learnable_rho: false }
+    projection: hard
+    roi_enabled: false
+    ckpt_diff: ""
+    ckpt_acker: test/configs/test/weights/dual_baselines/20251223_012416/admm/model_best.pth
+
+  deepinverse:
+    front_type: deepinverse
+    front_state_dim: 3
+    front_config: { num_layers: 8, hidden_dim: 64, a: 3.0, learnable_step: true }
+    projection: hard
+    roi_enabled: false
+    ckpt_diff: ""
+    ckpt_acker: test/configs/test/weights/dual_baselines/20251223_012416/deepinverse/model_best.pth
+
+  pointnet_plusplus:
+    front_type: pointnet_plusplus
+    front_state_dim: 3
+    front_config: {}
+    projection: hard
+    roi_enabled: false
+    ckpt_diff: ""
+    ckpt_acker: test/configs/test/weights/dual_baselines/20251224_171606/pointnet_plusplus/model_best.pth
+
+  point_transformer_v3:
+    front_type: point_transformer_v3
+    front_state_dim: 3
+    front_config: {}
+    projection: hard
+    roi_enabled: false
+    ckpt_diff: ""
+    ckpt_acker: test/configs/test/weights/dual_baselines/20251223_202042/point_transformer_v3/model_best.pth
