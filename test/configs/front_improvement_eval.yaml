@@ -1,0 +1,93 @@
+## PDPL-Net Closed-Loop Evaluation Config
+#
+# Purpose: Validate PDPL-Net in closed-loop MPC navigation (论文5.11节)
+#
+# Note: no_projection and no_learned are excluded from closed-loop evaluation
+# because their constraint satisfaction rate < 1% in point-level evaluation,
+# making stable MPC solving impossible.
+#
+# Run with:
+#   python -m test.batch_core_modules_evaluation --config-file test/configs/front_improvement_eval.yaml -r 5
+#
+
+## Global Parameters
+device: cpu
+runs: 100
+max_steps: 600
+no_display: true
+quiet: false
+save_results: true
+output_dir: ""
+roi_template: test/configs/roi_config_template.yaml
+use_virtual_points: false
+
+# Media saving (disabled to save time for 100 runs)
+save_media: true
+save_gif: true
+save_png: false
+
+# No random obstacles
+random_obstacles:
+  enabled: false
+
+## Scenarios
+examples: corridor,convex_obs,dyna_obs
+kinematics: acker
+
+## Override pan parameters
+pan_overrides:
+  nrmp_max_num: 30
+  dune_max_num: 200
+  iter_num: 3
+
+## Configuration matrix
+configurations:
+  # ============ Core Comparison (论文5.11) ============
+  # 1) NeuPAN Original (DUNE/ObsPointNet) - Baseline
+  NeuPAN:
+    front_type: obs_point
+    roi_enabled: false
+    ckpt_diff: example/model/diff_robot_default/model_5000.pth
+    ckpt_acker: example/model/acker_CLARABEL_robot/model_5000.pth
+
+  # ============ Ablation (闭环可行的变体) ============
+  # 2) PDPL-Net without KKT Loss (验证KKT正则化的作用)
+  PDPL_no_kkt:
+    front_type: flex_pdhg
+    front_learned: true
+    front_J: 1
+    projection: hard
+    roi_enabled: false
+    ckpt_diff: ""
+    ckpt_acker: example/model/acker_flex_pdhg-1_robot/model_2500.pth
+
+  # ============ Your Method: PDPL-Net ============
+  # 3) PDPL-Net J=1 (Full: Learned + KKT + Hard Projection)
+  PDPL_J1:
+    front_type: flex_pdhg
+    front_learned: true
+    front_J: 1
+    projection: hard
+    roi_enabled: false
+    ckpt_diff: example/model/diff_flex_pdhg_robot/model_5000.pth
+    ckpt_acker: example/model/acker_flex_pdhg-1_kkt_robot/model_500.pth
+
+  # 4) PDPL-Net J=2
+  PDPL_J2:
+    front_type: flex_pdhg
+    front_learned: true
+    front_J: 2
+    projection: hard
+    roi_enabled: false
+    ckpt_diff: ""
+    ckpt_acker: example/model/acker_flex_pdhg-2_robot/model_5000.pth
+
+  # 5) PDPL-Net J=3
+  PDPL_J3:
+    front_type: flex_pdhg
+    front_learned: true
+    front_J: 3
+    projection: hard
+    roi_enabled: false
+    ckpt_diff: ""
+    ckpt_acker: example/dune_train/model/acker_flex_pdhg-3_robot/model_2500.pth

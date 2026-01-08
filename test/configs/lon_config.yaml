@@ -1,0 +1,25 @@
+# LON (Learning Optimization Network) Configuration
+# 用于自动调整 NeuPAN/PDPL-Net 的 MPC 参数 (eta, d_max, p_u)
+
+# --- 1. 实验场景 ---
+# 窄道实验
+env_file: "example/narrow_gap/env.yaml"
+planner_file: "example/narrow_gap/planner.yaml"
+
+# 动态障碍物实验 (取消注释以使用)
+# env_file: "example/dynamic/env.yaml"
+# planner_file: "example/dynamic/planner.yaml"
+
+# --- 2. 模型权重 ---
+# 指向你的 PDPL-Net 模型路径
+# checkpoint: "example/model/acker_flex_pdhg-1_kkt_robot/model_5000.pth"
+# 或者使用基线模型
+checkpoint: null
+
+# --- 3. 训练超参数 ---
+epochs: 30
+learning_rate: 0.005
+max_steps_per_epoch: 500
+
+# --- 4. 显示设置 ---
+no_render: false  # 设为 true 可后台快速运行
