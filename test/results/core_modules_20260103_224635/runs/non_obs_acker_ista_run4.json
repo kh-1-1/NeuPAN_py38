@@ -1,0 +1,41 @@
+{
+  "config": {
+    "example": "non_obs",
+    "kinematics": "acker",
+    "config_id": "ista",
+    "env_file": "test\\results\\core_modules_20260103_224635\\random_envs\\non_obs_acker_ista_run4.yaml",
+    "planner_file": "example/non_obs/acker/planner.yaml",
+    "checkpoint": "test/configs/test/weights/dual_baselines/20251223_012416/ista/model_best.pth",
+    "front_type": "ista",
+    "front_learned": false,
+    "roi_enabled": false,
+    "roi_template": null,
+    "receding": 10,
+    "step_time": 0.1,
+    "robot": "acker_robot_default",
+    "max_steps": 800
+  },
+  "metrics": {
+    "steps": 155,
+    "arrive": false,
+    "stop": false,
+    "collision": false,
+    "timeout": false,
+    "min_distance": Infinity,
+    "path_length": 32.46254049979324,
+    "avg_step_time_ms": 90.92550709683564,
+    "avg_forward_time_ms": 90.64635615194997,
+    "max_velocity": 7.17075252532959,
+    "avg_velocity": 2.068133469199529,
+    "roi_strategy_counts": {},
+    "roi_avg_n_in": null,
+    "roi_avg_n_roi": null,
+    "roi_reduction_ratio": null,
+    "avg_min_distance": 0.0,
+    "roi_total_time_ms": null,
+    "dual_violation_rate": 0.40999147789431856,
+    "dual_p95_norm": 1.0486699342727661,
+    "total_compute_time_ms": 14093.453600009525,
+    "total_forward_time_ms": 14050.185203552246
+  }
+}

@@ -1,0 +1,56 @@
+obstacle:
+- shape:
+    length: 4
+    name: rectangle
+    width: 18
+  state:
+  - 20
+  - 30
+  - 0
+- shape:
+    length: 4
+    name: rectangle
+    width: 18
+  state:
+  - 20
+  - 10
+  - 0
+robot:
+- goal:
+  - 40
+  - 20
+  - 0
+  kinematics:
+    name: acker
+  sensors:
+  - angle_range: 3.1415926
+    noise: false
+    number: 100
+    range_max: 20
+    range_min: 0
+    type: lidar2d
+  shape:
+    length: 4.6
+    name: rectangle
+    wheelbase: 3
+    width: 1.6
+  state:
+  - 0
+  - 20
+  - 0
+  - 0
+  vel_max:
+  - 2
+  - 0.6
+  vel_min:
+  - -2
+  - -0.6
+world:
+  collision_mode: stop
+  height: 40
+  offset:
+  - 0
+  - 0
+  sample_time: 0.1
+  step_time: 0.1
+  width: 40

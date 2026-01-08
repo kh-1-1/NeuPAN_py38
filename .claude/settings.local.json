@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat paper/sections/00_title.md paper/sections/00_abstract.md paper/sections/01_introduction.md paper/sections/02_related_work.md paper/sections/03_problem_formulation.md paper/sections/04_architecture.md paper/sections/05_training_strategy.md paper/sections/06_experiments.md paper/sections/07_discussion.md paper/sections/08_conclusion.md paper/sections/09_references.md)",
+      "Bash(cat d:/Desktop/NeuPAN_py38/paper/sections/00_title.md d:/Desktop/NeuPAN_py38/paper/sections/00_abstract.md d:/Desktop/NeuPAN_py38/paper/sections/01_introduction.md d:/Desktop/NeuPAN_py38/paper/sections/02_related_work.md d:/Desktop/NeuPAN_py38/paper/sections/03_problem_formulation.md d:/Desktop/NeuPAN_py38/paper/sections/04_architecture.md d:/Desktop/NeuPAN_py38/paper/sections/05_training_strategy.md d:/Desktop/NeuPAN_py38/paper/sections/06_experiments.md d:/Desktop/NeuPAN_py38/paper/sections/07_discussion.md d:/Desktop/NeuPAN_py38/paper/sections/08_conclusion.md d:/Desktop/NeuPAN_py38/paper/sections/09_references.md)",
+      "Bash(ls -la \"d:/Desktop/NeuPAN_py38/\"*.pdf)"
+    ]
+  }
+}

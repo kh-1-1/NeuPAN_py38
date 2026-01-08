@@ -1,0 +1,70 @@
+world:
+  height: 42
+  width: 53
+  step_time: 0.1
+  sample_time: 0.1
+  offset:
+  - -2
+  - 5
+  collision_mode: stop
+  control_mode: auto
+robot:
+- kinematics:
+    name: acker
+  shape:
+    name: rectangle
+    length: 4.6
+    width: 1.6
+    wheelbase: 3
+  state:
+  - -1
+  - 25
+  - 0
+  - 0
+  vel_min:
+  - -8
+  - -1
+  vel_max:
+  - 8
+  - 1
+  goal_threshold: 0.3
+  plot:
+    show_trail: true
+    show_goal: true
+  sensors:
+  - type: lidar2d
+    range_min: 0
+    range_max: 10
+    angle_range: 3.1415926
+    number: 100
+    noise: false
+obstacle:
+- number: 10
+  distribution:
+    name: manual
+  shape:
+  - name: circle
+    radius: 1.5
+  - name: circle
+    radius: 1.0
+  state:
+  - - 10.269473546681644
+    - 23.292813602486934
+  - - 5.591350862726938
+    - 24.413511396081617
+  - - 32.75169774946625
+    - 23.501980287598148
+  - - 20.149786281609195
+    - 24.326325743226693
+  - - 26.740865254198216
+    - 22.81739639869401
+  - - 44.393095426509646
+    - 23.176894159319605
+  - - 24.34595359992669
+    - 26.678149756038632
+  - - 38.79420508721335
+    - 25.766957725580028
+  - - 15.590468542172335
+    - 26.13080372111191
+  - - 29.013199330027014
+    - 26.791557571216778

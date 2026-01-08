@@ -1,0 +1,41 @@
+{
+  "config": {
+    "example": "convex_obs",
+    "kinematics": "acker",
+    "config_id": "NeuPAN",
+    "env_file": "example/convex_obs/acker/env.yaml",
+    "planner_file": "example/convex_obs/acker/planner.yaml",
+    "checkpoint": "example/model/acker_CLARABEL_robot/model_5000.pth",
+    "front_type": "obs_point",
+    "front_learned": false,
+    "roi_enabled": false,
+    "roi_template": null,
+    "receding": 10,
+    "step_time": 0.1,
+    "robot": "acker_robot_default",
+    "max_steps": 600
+  },
+  "metrics": {
+    "steps": 146,
+    "arrive": true,
+    "stop": false,
+    "collision": false,
+    "timeout": false,
+    "min_distance": Infinity,
+    "path_length": 53.429494804143935,
+    "avg_step_time_ms": 60.06997534261669,
+    "avg_forward_time_ms": 59.83688243447918,
+    "max_velocity": 5.439329624176025,
+    "avg_velocity": 3.6595544386399936,
+    "roi_strategy_counts": {},
+    "roi_avg_n_in": null,
+    "roi_avg_n_roi": null,
+    "roi_reduction_ratio": null,
+    "avg_min_distance": 0.0,
+    "roi_total_time_ms": null,
+    "dual_violation_rate": 0.5039086040730277,
+    "dual_p95_norm": 1.0078671276569366,
+    "total_compute_time_ms": 8770.216400022036,
+    "total_forward_time_ms": 8736.18483543396
+  }
+}

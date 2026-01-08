@@ -1,0 +1,88 @@
+obstacle:
+- distribution:
+    name: random
+    range:
+    - 5
+    - 45
+    - 15
+    - 35
+  number: 11
+  shape:
+  - avg_radius_range:
+    - 0.5
+    - 1.0
+    center_range:
+    - 0
+    - 0
+    - 0
+    - 0
+    irregularity_range:
+    - 0.9
+    - 1.0
+    name: polygon
+    random_shape: true
+  state:
+  - - 20
+    - 34
+  - - 31
+    - 38
+  - - 10
+    - 20
+  - - 41
+    - 25
+  - - 18.8
+    - 13
+  - - 16
+    - 26
+  - - 10
+    - 24
+  - - 15
+    - 20
+  - - 16
+    - 26
+  - - 19
+    - 26
+  - - 11
+    - 14.5
+  - - 14
+    - 15
+robot:
+- goal_threshold: 0.3
+  kinematics:
+    name: acker
+  plot:
+    show_goal: false
+    show_trail: true
+  sensors:
+  - angle_range: 3.1415926
+    noise: false
+    number: 100
+    range_max: 10
+    range_min: 0
+    type: lidar2d
+  shape:
+    length: 4.6
+    name: rectangle
+    wheelbase: 3
+    width: 1.6
+  state:
+  - -1
+  - 25
+  - 0
+  - 0
+  vel_max:
+  - 8
+  - 1
+  vel_min:
+  - -8
+  - -1
+world:
+  collision_mode: stop
+  control_mode: auto
+  height: 42
+  offset:
+  - -2
+  - 5
+  sample_time: 0.1
+  step_time: 0.1
+  width: 53

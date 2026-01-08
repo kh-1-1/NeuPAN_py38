@@ -1,0 +1,176 @@
+obstacle:
+- arrive_mode: position
+  behavior: &id001
+    accer: 1.0
+    factor: 0.5
+    name: rvo
+    range_high:
+    - 45
+    - 35
+    - 3.14
+    range_low:
+    - 5
+    - 15
+    - -3.14
+    vxmax: 1.0
+    vymax: 1.0
+    wander: true
+  distribution:
+    name: manual
+  goal_threshold: 0.3
+  kinematics: &id002
+    name: omni
+  number: 10
+  plot: &id003
+    arrow_length: 0.8
+    arrow_width: 0.5
+    show_arrow: true
+    show_goal: false
+  shape: &id004
+  - name: polygon
+    vertices:
+    - - -1
+      - -1
+    - - 1
+      - -1
+    - - 1
+      - 1
+    - - -1
+      - 1
+  - name: circle
+    radius: 1.5
+  - name: circle
+    radius: 1.0
+  - avg_radius_range:
+    - 0.5
+    - 1.5
+    center_range:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    irregularity_range:
+    - 0.9
+    - 0.9
+    name: polygon
+    random_shape: true
+  state:
+  - - 21.056379455072225
+    - 20.543227884234447
+  - - 30.74052902721029
+    - 17.22418153910657
+  - - 21.5762225617495
+    - 7.3644145570916155
+  - - 10.346042853344404
+    - 16.287006630713556
+  - - 37.33261854060183
+    - 19.619761802269053
+  - - 38.069125138495956
+    - 17.445490931910584
+  - - 32.16147320760989
+    - 6.50378313563336
+  - - 30.66280153239599
+    - 18.261491140683727
+  - - 18.321282623927075
+    - 9.172065001857678
+  - - 33.83318133800828
+    - 17.853891197407222
+  vel_max: &id005
+  - 4.0
+  - 3.14
+  vel_min: &id006
+  - -4.0
+  - -3.14
+- arrive_mode: position
+  behavior: *id001
+  distribution:
+    name: manual
+  goal_threshold: 0.3
+  kinematics: *id002
+  number: 10
+  plot: *id003
+  shape: *id004
+  state:
+  - - 5.93200457096016
+    - 42.65483495480704
+  - - 24.99356405481237
+    - 39.05831565864419
+  - - 35.089771327846435
+    - 39.201226339252564
+  - - 28.187483362119156
+    - 33.71360863502973
+  - - 38.10496031779383
+    - 44.21398644745341
+  - - 42.549729894037235
+    - 29.029083358135928
+  - - 31.51301161123512
+    - 28.37732682061736
+  - - 40.74856535159204
+    - 30.15342626593302
+  - - 26.253982673838667
+    - 33.43161678419608
+  - - 27.44441164870818
+    - 35.18504987416246
+  vel_max: *id005
+  vel_min: *id006
+- arrive_mode: position
+  behavior: *id001
+  distribution:
+    name: manual
+  goal_threshold: 0.3
+  kinematics: *id002
+  number: 2
+  plot: *id003
+  shape: *id004
+  state:
+  - - 7.343501028908962
+    - 25.313185138686297
+  - - 23.501517209395747
+    - 24.127371506407822
+  vel_max: *id005
+  vel_min: *id006
+robot:
+- goal:
+  - 47
+  - 25
+  - 0
+  goal_threshold: 0.3
+  kinematics:
+    name: acker
+  plot:
+    show_goal: true
+    show_trail: true
+  sensors:
+  - angle_range: 3.1415926
+    has_velocity: true
+    noise: false
+    number: 100
+    range_max: 10
+    range_min: 0
+    type: lidar2d
+  shape:
+    length: 4.6
+    name: rectangle
+    wheelbase: 3
+    width: 1.6
+  state:
+  - -1
+  - 25
+  - 0
+  - 0
+  vel_max:
+  - 8
+  - 1
+  vel_min:
+  - -8
+  - -1
+world:
+  collision_mode: unobstructed_obstacles
+  control_mode: auto
+  height: 42
+  offset:
+  - -2
+  - 5
+  sample_time: 0.1
+  step_time: 0.1
+  width: 53

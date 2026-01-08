@@ -1,0 +1,41 @@
+{
+  "config": {
+    "example": "convex_obs",
+    "kinematics": "acker",
+    "config_id": "deepinverse",
+    "env_file": "test\\results\\core_modules_20260103_224635\\random_envs\\convex_obs_acker_deepinverse_run5.yaml",
+    "planner_file": "example/convex_obs/acker/planner.yaml",
+    "checkpoint": "test/configs/test/weights/dual_baselines/20251223_012416/deepinverse/model_best.pth",
+    "front_type": "deepinverse",
+    "front_learned": false,
+    "roi_enabled": false,
+    "roi_template": null,
+    "receding": 10,
+    "step_time": 0.1,
+    "robot": "acker_robot_default",
+    "max_steps": 800
+  },
+  "metrics": {
+    "steps": 22,
+    "arrive": false,
+    "stop": false,
+    "collision": true,
+    "timeout": false,
+    "min_distance": Infinity,
+    "path_length": 8.849465227127077,
+    "avg_step_time_ms": 67.28407272724077,
+    "avg_forward_time_ms": 66.98992035605691,
+    "max_velocity": 7.998996734619141,
+    "avg_velocity": 3.460601969198747,
+    "roi_strategy_counts": {},
+    "roi_avg_n_in": null,
+    "roi_avg_n_roi": null,
+    "roi_reduction_ratio": null,
+    "avg_min_distance": 0.0,
+    "roi_total_time_ms": null,
+    "dual_violation_rate": 0.004001791988100324,
+    "dual_p95_norm": 0.011571928149177915,
+    "total_compute_time_ms": 1480.249599999297,
+    "total_forward_time_ms": 1473.778247833252
+  }
+}

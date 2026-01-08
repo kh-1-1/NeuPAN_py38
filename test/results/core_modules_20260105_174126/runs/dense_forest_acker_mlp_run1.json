@@ -1,0 +1,41 @@
+{
+  "config": {
+    "example": "dense_forest",
+    "kinematics": "acker",
+    "config_id": "mlp",
+    "env_file": "example/dense_forest/acker/env.yaml",
+    "planner_file": "example/dense_forest/acker/planner.yaml",
+    "checkpoint": "test/configs/test/weights/dual_baselines/20251223_012416/mlp/model_best.pth",
+    "front_type": "mlp",
+    "front_learned": false,
+    "roi_enabled": false,
+    "roi_template": null,
+    "receding": 12,
+    "step_time": 0.1,
+    "robot": "acker_robot_default",
+    "max_steps": 600
+  },
+  "metrics": {
+    "steps": 63,
+    "arrive": false,
+    "stop": false,
+    "collision": false,
+    "timeout": false,
+    "min_distance": Infinity,
+    "path_length": 0.6370451167729692,
+    "avg_step_time_ms": 32.90780476203913,
+    "avg_forward_time_ms": 32.39530987209744,
+    "max_velocity": 2.498892068862915,
+    "avg_velocity": 0.03259457493004447,
+    "roi_strategy_counts": {},
+    "roi_avg_n_in": null,
+    "roi_avg_n_roi": null,
+    "roi_reduction_ratio": null,
+    "avg_min_distance": 0.0,
+    "roi_total_time_ms": null,
+    "dual_violation_rate": 0.4606013221125449,
+    "dual_p95_norm": 1.003727686020636,
+    "total_compute_time_ms": 2073.191700008465,
+    "total_forward_time_ms": 2040.9045219421387
+  }
+}

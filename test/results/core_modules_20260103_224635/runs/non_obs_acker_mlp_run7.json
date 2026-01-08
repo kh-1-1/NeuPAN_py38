@@ -1,0 +1,41 @@
+{
+  "config": {
+    "example": "non_obs",
+    "kinematics": "acker",
+    "config_id": "mlp",
+    "env_file": "test\\results\\core_modules_20260103_224635\\random_envs\\non_obs_acker_mlp_run7.yaml",
+    "planner_file": "example/non_obs/acker/planner.yaml",
+    "checkpoint": "test/configs/test/weights/dual_baselines/20251223_012416/mlp/model_best.pth",
+    "front_type": "mlp",
+    "front_learned": false,
+    "roi_enabled": false,
+    "roi_template": null,
+    "receding": 10,
+    "step_time": 0.1,
+    "robot": "acker_robot_default",
+    "max_steps": 800
+  },
+  "metrics": {
+    "steps": 44,
+    "arrive": false,
+    "stop": false,
+    "collision": true,
+    "timeout": false,
+    "min_distance": Infinity,
+    "path_length": 12.506239628791809,
+    "avg_step_time_ms": 147.75948181820488,
+    "avg_forward_time_ms": 147.48149026523936,
+    "max_velocity": 4.992873191833496,
+    "avg_velocity": 2.898577007380399,
+    "roi_strategy_counts": {},
+    "roi_avg_n_in": null,
+    "roi_avg_n_roi": null,
+    "roi_reduction_ratio": null,
+    "avg_min_distance": 0.0,
+    "roi_total_time_ms": null,
+    "dual_violation_rate": 0.4811661077100177,
+    "dual_p95_norm": 1.0171192219091016,
+    "total_compute_time_ms": 6501.417200001015,
+    "total_forward_time_ms": 6489.185571670532
+  }
+}

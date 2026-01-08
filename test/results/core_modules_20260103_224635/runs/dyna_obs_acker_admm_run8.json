@@ -1,0 +1,41 @@
+{
+  "config": {
+    "example": "dyna_obs",
+    "kinematics": "acker",
+    "config_id": "admm",
+    "env_file": "example/dyna_obs/acker/env.yaml",
+    "planner_file": "example/dyna_obs/acker/planner.yaml",
+    "checkpoint": "test/configs/test/weights/dual_baselines/20251223_012416/admm/model_best.pth",
+    "front_type": "admm",
+    "front_learned": false,
+    "roi_enabled": false,
+    "roi_template": null,
+    "receding": 10,
+    "step_time": 0.2,
+    "robot": "acker_robot_default",
+    "max_steps": 800
+  },
+  "metrics": {
+    "steps": 354,
+    "arrive": false,
+    "stop": false,
+    "collision": true,
+    "timeout": false,
+    "min_distance": Infinity,
+    "path_length": 139.3771138896351,
+    "avg_step_time_ms": 66.26539378530805,
+    "avg_forward_time_ms": 66.06972689008983,
+    "max_velocity": 8.000273704528809,
+    "avg_velocity": 3.9379988988610855,
+    "roi_strategy_counts": {},
+    "roi_avg_n_in": null,
+    "roi_avg_n_roi": null,
+    "roi_reduction_ratio": null,
+    "avg_min_distance": 0.0,
+    "roi_total_time_ms": null,
+    "dual_violation_rate": 0.24651762907336833,
+    "dual_p95_norm": 1.0051641086737315,
+    "total_compute_time_ms": 23457.949399999052,
+    "total_forward_time_ms": 23388.683319091797
+  }
+}

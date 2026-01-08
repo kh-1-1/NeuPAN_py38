@@ -1,0 +1,41 @@
+{
+  "config": {
+    "example": "dyna_obs",
+    "kinematics": "acker",
+    "config_id": "pointnet_plusplus",
+    "env_file": "example/dyna_obs/acker/env.yaml",
+    "planner_file": "example/dyna_obs/acker/planner.yaml",
+    "checkpoint": "test/configs/test/weights/dual_baselines/20251224_171606/pointnet_plusplus/model_best.pth",
+    "front_type": "pointnet_plusplus",
+    "front_learned": false,
+    "roi_enabled": false,
+    "roi_template": null,
+    "receding": 10,
+    "step_time": 0.2,
+    "robot": "acker_robot_default",
+    "max_steps": 800
+  },
+  "metrics": {
+    "steps": 3,
+    "arrive": false,
+    "stop": true,
+    "collision": false,
+    "timeout": false,
+    "min_distance": Infinity,
+    "path_length": 0.6424716234207154,
+    "avg_step_time_ms": 71.04586666658481,
+    "avg_forward_time_ms": 70.97538312276204,
+    "max_velocity": 4.2732038497924805,
+    "avg_velocity": 3.5659733613332114,
+    "roi_strategy_counts": {},
+    "roi_avg_n_in": null,
+    "roi_avg_n_roi": null,
+    "roi_reduction_ratio": null,
+    "avg_min_distance": 0.0,
+    "roi_total_time_ms": null,
+    "dual_violation_rate": null,
+    "dual_p95_norm": null,
+    "total_compute_time_ms": 213.13759999975446,
+    "total_forward_time_ms": 212.92614936828613
+  }
+}
