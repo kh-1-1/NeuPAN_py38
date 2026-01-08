@@ -1,0 +1,4518 @@
+model_name: acker_flex_pdhg-1_kkt_robot | data_size: 150000, data_range: [-25, -25, 25, 25], batch_size: 256, epoch: 500, valid_freq: 1, save_freq: 500, lr: 5e-6, lr_decay: 0.5, decay_freq: 300, robot_G: tensor([[ 0.0000, -4.6000],
+        [ 1.6000, -0.0000],
+        [ 0.0000,  4.6000],
+        [-1.6000, -0.0000]], device='cuda:0'), robot_h: tensor([[3.6800],
+        [6.0800],
+        [3.6800],
+        [1.2800]], device='cuda:0')
+
+Epoch 0/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.81e-06   | Validate Mu Loss:            8.66e-06
+  Distance Loss:    3.15e-07   | Validate Distance Loss:      3.97e-07
+  Fa Loss:          5.13e-05   | Validate Fa Loss:            7.63e-05
+  Fb Loss:          5.58e-04   | Validate Fb Loss:            1.11e-03
+
+val_total: 1.286779e-03
+Epoch 1/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.79e-06   | Validate Mu Loss:            8.66e-06
+  Distance Loss:    3.21e-07   | Validate Distance Loss:      3.96e-07
+  Fa Loss:          5.10e-05   | Validate Fa Loss:            7.64e-05
+  Fb Loss:          4.42e-04   | Validate Fb Loss:            6.51e-04
+
+val_total: 8.296662e-04
+Epoch 2/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.79e-06   | Validate Mu Loss:            8.70e-06
+  Distance Loss:    3.22e-07   | Validate Distance Loss:      4.03e-07
+  Fa Loss:          5.10e-05   | Validate Fa Loss:            7.61e-05
+  Fb Loss:          7.86e-04   | Validate Fb Loss:            9.55e-04
+
+val_total: 1.134191e-03
+Epoch 3/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.73e-06   | Validate Mu Loss:            8.70e-06
+  Distance Loss:    3.20e-07   | Validate Distance Loss:      4.06e-07
+  Fa Loss:          5.05e-05   | Validate Fa Loss:            7.55e-05
+  Fb Loss:          6.44e-04   | Validate Fb Loss:            1.45e-03
+
+val_total: 1.628400e-03
+Epoch 4/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.69e-06   | Validate Mu Loss:            8.72e-06
+  Distance Loss:    3.15e-07   | Validate Distance Loss:      3.98e-07
+  Fa Loss:          5.04e-05   | Validate Fa Loss:            7.55e-05
+  Fb Loss:          5.67e-04   | Validate Fb Loss:            1.33e-03
+
+val_total: 1.506557e-03
+Epoch 5/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.68e-06   | Validate Mu Loss:            8.72e-06
+  Distance Loss:    3.09e-07   | Validate Distance Loss:      3.94e-07
+  Fa Loss:          5.01e-05   | Validate Fa Loss:            7.55e-05
+  Fb Loss:          6.10e-04   | Validate Fb Loss:            4.65e-04
+
+val_total: 6.436092e-04
+Epoch 6/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.69e-06   | Validate Mu Loss:            8.72e-06
+  Distance Loss:    3.07e-07   | Validate Distance Loss:      3.92e-07
+  Fa Loss:          5.01e-05   | Validate Fa Loss:            7.56e-05
+  Fb Loss:          8.13e-04   | Validate Fb Loss:            1.40e-03
+
+val_total: 1.580149e-03
+Epoch 7/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.67e-06   | Validate Mu Loss:            8.73e-06
+  Distance Loss:    3.06e-07   | Validate Distance Loss:      3.84e-07
+  Fa Loss:          4.97e-05   | Validate Fa Loss:            7.54e-05
+  Fb Loss:          7.44e-04   | Validate Fb Loss:            1.11e-03
+
+val_total: 1.291765e-03
+Epoch 8/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.66e-06   | Validate Mu Loss:            8.74e-06
+  Distance Loss:    3.01e-07   | Validate Distance Loss:      3.81e-07
+  Fa Loss:          4.97e-05   | Validate Fa Loss:            7.55e-05
+  Fb Loss:          5.17e-04   | Validate Fb Loss:            1.30e-03
+
+val_total: 1.482164e-03
+Epoch 9/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.65e-06   | Validate Mu Loss:            8.72e-06
+  Distance Loss:    2.96e-07   | Validate Distance Loss:      3.86e-07
+  Fa Loss:          4.94e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          7.38e-04   | Validate Fb Loss:            2.25e-04
+
+val_total: 4.018428e-04
+Epoch 10/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.60e-06   | Validate Mu Loss:            8.73e-06
+  Distance Loss:    3.00e-07   | Validate Distance Loss:      3.86e-07
+  Fa Loss:          4.93e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          5.20e-04   | Validate Fb Loss:            8.03e-04
+
+val_total: 9.802924e-04
+Epoch 11/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.61e-06   | Validate Mu Loss:            8.73e-06
+  Distance Loss:    2.98e-07   | Validate Distance Loss:      3.85e-07
+  Fa Loss:          4.93e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          6.43e-04   | Validate Fb Loss:            1.07e-03
+
+val_total: 1.248012e-03
+Epoch 12/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.58e-06   | Validate Mu Loss:            8.73e-06
+  Distance Loss:    2.94e-07   | Validate Distance Loss:      3.83e-07
+  Fa Loss:          4.88e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.90e-04   | Validate Fb Loss:            1.21e-03
+
+val_total: 1.386076e-03
+Epoch 13/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.58e-06   | Validate Mu Loss:            8.72e-06
+  Distance Loss:    2.93e-07   | Validate Distance Loss:      3.83e-07
+  Fa Loss:          4.88e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          6.02e-04   | Validate Fb Loss:            1.32e-03
+
+val_total: 1.496160e-03
+Epoch 14/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.59e-06   | Validate Mu Loss:            8.73e-06
+  Distance Loss:    2.86e-07   | Validate Distance Loss:      3.81e-07
+  Fa Loss:          4.87e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.25e-04   | Validate Fb Loss:            1.50e-03
+
+val_total: 1.673020e-03
+Epoch 15/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.58e-06   | Validate Mu Loss:            8.72e-06
+  Distance Loss:    2.87e-07   | Validate Distance Loss:      3.81e-07
+  Fa Loss:          4.85e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.93e-04   | Validate Fb Loss:            7.85e-04
+
+val_total: 9.619663e-04
+Epoch 16/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.60e-06   | Validate Mu Loss:            8.74e-06
+  Distance Loss:    2.86e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.89e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          5.92e-04   | Validate Fb Loss:            1.05e-03
+
+val_total: 1.224831e-03
+Epoch 17/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.58e-06   | Validate Mu Loss:            8.75e-06
+  Distance Loss:    2.87e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.85e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          6.76e-04   | Validate Fb Loss:            9.99e-04
+
+val_total: 1.175740e-03
+Epoch 18/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.54e-06   | Validate Mu Loss:            8.75e-06
+  Distance Loss:    2.85e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.80e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          7.08e-04   | Validate Fb Loss:            7.21e-04
+
+val_total: 8.977351e-04
+Epoch 19/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.54e-06   | Validate Mu Loss:            8.77e-06
+  Distance Loss:    2.85e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.82e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          7.24e-04   | Validate Fb Loss:            1.37e-03
+
+val_total: 1.549840e-03
+Epoch 20/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.55e-06   | Validate Mu Loss:            8.78e-06
+  Distance Loss:    2.85e-07   | Validate Distance Loss:      3.85e-07
+  Fa Loss:          4.82e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          6.62e-04   | Validate Fb Loss:            8.12e-04
+
+val_total: 9.885936e-04
+Epoch 21/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.52e-06   | Validate Mu Loss:            8.77e-06
+  Distance Loss:    2.89e-07   | Validate Distance Loss:      3.86e-07
+  Fa Loss:          4.84e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          6.59e-04   | Validate Fb Loss:            8.06e-04
+
+val_total: 9.830914e-04
+Epoch 22/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.49e-06   | Validate Mu Loss:            8.76e-06
+  Distance Loss:    2.89e-07   | Validate Distance Loss:      3.88e-07
+  Fa Loss:          4.79e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          5.61e-04   | Validate Fb Loss:            3.56e-04
+
+val_total: 5.326301e-04
+Epoch 23/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.49e-06   | Validate Mu Loss:            8.74e-06
+  Distance Loss:    2.91e-07   | Validate Distance Loss:      3.88e-07
+  Fa Loss:          4.78e-05   | Validate Fa Loss:            7.32e-05
+  Fb Loss:          5.17e-04   | Validate Fb Loss:            1.23e-03
+
+val_total: 1.401257e-03
+Epoch 24/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.48e-06   | Validate Mu Loss:            8.73e-06
+  Distance Loss:    2.89e-07   | Validate Distance Loss:      3.94e-07
+  Fa Loss:          4.78e-05   | Validate Fa Loss:            7.32e-05
+  Fb Loss:          5.23e-04   | Validate Fb Loss:            7.20e-04
+
+val_total: 8.963765e-04
+Epoch 25/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.48e-06   | Validate Mu Loss:            8.72e-06
+  Distance Loss:    2.92e-07   | Validate Distance Loss:      3.93e-07
+  Fa Loss:          4.77e-05   | Validate Fa Loss:            7.32e-05
+  Fb Loss:          6.50e-04   | Validate Fb Loss:            9.48e-04
+
+val_total: 1.123583e-03
+Epoch 26/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.48e-06   | Validate Mu Loss:            8.73e-06
+  Distance Loss:    2.92e-07   | Validate Distance Loss:      3.94e-07
+  Fa Loss:          4.75e-05   | Validate Fa Loss:            7.32e-05
+  Fb Loss:          4.91e-04   | Validate Fb Loss:            9.22e-04
+
+val_total: 1.098127e-03
+Epoch 27/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.48e-06   | Validate Mu Loss:            8.72e-06
+  Distance Loss:    2.94e-07   | Validate Distance Loss:      3.94e-07
+  Fa Loss:          4.77e-05   | Validate Fa Loss:            7.24e-05
+  Fb Loss:          7.69e-04   | Validate Fb Loss:            1.11e-03
+
+val_total: 1.288345e-03
+Epoch 28/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.46e-06   | Validate Mu Loss:            8.76e-06
+  Distance Loss:    2.92e-07   | Validate Distance Loss:      3.99e-07
+  Fa Loss:          4.81e-05   | Validate Fa Loss:            7.22e-05
+  Fb Loss:          8.37e-04   | Validate Fb Loss:            1.44e-03
+
+val_total: 1.610137e-03
+Epoch 29/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.43e-06   | Validate Mu Loss:            8.74e-06
+  Distance Loss:    2.94e-07   | Validate Distance Loss:      3.95e-07
+  Fa Loss:          4.75e-05   | Validate Fa Loss:            7.26e-05
+  Fb Loss:          4.55e-04   | Validate Fb Loss:            7.80e-04
+
+val_total: 9.555937e-04
+Epoch 30/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.42e-06   | Validate Mu Loss:            8.73e-06
+  Distance Loss:    2.88e-07   | Validate Distance Loss:      3.95e-07
+  Fa Loss:          4.73e-05   | Validate Fa Loss:            7.28e-05
+  Fb Loss:          5.17e-04   | Validate Fb Loss:            4.41e-04
+
+val_total: 6.163878e-04
+Epoch 31/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.46e-06   | Validate Mu Loss:            8.73e-06
+  Distance Loss:    2.92e-07   | Validate Distance Loss:      3.92e-07
+  Fa Loss:          4.77e-05   | Validate Fa Loss:            7.29e-05
+  Fb Loss:          6.12e-04   | Validate Fb Loss:            1.11e-03
+
+val_total: 1.282101e-03
+Epoch 32/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.43e-06   | Validate Mu Loss:            8.74e-06
+  Distance Loss:    2.86e-07   | Validate Distance Loss:      3.94e-07
+  Fa Loss:          4.70e-05   | Validate Fa Loss:            7.29e-05
+  Fb Loss:          5.57e-04   | Validate Fb Loss:            6.72e-04
+
+val_total: 8.476680e-04
+Epoch 33/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.44e-06   | Validate Mu Loss:            8.74e-06
+  Distance Loss:    2.90e-07   | Validate Distance Loss:      3.88e-07
+  Fa Loss:          4.71e-05   | Validate Fa Loss:            7.34e-05
+  Fb Loss:          6.79e-04   | Validate Fb Loss:            1.52e-03
+
+val_total: 1.700294e-03
+Epoch 34/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.44e-06   | Validate Mu Loss:            8.74e-06
+  Distance Loss:    2.86e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.74e-05   | Validate Fa Loss:            7.33e-05
+  Fb Loss:          5.49e-04   | Validate Fb Loss:            7.40e-04
+
+val_total: 9.158185e-04
+Epoch 35/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.44e-06   | Validate Mu Loss:            8.76e-06
+  Distance Loss:    2.78e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.74e-05   | Validate Fa Loss:            7.32e-05
+  Fb Loss:          6.74e-04   | Validate Fb Loss:            9.67e-04
+
+val_total: 1.142600e-03
+Epoch 36/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.42e-06   | Validate Mu Loss:            8.78e-06
+  Distance Loss:    2.72e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.68e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          5.39e-04   | Validate Fb Loss:            1.53e-03
+
+val_total: 1.701943e-03
+Epoch 37/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.42e-06   | Validate Mu Loss:            8.79e-06
+  Distance Loss:    2.70e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.69e-05   | Validate Fa Loss:            7.34e-05
+  Fb Loss:          6.73e-04   | Validate Fb Loss:            1.05e-03
+
+val_total: 1.228782e-03
+Epoch 38/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.40e-06   | Validate Mu Loss:            8.77e-06
+  Distance Loss:    2.75e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.70e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          6.83e-04   | Validate Fb Loss:            4.77e-04
+
+val_total: 6.531097e-04
+Epoch 39/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.41e-06   | Validate Mu Loss:            8.79e-06
+  Distance Loss:    2.76e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.69e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          4.39e-04   | Validate Fb Loss:            5.49e-04
+
+val_total: 7.254103e-04
+Epoch 40/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.42e-06   | Validate Mu Loss:            8.79e-06
+  Distance Loss:    2.75e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.68e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.56e-04   | Validate Fb Loss:            1.62e-03
+
+val_total: 1.794544e-03
+Epoch 41/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.44e-06   | Validate Mu Loss:            8.78e-06
+  Distance Loss:    2.70e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.70e-05   | Validate Fa Loss:            7.35e-05
+  Fb Loss:          8.24e-04   | Validate Fb Loss:            1.30e-03
+
+val_total: 1.473599e-03
+Epoch 42/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.42e-06   | Validate Mu Loss:            8.79e-06
+  Distance Loss:    2.66e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.70e-05   | Validate Fa Loss:            7.32e-05
+  Fb Loss:          5.72e-04   | Validate Fb Loss:            5.81e-04
+
+val_total: 7.574217e-04
+Epoch 43/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.41e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.63e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.69e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          7.10e-04   | Validate Fb Loss:            7.98e-04
+
+val_total: 9.741851e-04
+Epoch 44/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.39e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.65e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.63e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          7.42e-04   | Validate Fb Loss:            9.12e-04
+
+val_total: 1.089580e-03
+Epoch 45/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.41e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.67e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.65e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.26e-04   | Validate Fb Loss:            9.95e-04
+
+val_total: 1.172150e-03
+Epoch 46/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.39e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.68e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.65e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.08e-04   | Validate Fb Loss:            9.97e-04
+
+val_total: 1.174634e-03
+Epoch 47/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.39e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.66e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.62e-05   | Validate Fa Loss:            7.52e-05
+  Fb Loss:          4.73e-04   | Validate Fb Loss:            1.18e-03
+
+val_total: 1.356222e-03
+Epoch 48/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.39e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.65e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.63e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.61e-04   | Validate Fb Loss:            9.77e-04
+
+val_total: 1.154971e-03
+Epoch 49/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.38e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.71e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.63e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          6.08e-04   | Validate Fb Loss:            1.48e-03
+
+val_total: 1.653931e-03
+Epoch 50/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.36e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.65e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.60e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.89e-04   | Validate Fb Loss:            5.90e-04
+
+val_total: 7.674983e-04
+Epoch 51/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.37e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.68e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.65e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          6.24e-04   | Validate Fb Loss:            6.51e-04
+
+val_total: 8.289681e-04
+Epoch 52/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.37e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.69e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.61e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          7.08e-04   | Validate Fb Loss:            5.55e-04
+
+val_total: 7.324284e-04
+Epoch 53/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.37e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.67e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.63e-05   | Validate Fa Loss:            7.57e-05
+  Fb Loss:          5.69e-04   | Validate Fb Loss:            3.95e-04
+
+val_total: 5.731503e-04
+Epoch 54/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.36e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.74e-07   | Validate Distance Loss:      3.86e-07
+  Fa Loss:          4.66e-05   | Validate Fa Loss:            7.56e-05
+  Fb Loss:          5.53e-04   | Validate Fb Loss:            1.15e-03
+
+val_total: 1.330728e-03
+Epoch 55/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.37e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.77e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.66e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.94e-04   | Validate Fb Loss:            1.02e-03
+
+val_total: 1.202210e-03
+Epoch 56/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.36e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.68e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.60e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          6.62e-04   | Validate Fb Loss:            5.97e-04
+
+val_total: 7.748160e-04
+Epoch 57/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.35e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.72e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.63e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          7.13e-04   | Validate Fb Loss:            4.20e-04
+
+val_total: 5.977656e-04
+Epoch 58/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.34e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.72e-07   | Validate Distance Loss:      3.84e-07
+  Fa Loss:          4.62e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.99e-04   | Validate Fb Loss:            8.01e-04
+
+val_total: 9.775496e-04
+Epoch 59/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.33e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.76e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.58e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          5.77e-04   | Validate Fb Loss:            7.46e-04
+
+val_total: 9.236799e-04
+Epoch 60/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.34e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.72e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.59e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          6.55e-04   | Validate Fb Loss:            7.04e-04
+
+val_total: 8.809618e-04
+Epoch 61/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.34e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.68e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.57e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          5.08e-04   | Validate Fb Loss:            3.69e-04
+
+val_total: 5.464070e-04
+Epoch 62/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.34e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.73e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.59e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.54e-04   | Validate Fb Loss:            1.16e-03
+
+val_total: 1.335008e-03
+Epoch 63/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.35e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.74e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.57e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          5.06e-04   | Validate Fb Loss:            7.92e-04
+
+val_total: 9.684197e-04
+Epoch 64/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.32e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.71e-07   | Validate Distance Loss:      3.83e-07
+  Fa Loss:          4.56e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          5.19e-04   | Validate Fb Loss:            1.11e-03
+
+val_total: 1.282501e-03
+Epoch 65/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.33e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.77e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.57e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          6.41e-04   | Validate Fb Loss:            8.34e-04
+
+val_total: 1.011997e-03
+Epoch 66/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.33e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.74e-07   | Validate Distance Loss:      3.83e-07
+  Fa Loss:          4.56e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.67e-04   | Validate Fb Loss:            1.01e-03
+
+val_total: 1.186884e-03
+Epoch 67/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.33e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.74e-07   | Validate Distance Loss:      3.84e-07
+  Fa Loss:          4.57e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.77e-04   | Validate Fb Loss:            1.13e-03
+
+val_total: 1.308947e-03
+Epoch 68/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.33e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.76e-07   | Validate Distance Loss:      3.91e-07
+  Fa Loss:          4.56e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          5.74e-04   | Validate Fb Loss:            8.03e-04
+
+val_total: 9.803137e-04
+Epoch 69/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.35e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.83e-07   | Validate Distance Loss:      3.87e-07
+  Fa Loss:          4.58e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          7.33e-04   | Validate Fb Loss:            7.77e-04
+
+val_total: 9.537157e-04
+Epoch 70/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.31e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.75e-07   | Validate Distance Loss:      3.88e-07
+  Fa Loss:          4.51e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.15e-04   | Validate Fb Loss:            1.03e-03
+
+val_total: 1.208614e-03
+Epoch 71/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.33e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.78e-07   | Validate Distance Loss:      3.83e-07
+  Fa Loss:          4.54e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          7.12e-04   | Validate Fb Loss:            7.53e-04
+
+val_total: 9.304658e-04
+Epoch 72/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.31e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.74e-07   | Validate Distance Loss:      3.84e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.50e-05
+  Fb Loss:          4.99e-04   | Validate Fb Loss:            6.52e-04
+
+val_total: 8.295996e-04
+Epoch 73/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.32e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.74e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.55e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          6.16e-04   | Validate Fb Loss:            1.05e-03
+
+val_total: 1.225185e-03
+Epoch 74/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.35e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.68e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.58e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          6.88e-04   | Validate Fb Loss:            1.07e-03
+
+val_total: 1.244720e-03
+Epoch 75/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.30e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.66e-07   | Validate Distance Loss:      3.83e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          4.62e-04   | Validate Fb Loss:            8.44e-04
+
+val_total: 1.021696e-03
+Epoch 76/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.32e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.74e-07   | Validate Distance Loss:      3.81e-07
+  Fa Loss:          4.53e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.45e-04   | Validate Fb Loss:            8.99e-04
+
+val_total: 1.076950e-03
+Epoch 77/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.32e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.70e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.52e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          6.28e-04   | Validate Fb Loss:            1.21e-03
+
+val_total: 1.387317e-03
+Epoch 78/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.31e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.70e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          6.00e-04   | Validate Fb Loss:            9.90e-04
+
+val_total: 1.167180e-03
+Epoch 79/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.31e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.64e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.66e-04   | Validate Fb Loss:            9.33e-04
+
+val_total: 1.110993e-03
+Epoch 80/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.31e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.63e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          6.42e-04   | Validate Fb Loss:            6.15e-04
+
+val_total: 7.918259e-04
+Epoch 81/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.32e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.52e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          5.64e-04   | Validate Fb Loss:            9.30e-04
+
+val_total: 1.106764e-03
+Epoch 82/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.32e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.55e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          4.95e-04   | Validate Fb Loss:            6.43e-04
+
+val_total: 8.189345e-04
+Epoch 83/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.31e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.53e-05   | Validate Fa Loss:            7.32e-05
+  Fb Loss:          5.66e-04   | Validate Fb Loss:            8.83e-04
+
+val_total: 1.059275e-03
+Epoch 84/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.31e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.55e-05   | Validate Fa Loss:            7.34e-05
+  Fb Loss:          5.55e-04   | Validate Fb Loss:            5.85e-04
+
+val_total: 7.613758e-04
+Epoch 85/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.31e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.62e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.53e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.34e-04   | Validate Fb Loss:            8.39e-04
+
+val_total: 1.016179e-03
+Epoch 86/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.31e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.53e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.47e-04   | Validate Fb Loss:            7.90e-04
+
+val_total: 9.667139e-04
+Epoch 87/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.28e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.64e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.51e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.16e-04   | Validate Fb Loss:            1.37e-03
+
+val_total: 1.551605e-03
+Epoch 88/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.31e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.69e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.59e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          7.51e-04   | Validate Fb Loss:            9.28e-04
+
+val_total: 1.104849e-03
+Epoch 89/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.28e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.67e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          3.89e-04   | Validate Fb Loss:            8.24e-04
+
+val_total: 1.001258e-03
+Epoch 90/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.29e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.54e-04   | Validate Fb Loss:            7.77e-04
+
+val_total: 9.543482e-04
+Epoch 91/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.29e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.51e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          7.19e-04   | Validate Fb Loss:            6.84e-04
+
+val_total: 8.604992e-04
+Epoch 92/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.29e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.49e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          5.31e-04   | Validate Fb Loss:            1.18e-03
+
+val_total: 1.356045e-03
+Epoch 93/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.28e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.48e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          4.94e-04   | Validate Fb Loss:            1.10e-03
+
+val_total: 1.273826e-03
+Epoch 94/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.62e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.18e-04   | Validate Fb Loss:            9.10e-04
+
+val_total: 1.087265e-03
+Epoch 95/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.28e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.66e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.52e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          6.79e-04   | Validate Fb Loss:            8.51e-04
+
+val_total: 1.028671e-03
+Epoch 96/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.30e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.64e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.49e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          6.79e-04   | Validate Fb Loss:            1.22e-03
+
+val_total: 1.395535e-03
+Epoch 97/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.29e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.47e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.95e-04   | Validate Fb Loss:            8.60e-04
+
+val_total: 1.036636e-03
+Epoch 98/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.46e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          5.82e-04   | Validate Fb Loss:            7.02e-04
+
+val_total: 8.797162e-04
+Epoch 99/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.29e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.49e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          6.35e-04   | Validate Fb Loss:            7.33e-04
+
+val_total: 9.102273e-04
+Epoch 100/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.30e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          5.74e-04   | Validate Fb Loss:            1.40e-03
+
+val_total: 1.578763e-03
+Epoch 101/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.29e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.63e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.49e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          5.99e-04   | Validate Fb Loss:            1.10e-03
+
+val_total: 1.281368e-03
+Epoch 102/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.29e-06   | Validate Mu Loss:            8.80e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.48e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          6.46e-04   | Validate Fb Loss:            8.40e-04
+
+val_total: 1.016381e-03
+Epoch 103/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.31e-06   | Validate Mu Loss:            8.78e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.48e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          6.40e-04   | Validate Fb Loss:            1.07e-03
+
+val_total: 1.247014e-03
+Epoch 104/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.30e-06   | Validate Mu Loss:            8.79e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.32e-05
+  Fb Loss:          6.72e-04   | Validate Fb Loss:            8.18e-04
+
+val_total: 9.936412e-04
+Epoch 105/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.48e-05   | Validate Fa Loss:            7.32e-05
+  Fb Loss:          5.30e-04   | Validate Fb Loss:            1.18e-03
+
+val_total: 1.357948e-03
+Epoch 106/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.29e-06   | Validate Mu Loss:            8.80e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.53e-05   | Validate Fa Loss:            7.29e-05
+  Fb Loss:          4.83e-04   | Validate Fb Loss:            7.40e-04
+
+val_total: 9.153773e-04
+Epoch 107/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.28e-06   | Validate Mu Loss:            8.80e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.52e-05   | Validate Fa Loss:            7.29e-05
+  Fb Loss:          4.57e-04   | Validate Fb Loss:            1.36e-03
+
+val_total: 1.533537e-03
+Epoch 108/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.81e-07
+  Fa Loss:          4.48e-05   | Validate Fa Loss:            7.34e-05
+  Fb Loss:          5.64e-04   | Validate Fb Loss:            7.68e-04
+
+val_total: 9.438992e-04
+Epoch 109/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.69e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.51e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          4.95e-04   | Validate Fb Loss:            9.49e-04
+
+val_total: 1.125895e-03
+Epoch 110/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.29e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.52e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          7.28e-04   | Validate Fb Loss:            7.66e-04
+
+val_total: 9.423465e-04
+Epoch 111/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.28e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.48e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          6.33e-04   | Validate Fb Loss:            1.05e-03
+
+val_total: 1.228532e-03
+Epoch 112/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.63e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.49e-05   | Validate Fa Loss:            7.35e-05
+  Fb Loss:          7.03e-04   | Validate Fb Loss:            9.53e-04
+
+val_total: 1.129267e-03
+Epoch 113/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.48e-05   | Validate Fa Loss:            7.35e-05
+  Fb Loss:          5.80e-04   | Validate Fb Loss:            1.01e-03
+
+val_total: 1.185115e-03
+Epoch 114/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.26e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.66e-07   | Validate Distance Loss:      3.83e-07
+  Fa Loss:          4.45e-05   | Validate Fa Loss:            7.35e-05
+  Fb Loss:          4.62e-04   | Validate Fb Loss:            1.39e-03
+
+val_total: 1.567334e-03
+Epoch 115/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.26e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.70e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.48e-05   | Validate Fa Loss:            7.34e-05
+  Fb Loss:          6.15e-04   | Validate Fb Loss:            1.21e-03
+
+val_total: 1.384609e-03
+Epoch 116/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.63e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          6.36e-04   | Validate Fb Loss:            4.37e-04
+
+val_total: 6.137019e-04
+Epoch 117/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.26e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.62e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.46e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          4.83e-04   | Validate Fb Loss:            5.62e-04
+
+val_total: 7.390638e-04
+Epoch 118/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.26e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.64e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.44e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          4.95e-04   | Validate Fb Loss:            1.07e-03
+
+val_total: 1.246966e-03
+Epoch 119/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.26e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.66e-07   | Validate Distance Loss:      3.83e-07
+  Fa Loss:          4.46e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          5.65e-04   | Validate Fb Loss:            9.13e-04
+
+val_total: 1.091171e-03
+Epoch 120/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.28e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.70e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          5.70e-04   | Validate Fb Loss:            1.67e-03
+
+val_total: 1.846269e-03
+Epoch 121/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.25e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.66e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.46e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          4.95e-04   | Validate Fb Loss:            4.80e-04
+
+val_total: 6.567170e-04
+Epoch 122/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.26e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.65e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.46e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          4.91e-04   | Validate Fb Loss:            5.93e-04
+
+val_total: 7.693994e-04
+Epoch 123/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.26e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.67e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.48e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          5.69e-04   | Validate Fb Loss:            1.03e-03
+
+val_total: 1.202393e-03
+Epoch 124/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.25e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.63e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.44e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.01e-04   | Validate Fb Loss:            1.22e-03
+
+val_total: 1.398626e-03
+Epoch 125/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.26e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.67e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.46e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.22e-04   | Validate Fb Loss:            7.09e-04
+
+val_total: 8.857559e-04
+Epoch 126/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.71e-07   | Validate Distance Loss:      3.86e-07
+  Fa Loss:          4.49e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          6.45e-04   | Validate Fb Loss:            1.39e-03
+
+val_total: 1.570229e-03
+Epoch 127/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.77e-07   | Validate Distance Loss:      3.88e-07
+  Fa Loss:          4.46e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.81e-04   | Validate Fb Loss:            1.40e-03
+
+val_total: 1.575135e-03
+Epoch 128/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.76e-07   | Validate Distance Loss:      3.85e-07
+  Fa Loss:          4.50e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.31e-04   | Validate Fb Loss:            1.24e-03
+
+val_total: 1.416296e-03
+Epoch 129/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.26e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.67e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.47e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.66e-04   | Validate Fb Loss:            7.68e-04
+
+val_total: 9.450994e-04
+Epoch 130/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.27e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.67e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.48e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          5.93e-04   | Validate Fb Loss:            9.15e-04
+
+val_total: 1.092490e-03
+Epoch 131/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.25e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.71e-07   | Validate Distance Loss:      3.92e-07
+  Fa Loss:          4.45e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          4.49e-04   | Validate Fb Loss:            8.72e-04
+
+val_total: 1.048741e-03
+Epoch 132/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.28e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.75e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.49e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          6.77e-04   | Validate Fb Loss:            5.57e-04
+
+val_total: 7.345440e-04
+Epoch 133/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.25e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.63e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.44e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          6.45e-04   | Validate Fb Loss:            1.04e-03
+
+val_total: 1.221267e-03
+Epoch 134/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.26e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.69e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.46e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          6.12e-04   | Validate Fb Loss:            8.61e-04
+
+val_total: 1.037965e-03
+Epoch 135/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.25e-06   | Validate Mu Loss:            8.80e-06
+  Distance Loss:    2.65e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          4.80e-04   | Validate Fb Loss:            3.42e-04
+
+val_total: 5.181808e-04
+Epoch 136/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.25e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.64e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          5.41e-04   | Validate Fb Loss:            5.09e-04
+
+val_total: 6.859106e-04
+Epoch 137/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.28e-06   | Validate Mu Loss:            8.79e-06
+  Distance Loss:    2.64e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.48e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          7.52e-04   | Validate Fb Loss:            6.76e-04
+
+val_total: 8.529260e-04
+Epoch 138/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.24e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.58e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.11e-04   | Validate Fb Loss:            3.32e-04
+
+val_total: 5.091936e-04
+Epoch 139/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.26e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.67e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.45e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.44e-04   | Validate Fb Loss:            7.16e-04
+
+val_total: 8.927016e-04
+Epoch 140/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.25e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.63e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.45e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          5.69e-04   | Validate Fb Loss:            6.94e-04
+
+val_total: 8.709557e-04
+Epoch 141/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.24e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.58e-04   | Validate Fb Loss:            1.06e-03
+
+val_total: 1.241482e-03
+Epoch 142/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.24e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          6.55e-04   | Validate Fb Loss:            1.01e-03
+
+val_total: 1.184818e-03
+Epoch 143/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.23e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.46e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.73e-04   | Validate Fb Loss:            1.38e-03
+
+val_total: 1.552350e-03
+Epoch 144/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.23e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.44e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          5.72e-04   | Validate Fb Loss:            8.62e-04
+
+val_total: 1.038547e-03
+Epoch 145/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.23e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.63e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.45e-05   | Validate Fa Loss:            7.35e-05
+  Fb Loss:          5.59e-04   | Validate Fb Loss:            1.44e-03
+
+val_total: 1.615217e-03
+Epoch 146/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.67e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          5.91e-04   | Validate Fb Loss:            1.34e-03
+
+val_total: 1.517102e-03
+Epoch 147/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.23e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.66e-07   | Validate Distance Loss:      3.81e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.35e-05
+  Fb Loss:          4.53e-04   | Validate Fb Loss:            5.87e-04
+
+val_total: 7.631893e-04
+Epoch 148/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.23e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.66e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          7.19e-04   | Validate Fb Loss:            1.17e-03
+
+val_total: 1.344352e-03
+Epoch 149/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.24e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.70e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.47e-05   | Validate Fa Loss:            7.50e-05
+  Fb Loss:          5.44e-04   | Validate Fb Loss:            1.53e-03
+
+val_total: 1.711689e-03
+Epoch 150/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.24e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.71e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.49e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.63e-04   | Validate Fb Loss:            9.11e-04
+
+val_total: 1.087263e-03
+Epoch 151/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.65e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.41e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          3.96e-04   | Validate Fb Loss:            7.45e-04
+
+val_total: 9.222291e-04
+Epoch 152/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.25e-04   | Validate Fb Loss:            1.22e-03
+
+val_total: 1.394638e-03
+Epoch 153/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.23e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.23e-04   | Validate Fb Loss:            5.01e-04
+
+val_total: 6.784492e-04
+Epoch 154/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.58e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          6.44e-04   | Validate Fb Loss:            1.07e-03
+
+val_total: 1.250361e-03
+Epoch 155/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.23e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          6.03e-04   | Validate Fb Loss:            9.90e-04
+
+val_total: 1.166411e-03
+Epoch 156/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.23e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.63e-07
+  Fa Loss:          4.41e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          6.87e-04   | Validate Fb Loss:            4.98e-04
+
+val_total: 6.752757e-04
+Epoch 157/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.39e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          4.94e-04   | Validate Fb Loss:            1.22e-03
+
+val_total: 1.393610e-03
+Epoch 158/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.23e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.45e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          6.42e-04   | Validate Fb Loss:            1.59e-03
+
+val_total: 1.768168e-03
+Epoch 159/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          6.54e-04   | Validate Fb Loss:            6.77e-04
+
+val_total: 8.533056e-04
+Epoch 160/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.23e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.44e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          6.33e-04   | Validate Fb Loss:            1.33e-03
+
+val_total: 1.505482e-03
+Epoch 161/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.35e-05
+  Fb Loss:          5.49e-04   | Validate Fb Loss:            5.87e-04
+
+val_total: 7.637536e-04
+Epoch 162/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.21e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.41e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.87e-04   | Validate Fb Loss:            7.52e-04
+
+val_total: 9.285851e-04
+Epoch 163/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          4.52e-04   | Validate Fb Loss:            7.97e-04
+
+val_total: 9.740120e-04
+Epoch 164/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          5.66e-04   | Validate Fb Loss:            5.97e-04
+
+val_total: 7.730799e-04
+Epoch 165/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.21e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.44e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          4.68e-04   | Validate Fb Loss:            7.62e-04
+
+val_total: 9.386816e-04
+Epoch 166/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.35e-05
+  Fb Loss:          6.50e-04   | Validate Fb Loss:            1.33e-03
+
+val_total: 1.505875e-03
+Epoch 167/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.64e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          4.83e-04   | Validate Fb Loss:            1.59e-03
+
+val_total: 1.767522e-03
+Epoch 168/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          5.50e-04   | Validate Fb Loss:            1.17e-03
+
+val_total: 1.347183e-03
+Epoch 169/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.21e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.41e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          5.15e-04   | Validate Fb Loss:            8.64e-04
+
+val_total: 1.041608e-03
+Epoch 170/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.21e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          6.56e-04   | Validate Fb Loss:            1.15e-03
+
+val_total: 1.329269e-03
+Epoch 171/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.62e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.41e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          4.10e-04   | Validate Fb Loss:            9.21e-04
+
+val_total: 1.098290e-03
+Epoch 172/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          6.50e-04   | Validate Fb Loss:            1.00e-03
+
+val_total: 1.180836e-03
+Epoch 173/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.58e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.39e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          4.36e-04   | Validate Fb Loss:            7.25e-04
+
+val_total: 9.022466e-04
+Epoch 174/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.21e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.63e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          6.37e-04   | Validate Fb Loss:            8.32e-04
+
+val_total: 1.008936e-03
+Epoch 175/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.41e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          4.28e-04   | Validate Fb Loss:            1.50e-03
+
+val_total: 1.681485e-03
+Epoch 176/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.21e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.62e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          6.38e-04   | Validate Fb Loss:            1.39e-03
+
+val_total: 1.566450e-03
+Epoch 177/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.58e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          4.87e-04   | Validate Fb Loss:            1.05e-03
+
+val_total: 1.231663e-03
+Epoch 178/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.39e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          6.02e-04   | Validate Fb Loss:            1.24e-03
+
+val_total: 1.416253e-03
+Epoch 179/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.41e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          4.89e-04   | Validate Fb Loss:            5.54e-04
+
+val_total: 7.305114e-04
+Epoch 180/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.21e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.63e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.41e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          6.00e-04   | Validate Fb Loss:            4.76e-04
+
+val_total: 6.528492e-04
+Epoch 181/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.19e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.67e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.40e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.11e-04   | Validate Fb Loss:            1.26e-03
+
+val_total: 1.436049e-03
+Epoch 182/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.21e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.66e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.43e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          6.30e-04   | Validate Fb Loss:            1.02e-03
+
+val_total: 1.199183e-03
+Epoch 183/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.19e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.16e-04   | Validate Fb Loss:            9.73e-04
+
+val_total: 1.150685e-03
+Epoch 184/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.58e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.52e-05
+  Fb Loss:          5.02e-04   | Validate Fb Loss:            5.31e-04
+
+val_total: 7.086638e-04
+Epoch 185/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.24e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.64e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.45e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          6.34e-04   | Validate Fb Loss:            6.46e-04
+
+val_total: 8.232377e-04
+Epoch 186/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          4.68e-04   | Validate Fb Loss:            8.14e-04
+
+val_total: 9.903250e-04
+Epoch 187/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          5.71e-04   | Validate Fb Loss:            8.51e-04
+
+val_total: 1.027652e-03
+Epoch 188/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.21e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.64e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.40e-05   | Validate Fa Loss:            7.35e-05
+  Fb Loss:          5.12e-04   | Validate Fb Loss:            1.10e-03
+
+val_total: 1.277850e-03
+Epoch 189/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.19e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.36e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          3.99e-04   | Validate Fb Loss:            5.19e-04
+
+val_total: 6.954730e-04
+Epoch 190/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.40e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.25e-04   | Validate Fb Loss:            9.67e-04
+
+val_total: 1.144297e-03
+Epoch 191/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          7.06e-04   | Validate Fb Loss:            8.30e-04
+
+val_total: 1.007193e-03
+Epoch 192/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.58e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.73e-04   | Validate Fb Loss:            9.29e-04
+
+val_total: 1.106110e-03
+Epoch 193/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.58e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          5.73e-04   | Validate Fb Loss:            7.01e-04
+
+val_total: 8.777941e-04
+Epoch 194/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.19e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.17e-04   | Validate Fb Loss:            8.98e-04
+
+val_total: 1.075145e-03
+Epoch 195/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.21e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.40e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          6.59e-04   | Validate Fb Loss:            5.05e-04
+
+val_total: 6.826964e-04
+Epoch 196/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          3.91e-04   | Validate Fb Loss:            6.95e-04
+
+val_total: 8.724247e-04
+Epoch 197/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.39e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.41e-04   | Validate Fb Loss:            1.13e-03
+
+val_total: 1.303792e-03
+Epoch 198/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.19e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.82e-04   | Validate Fb Loss:            4.98e-04
+
+val_total: 6.756034e-04
+Epoch 199/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.40e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          5.60e-04   | Validate Fb Loss:            6.74e-04
+
+val_total: 8.509026e-04
+Epoch 200/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.19e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          5.82e-04   | Validate Fb Loss:            6.01e-04
+
+val_total: 7.784771e-04
+Epoch 201/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.19e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          3.94e-04   | Validate Fb Loss:            1.19e-03
+
+val_total: 1.365347e-03
+Epoch 202/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.22e-04   | Validate Fb Loss:            9.29e-04
+
+val_total: 1.106586e-03
+Epoch 203/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.22e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.40e-05   | Validate Fa Loss:            7.50e-05
+  Fb Loss:          8.18e-04   | Validate Fb Loss:            1.23e-03
+
+val_total: 1.404741e-03
+Epoch 204/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.19e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          6.43e-04   | Validate Fb Loss:            8.07e-04
+
+val_total: 9.841883e-04
+Epoch 205/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.19e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.56e-05
+  Fb Loss:          5.81e-04   | Validate Fb Loss:            1.00e-03
+
+val_total: 1.179192e-03
+Epoch 206/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.20e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.40e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          7.59e-04   | Validate Fb Loss:            1.09e-03
+
+val_total: 1.266030e-03
+Epoch 207/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.18e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.40e-04   | Validate Fb Loss:            1.34e-03
+
+val_total: 1.520709e-03
+Epoch 208/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.18e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.49e-04   | Validate Fb Loss:            6.62e-04
+
+val_total: 8.390673e-04
+Epoch 209/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.18e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          6.87e-04   | Validate Fb Loss:            1.17e-03
+
+val_total: 1.349613e-03
+Epoch 210/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.19e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.62e-07
+  Fa Loss:          4.36e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.49e-04   | Validate Fb Loss:            1.47e-03
+
+val_total: 1.644177e-03
+Epoch 211/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.18e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.62e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.72e-04   | Validate Fb Loss:            6.21e-04
+
+val_total: 7.983813e-04
+Epoch 212/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.17e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.64e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          4.03e-04   | Validate Fb Loss:            9.61e-04
+
+val_total: 1.137972e-03
+Epoch 213/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.17e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          5.52e-04   | Validate Fb Loss:            9.00e-04
+
+val_total: 1.076731e-03
+Epoch 214/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.18e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.40e-05   | Validate Fa Loss:            7.35e-05
+  Fb Loss:          4.78e-04   | Validate Fb Loss:            1.17e-03
+
+val_total: 1.349154e-03
+Epoch 215/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.41e-04   | Validate Fb Loss:            7.87e-04
+
+val_total: 9.643758e-04
+Epoch 216/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          4.72e-04   | Validate Fb Loss:            7.51e-04
+
+val_total: 9.271451e-04
+Epoch 217/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.18e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.39e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.97e-04   | Validate Fb Loss:            1.19e-03
+
+val_total: 1.369989e-03
+Epoch 218/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.17e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          3.87e-04   | Validate Fb Loss:            1.18e-03
+
+val_total: 1.351809e-03
+Epoch 219/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.17e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.57e-04   | Validate Fb Loss:            9.86e-04
+
+val_total: 1.163343e-03
+Epoch 220/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.18e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.42e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.87e-04   | Validate Fb Loss:            8.39e-04
+
+val_total: 1.015495e-03
+Epoch 221/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.44e-04   | Validate Fb Loss:            5.84e-04
+
+val_total: 7.610702e-04
+Epoch 222/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          3.51e-04   | Validate Fb Loss:            1.03e-03
+
+val_total: 1.211647e-03
+Epoch 223/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          4.49e-04   | Validate Fb Loss:            8.64e-04
+
+val_total: 1.041493e-03
+Epoch 224/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          4.29e-04   | Validate Fb Loss:            6.73e-04
+
+val_total: 8.494243e-04
+Epoch 225/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.76e-04   | Validate Fb Loss:            9.31e-04
+
+val_total: 1.107731e-03
+Epoch 226/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.94e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          4.95e-04   | Validate Fb Loss:            1.63e-03
+
+val_total: 1.810949e-03
+Epoch 227/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.15e-06   | Validate Mu Loss:            8.91e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          5.88e-04   | Validate Fb Loss:            1.08e-03
+
+val_total: 1.260050e-03
+Epoch 228/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.15e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.61e-04   | Validate Fb Loss:            4.59e-04
+
+val_total: 6.361889e-04
+Epoch 229/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          7.52e-04   | Validate Fb Loss:            1.20e-03
+
+val_total: 1.375408e-03
+Epoch 230/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.93e-06
+  Distance Loss:    2.64e-07   | Validate Distance Loss:      3.81e-07
+  Fa Loss:          4.40e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.42e-04   | Validate Fb Loss:            1.36e-03
+
+val_total: 1.541422e-03
+Epoch 231/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.91e-06
+  Distance Loss:    2.65e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.41e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          6.18e-04   | Validate Fb Loss:            9.88e-04
+
+val_total: 1.165372e-03
+Epoch 232/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.92e-06
+  Distance Loss:    2.62e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.41e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          4.82e-04   | Validate Fb Loss:            1.22e-03
+
+val_total: 1.399207e-03
+Epoch 233/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.64e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.38e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          6.90e-04   | Validate Fb Loss:            6.02e-04
+
+val_total: 7.796518e-04
+Epoch 234/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.15e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          4.43e-04   | Validate Fb Loss:            1.42e-03
+
+val_total: 1.594384e-03
+Epoch 235/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          5.11e-04   | Validate Fb Loss:            1.11e-03
+
+val_total: 1.289780e-03
+Epoch 236/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.15e-06   | Validate Mu Loss:            8.92e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.92e-04   | Validate Fb Loss:            1.33e-03
+
+val_total: 1.510109e-03
+Epoch 237/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.15e-06   | Validate Mu Loss:            8.94e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.52e-05
+  Fb Loss:          4.99e-04   | Validate Fb Loss:            3.98e-04
+
+val_total: 5.763613e-04
+Epoch 238/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.92e-06
+  Distance Loss:    2.65e-07   | Validate Distance Loss:      3.85e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.07e-04   | Validate Fb Loss:            1.18e-03
+
+val_total: 1.360649e-03
+Epoch 239/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.15e-06   | Validate Mu Loss:            8.94e-06
+  Distance Loss:    2.69e-07   | Validate Distance Loss:      3.89e-07
+  Fa Loss:          4.36e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          3.97e-04   | Validate Fb Loss:            1.04e-03
+
+val_total: 1.221357e-03
+Epoch 240/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.92e-06
+  Distance Loss:    2.69e-07   | Validate Distance Loss:      3.81e-07
+  Fa Loss:          4.37e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          4.61e-04   | Validate Fb Loss:            4.82e-04
+
+val_total: 6.598503e-04
+Epoch 241/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.16e-06   | Validate Mu Loss:            8.91e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.36e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          5.05e-04   | Validate Fb Loss:            5.54e-04
+
+val_total: 7.321148e-04
+Epoch 242/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.13e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.30e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          4.38e-04   | Validate Fb Loss:            1.18e-03
+
+val_total: 1.357406e-03
+Epoch 243/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.15e-06   | Validate Mu Loss:            8.91e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.53e-05
+  Fb Loss:          6.43e-04   | Validate Fb Loss:            1.43e-03
+
+val_total: 1.610039e-03
+Epoch 244/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.14e-06   | Validate Mu Loss:            8.93e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.54e-05
+  Fb Loss:          5.08e-04   | Validate Fb Loss:            5.79e-04
+
+val_total: 7.571903e-04
+Epoch 245/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.14e-06   | Validate Mu Loss:            8.93e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.58e-05
+  Fb Loss:          5.18e-04   | Validate Fb Loss:            1.08e-03
+
+val_total: 1.260508e-03
+Epoch 246/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.14e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.33e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          6.34e-04   | Validate Fb Loss:            9.18e-04
+
+val_total: 1.095941e-03
+Epoch 247/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          4.06e-04   | Validate Fb Loss:            7.82e-04
+
+val_total: 9.596204e-04
+Epoch 248/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.14e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          4.68e-04   | Validate Fb Loss:            1.24e-03
+
+val_total: 1.418531e-03
+Epoch 249/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.14e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          6.14e-04   | Validate Fb Loss:            1.23e-03
+
+val_total: 1.411517e-03
+Epoch 250/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.14e-06   | Validate Mu Loss:            8.91e-06
+  Distance Loss:    2.60e-07   | Validate Distance Loss:      3.81e-07
+  Fa Loss:          4.33e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          3.45e-04   | Validate Fb Loss:            1.25e-03
+
+val_total: 1.426471e-03
+Epoch 251/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.15e-06   | Validate Mu Loss:            8.91e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.84e-07
+  Fa Loss:          4.33e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.32e-04   | Validate Fb Loss:            3.27e-04
+
+val_total: 5.042549e-04
+Epoch 252/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.15e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.53e-05
+  Fb Loss:          4.27e-04   | Validate Fb Loss:            1.43e-03
+
+val_total: 1.605901e-03
+Epoch 253/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.13e-06   | Validate Mu Loss:            8.91e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.30e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          5.17e-04   | Validate Fb Loss:            4.94e-04
+
+val_total: 6.717529e-04
+Epoch 254/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.13e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.58e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.50e-05
+  Fb Loss:          5.65e-04   | Validate Fb Loss:            7.70e-04
+
+val_total: 9.481270e-04
+Epoch 255/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.29e-05   | Validate Fa Loss:            7.55e-05
+  Fb Loss:          5.48e-04   | Validate Fb Loss:            7.60e-04
+
+val_total: 9.379563e-04
+Epoch 256/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.14e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.52e-05
+  Fb Loss:          4.43e-04   | Validate Fb Loss:            5.89e-04
+
+val_total: 7.672359e-04
+Epoch 257/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.14e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.57e-05
+  Fb Loss:          4.75e-04   | Validate Fb Loss:            6.07e-04
+
+val_total: 7.860298e-04
+Epoch 258/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.15e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.32e-05   | Validate Fa Loss:            7.53e-05
+  Fb Loss:          4.68e-04   | Validate Fb Loss:            1.33e-03
+
+val_total: 1.507132e-03
+Epoch 259/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.14e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.32e-05   | Validate Fa Loss:            7.55e-05
+  Fb Loss:          5.06e-04   | Validate Fb Loss:            1.07e-03
+
+val_total: 1.245889e-03
+Epoch 260/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.13e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          4.75e-04   | Validate Fb Loss:            7.38e-04
+
+val_total: 9.162246e-04
+Epoch 261/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.30e-05   | Validate Fa Loss:            7.52e-05
+  Fb Loss:          5.63e-04   | Validate Fb Loss:            1.31e-03
+
+val_total: 1.489377e-03
+Epoch 262/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.13e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.30e-05   | Validate Fa Loss:            7.53e-05
+  Fb Loss:          5.73e-04   | Validate Fb Loss:            8.59e-04
+
+val_total: 1.037084e-03
+Epoch 263/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.14e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.50e-05
+  Fb Loss:          6.45e-04   | Validate Fb Loss:            8.66e-04
+
+val_total: 1.043705e-03
+Epoch 264/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.29e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          4.18e-04   | Validate Fb Loss:            1.13e-03
+
+val_total: 1.311575e-03
+Epoch 265/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.30e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          5.46e-04   | Validate Fb Loss:            1.31e-03
+
+val_total: 1.486708e-03
+Epoch 266/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.13e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.33e-05   | Validate Fa Loss:            7.53e-05
+  Fb Loss:          4.54e-04   | Validate Fb Loss:            9.18e-04
+
+val_total: 1.096364e-03
+Epoch 267/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.33e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          6.06e-04   | Validate Fb Loss:            1.07e-03
+
+val_total: 1.244386e-03
+Epoch 268/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.32e-05   | Validate Fa Loss:            7.50e-05
+  Fb Loss:          5.52e-04   | Validate Fb Loss:            1.05e-03
+
+val_total: 1.229359e-03
+Epoch 269/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.13e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.16e-04   | Validate Fb Loss:            8.15e-04
+
+val_total: 9.924828e-04
+Epoch 270/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.11e-06   | Validate Mu Loss:            8.91e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.33e-05   | Validate Fa Loss:            7.53e-05
+  Fb Loss:          5.34e-04   | Validate Fb Loss:            1.26e-03
+
+val_total: 1.441405e-03
+Epoch 271/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.59e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          6.92e-04   | Validate Fb Loss:            5.38e-04
+
+val_total: 7.155106e-04
+Epoch 272/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.13e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          6.29e-04   | Validate Fb Loss:            6.62e-04
+
+val_total: 8.397208e-04
+Epoch 273/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.29e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          5.69e-04   | Validate Fb Loss:            9.68e-04
+
+val_total: 1.145976e-03
+Epoch 274/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          4.99e-04   | Validate Fb Loss:            9.29e-04
+
+val_total: 1.106728e-03
+Epoch 275/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.13e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.11e-04   | Validate Fb Loss:            1.44e-03
+
+val_total: 1.618025e-03
+Epoch 276/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.33e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.23e-04   | Validate Fb Loss:            8.38e-04
+
+val_total: 1.014834e-03
+Epoch 277/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.30e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          5.24e-04   | Validate Fb Loss:            9.15e-04
+
+val_total: 1.092009e-03
+Epoch 278/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.11e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.27e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          5.58e-04   | Validate Fb Loss:            8.92e-04
+
+val_total: 1.068883e-03
+Epoch 279/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.94e-04   | Validate Fb Loss:            8.91e-04
+
+val_total: 1.068636e-03
+Epoch 280/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.11e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.30e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          4.46e-04   | Validate Fb Loss:            1.11e-03
+
+val_total: 1.289641e-03
+Epoch 281/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.11e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.29e-05   | Validate Fa Loss:            7.53e-05
+  Fb Loss:          5.34e-04   | Validate Fb Loss:            5.04e-04
+
+val_total: 6.821930e-04
+Epoch 282/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.58e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          5.12e-04   | Validate Fb Loss:            3.00e-04
+
+val_total: 4.777412e-04
+Epoch 283/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.15e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.61e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.35e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.59e-04   | Validate Fb Loss:            4.18e-04
+
+val_total: 5.953156e-04
+Epoch 284/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.11e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.32e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          4.13e-04   | Validate Fb Loss:            1.02e-03
+
+val_total: 1.200879e-03
+Epoch 285/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.33e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.54e-04   | Validate Fb Loss:            9.75e-04
+
+val_total: 1.151563e-03
+Epoch 286/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.11e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.64e-07
+  Fa Loss:          4.29e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          5.16e-04   | Validate Fb Loss:            1.24e-03
+
+val_total: 1.420528e-03
+Epoch 287/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.32e-05   | Validate Fa Loss:            7.35e-05
+  Fb Loss:          4.50e-04   | Validate Fb Loss:            8.17e-04
+
+val_total: 9.931323e-04
+Epoch 288/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.34e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          4.95e-04   | Validate Fb Loss:            9.74e-04
+
+val_total: 1.150808e-03
+Epoch 289/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.12e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.32e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          4.50e-04   | Validate Fb Loss:            1.37e-03
+
+val_total: 1.549997e-03
+Epoch 290/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.11e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.30e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          5.43e-04   | Validate Fb Loss:            7.61e-04
+
+val_total: 9.371731e-04
+Epoch 291/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.11e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.85e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.24e-04   | Validate Fb Loss:            3.89e-04
+
+val_total: 5.657235e-04
+Epoch 292/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.11e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          6.94e-04   | Validate Fb Loss:            9.23e-04
+
+val_total: 1.100175e-03
+Epoch 293/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.10e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.32e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.55e-04   | Validate Fb Loss:            1.27e-03
+
+val_total: 1.451490e-03
+Epoch 294/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.10e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.31e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.11e-04   | Validate Fb Loss:            6.04e-04
+
+val_total: 7.811988e-04
+Epoch 295/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.10e-06   | Validate Mu Loss:            8.90e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.29e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.33e-04   | Validate Fb Loss:            1.01e-03
+
+val_total: 1.184244e-03
+Epoch 296/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.09e-06   | Validate Mu Loss:            8.91e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.27e-05   | Validate Fa Loss:            7.58e-05
+  Fb Loss:          4.98e-04   | Validate Fb Loss:            9.50e-04
+
+val_total: 1.128499e-03
+Epoch 297/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.10e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.27e-05   | Validate Fa Loss:            7.57e-05
+  Fb Loss:          5.48e-04   | Validate Fb Loss:            5.73e-04
+
+val_total: 7.517470e-04
+Epoch 298/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.11e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.28e-05   | Validate Fa Loss:            7.60e-05
+  Fb Loss:          5.42e-04   | Validate Fb Loss:            1.18e-03
+
+val_total: 1.362138e-03
+Epoch 299/500 learning rate 5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.10e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.28e-05   | Validate Fa Loss:            7.56e-05
+  Fb Loss:          4.27e-04   | Validate Fb Loss:            3.59e-04
+
+val_total: 5.377159e-04
+model_name: acker_flex_pdhg-1_kkt_robot | current learning rate: 2.5e-06
+Epoch 300/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.09e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          4.05e-04   | Validate Fb Loss:            4.07e-04
+
+val_total: 5.846985e-04
+Epoch 301/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.50e-05
+  Fb Loss:          4.04e-04   | Validate Fb Loss:            1.40e-03
+
+val_total: 1.574340e-03
+Epoch 302/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          4.01e-04   | Validate Fb Loss:            8.96e-04
+
+val_total: 1.073801e-03
+Epoch 303/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.52e-05
+  Fb Loss:          4.45e-04   | Validate Fb Loss:            7.23e-04
+
+val_total: 9.012656e-04
+Epoch 304/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.54e-05
+  Fb Loss:          4.56e-04   | Validate Fb Loss:            7.74e-04
+
+val_total: 9.522906e-04
+Epoch 305/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          4.16e-04   | Validate Fb Loss:            6.88e-04
+
+val_total: 8.659051e-04
+Epoch 306/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.69e-04   | Validate Fb Loss:            1.17e-03
+
+val_total: 1.347924e-03
+Epoch 307/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.50e-05
+  Fb Loss:          6.50e-04   | Validate Fb Loss:            8.11e-04
+
+val_total: 9.889862e-04
+Epoch 308/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.27e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          4.36e-04   | Validate Fb Loss:            1.21e-03
+
+val_total: 1.383862e-03
+Epoch 309/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.16e-04   | Validate Fb Loss:            4.05e-04
+
+val_total: 5.823506e-04
+Epoch 310/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.52e-05
+  Fb Loss:          6.37e-04   | Validate Fb Loss:            6.84e-04
+
+val_total: 8.622002e-04
+Epoch 311/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.09e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.27e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.84e-04   | Validate Fb Loss:            5.69e-04
+
+val_total: 7.462886e-04
+Epoch 312/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.54e-05
+  Fb Loss:          5.19e-04   | Validate Fb Loss:            5.02e-04
+
+val_total: 6.801807e-04
+Epoch 313/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.27e-05   | Validate Fa Loss:            7.52e-05
+  Fb Loss:          5.37e-04   | Validate Fb Loss:            8.96e-04
+
+val_total: 1.073967e-03
+Epoch 314/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          5.70e-04   | Validate Fb Loss:            7.63e-04
+
+val_total: 9.411857e-04
+Epoch 315/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          4.85e-04   | Validate Fb Loss:            1.03e-03
+
+val_total: 1.205135e-03
+Epoch 316/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.81e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          4.30e-04   | Validate Fb Loss:            1.40e-03
+
+val_total: 1.579127e-03
+Epoch 317/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.27e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          6.18e-04   | Validate Fb Loss:            1.05e-03
+
+val_total: 1.227350e-03
+Epoch 318/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          5.82e-04   | Validate Fb Loss:            9.29e-04
+
+val_total: 1.106910e-03
+Epoch 319/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.66e-04   | Validate Fb Loss:            1.24e-03
+
+val_total: 1.416610e-03
+Epoch 320/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          5.23e-04   | Validate Fb Loss:            8.12e-04
+
+val_total: 9.897038e-04
+Epoch 321/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.27e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.13e-04   | Validate Fb Loss:            8.07e-04
+
+val_total: 9.842339e-04
+Epoch 322/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          5.15e-04   | Validate Fb Loss:            1.18e-03
+
+val_total: 1.362237e-03
+Epoch 323/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.15e-04   | Validate Fb Loss:            9.15e-04
+
+val_total: 1.092993e-03
+Epoch 324/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          5.91e-04   | Validate Fb Loss:            5.35e-04
+
+val_total: 7.131691e-04
+Epoch 325/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.52e-05
+  Fb Loss:          5.76e-04   | Validate Fb Loss:            6.94e-04
+
+val_total: 8.724660e-04
+Epoch 326/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          5.68e-04   | Validate Fb Loss:            7.45e-04
+
+val_total: 9.224468e-04
+Epoch 327/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          4.23e-04   | Validate Fb Loss:            7.69e-04
+
+val_total: 9.468796e-04
+Epoch 328/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          4.98e-04   | Validate Fb Loss:            7.83e-04
+
+val_total: 9.602771e-04
+Epoch 329/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.26e-04   | Validate Fb Loss:            1.19e-03
+
+val_total: 1.367799e-03
+Epoch 330/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          5.35e-04   | Validate Fb Loss:            8.44e-04
+
+val_total: 1.021395e-03
+Epoch 331/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.56e-07   | Validate Distance Loss:      3.83e-07
+  Fa Loss:          4.27e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.48e-04   | Validate Fb Loss:            5.48e-04
+
+val_total: 7.254679e-04
+Epoch 332/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.57e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.82e-04   | Validate Fb Loss:            1.22e-03
+
+val_total: 1.401977e-03
+Epoch 333/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.90e-04   | Validate Fb Loss:            5.41e-04
+
+val_total: 7.186113e-04
+Epoch 334/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          6.85e-04   | Validate Fb Loss:            9.01e-04
+
+val_total: 1.078057e-03
+Epoch 335/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          6.00e-04   | Validate Fb Loss:            9.86e-04
+
+val_total: 1.162666e-03
+Epoch 336/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.70e-04   | Validate Fb Loss:            5.75e-04
+
+val_total: 7.527453e-04
+Epoch 337/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          4.48e-04   | Validate Fb Loss:            6.42e-04
+
+val_total: 8.192373e-04
+Epoch 338/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          5.19e-04   | Validate Fb Loss:            9.98e-04
+
+val_total: 1.175652e-03
+Epoch 339/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.55e-04   | Validate Fb Loss:            1.06e-03
+
+val_total: 1.235499e-03
+Epoch 340/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          4.75e-04   | Validate Fb Loss:            1.27e-03
+
+val_total: 1.451513e-03
+Epoch 341/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.51e-04   | Validate Fb Loss:            1.15e-03
+
+val_total: 1.331597e-03
+Epoch 342/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          3.59e-04   | Validate Fb Loss:            1.33e-03
+
+val_total: 1.503100e-03
+Epoch 343/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.60e-04   | Validate Fb Loss:            8.85e-04
+
+val_total: 1.061872e-03
+Epoch 344/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          4.13e-04   | Validate Fb Loss:            7.82e-04
+
+val_total: 9.590048e-04
+Epoch 345/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          6.09e-04   | Validate Fb Loss:            4.94e-04
+
+val_total: 6.712517e-04
+Epoch 346/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          3.38e-04   | Validate Fb Loss:            7.63e-04
+
+val_total: 9.401159e-04
+Epoch 347/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          4.61e-04   | Validate Fb Loss:            1.08e-03
+
+val_total: 1.256094e-03
+Epoch 348/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.27e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          4.11e-04   | Validate Fb Loss:            5.31e-04
+
+val_total: 7.082257e-04
+Epoch 349/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.91e-04   | Validate Fb Loss:            7.52e-04
+
+val_total: 9.287694e-04
+Epoch 350/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          5.84e-04   | Validate Fb Loss:            1.03e-03
+
+val_total: 1.205967e-03
+Epoch 351/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.27e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          5.75e-04   | Validate Fb Loss:            5.12e-04
+
+val_total: 6.882493e-04
+Epoch 352/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          5.45e-04   | Validate Fb Loss:            9.90e-04
+
+val_total: 1.166465e-03
+Epoch 353/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          5.28e-04   | Validate Fb Loss:            1.10e-03
+
+val_total: 1.276147e-03
+Epoch 354/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          5.24e-04   | Validate Fb Loss:            1.11e-03
+
+val_total: 1.282580e-03
+Epoch 355/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.79e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.69e-04   | Validate Fb Loss:            1.02e-03
+
+val_total: 1.195692e-03
+Epoch 356/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.81e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          4.43e-04   | Validate Fb Loss:            3.05e-04
+
+val_total: 4.815346e-04
+Epoch 357/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.82e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          4.62e-04   | Validate Fb Loss:            9.94e-04
+
+val_total: 1.170599e-03
+Epoch 358/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.54e-07   | Validate Distance Loss:      3.80e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          3.83e-04   | Validate Fb Loss:            6.91e-04
+
+val_total: 8.683693e-04
+Epoch 359/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.55e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          4.87e-04   | Validate Fb Loss:            7.27e-04
+
+val_total: 9.051802e-04
+Epoch 360/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          6.92e-04   | Validate Fb Loss:            8.56e-04
+
+val_total: 1.033833e-03
+Epoch 361/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.51e-05
+  Fb Loss:          3.88e-04   | Validate Fb Loss:            1.24e-03
+
+val_total: 1.415204e-03
+Epoch 362/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.53e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.50e-05
+  Fb Loss:          5.00e-04   | Validate Fb Loss:            1.47e-03
+
+val_total: 1.652054e-03
+Epoch 363/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          4.74e-04   | Validate Fb Loss:            5.60e-04
+
+val_total: 7.370257e-04
+Epoch 364/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          4.49e-04   | Validate Fb Loss:            7.05e-04
+
+val_total: 8.829169e-04
+Epoch 365/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.45e-04   | Validate Fb Loss:            1.20e-03
+
+val_total: 1.376713e-03
+Epoch 366/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          4.64e-04   | Validate Fb Loss:            1.13e-03
+
+val_total: 1.306269e-03
+Epoch 367/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          6.54e-04   | Validate Fb Loss:            4.52e-04
+
+val_total: 6.293305e-04
+Epoch 368/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          5.51e-04   | Validate Fb Loss:            7.00e-04
+
+val_total: 8.779712e-04
+Epoch 369/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.54e-05
+  Fb Loss:          5.12e-04   | Validate Fb Loss:            1.32e-03
+
+val_total: 1.502966e-03
+Epoch 370/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          6.39e-04   | Validate Fb Loss:            1.40e-03
+
+val_total: 1.578728e-03
+Epoch 371/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          3.23e-04   | Validate Fb Loss:            5.63e-04
+
+val_total: 7.399348e-04
+Epoch 372/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.38e-04   | Validate Fb Loss:            6.02e-04
+
+val_total: 7.790213e-04
+Epoch 373/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          3.91e-04   | Validate Fb Loss:            1.99e-03
+
+val_total: 2.171275e-03
+Epoch 374/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          5.95e-04   | Validate Fb Loss:            1.23e-03
+
+val_total: 1.408839e-03
+Epoch 375/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.89e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.38e-04   | Validate Fb Loss:            1.20e-03
+
+val_total: 1.375888e-03
+Epoch 376/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          6.60e-04   | Validate Fb Loss:            1.12e-03
+
+val_total: 1.301336e-03
+Epoch 377/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          6.60e-04   | Validate Fb Loss:            1.05e-03
+
+val_total: 1.228735e-03
+Epoch 378/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          3.27e-04   | Validate Fb Loss:            1.23e-03
+
+val_total: 1.407859e-03
+Epoch 379/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          5.51e-04   | Validate Fb Loss:            6.90e-04
+
+val_total: 8.669814e-04
+Epoch 380/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          3.11e-04   | Validate Fb Loss:            4.44e-04
+
+val_total: 6.202390e-04
+Epoch 381/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          5.71e-04   | Validate Fb Loss:            9.08e-04
+
+val_total: 1.084171e-03
+Epoch 382/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          6.13e-04   | Validate Fb Loss:            1.11e-03
+
+val_total: 1.283850e-03
+Epoch 383/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          3.92e-04   | Validate Fb Loss:            6.93e-04
+
+val_total: 8.699752e-04
+Epoch 384/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          3.85e-04   | Validate Fb Loss:            9.92e-04
+
+val_total: 1.168504e-03
+Epoch 385/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.81e-04   | Validate Fb Loss:            1.36e-03
+
+val_total: 1.533344e-03
+Epoch 386/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.26e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.78e-04   | Validate Fb Loss:            7.93e-04
+
+val_total: 9.698900e-04
+Epoch 387/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          4.69e-04   | Validate Fb Loss:            6.85e-04
+
+val_total: 8.618829e-04
+Epoch 388/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.87e-04   | Validate Fb Loss:            9.26e-04
+
+val_total: 1.102673e-03
+Epoch 389/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.21e-04   | Validate Fb Loss:            4.51e-04
+
+val_total: 6.278979e-04
+Epoch 390/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.88e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.46e-04   | Validate Fb Loss:            8.98e-04
+
+val_total: 1.075640e-03
+Epoch 391/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.53e-04   | Validate Fb Loss:            5.77e-04
+
+val_total: 7.544380e-04
+Epoch 392/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          6.69e-04   | Validate Fb Loss:            1.12e-03
+
+val_total: 1.297384e-03
+Epoch 393/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.30e-04   | Validate Fb Loss:            1.23e-03
+
+val_total: 1.404304e-03
+Epoch 394/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.35e-04   | Validate Fb Loss:            8.92e-04
+
+val_total: 1.068837e-03
+Epoch 395/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.56e-04   | Validate Fb Loss:            1.11e-03
+
+val_total: 1.284729e-03
+Epoch 396/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.97e-04   | Validate Fb Loss:            6.90e-04
+
+val_total: 8.670505e-04
+Epoch 397/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          4.19e-04   | Validate Fb Loss:            9.66e-04
+
+val_total: 1.142609e-03
+Epoch 398/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          4.63e-04   | Validate Fb Loss:            1.04e-03
+
+val_total: 1.214981e-03
+Epoch 399/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          6.16e-04   | Validate Fb Loss:            9.74e-04
+
+val_total: 1.150628e-03
+Epoch 400/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          4.88e-04   | Validate Fb Loss:            8.15e-04
+
+val_total: 9.916747e-04
+Epoch 401/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          4.00e-04   | Validate Fb Loss:            1.34e-03
+
+val_total: 1.512941e-03
+Epoch 402/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          4.92e-04   | Validate Fb Loss:            6.14e-04
+
+val_total: 7.911938e-04
+Epoch 403/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.49e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          6.30e-04   | Validate Fb Loss:            9.80e-04
+
+val_total: 1.156709e-03
+Epoch 404/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.52e-07   | Validate Distance Loss:      3.77e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          4.78e-04   | Validate Fb Loss:            1.04e-03
+
+val_total: 1.216626e-03
+Epoch 405/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.51e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          5.34e-04   | Validate Fb Loss:            1.01e-03
+
+val_total: 1.181672e-03
+Epoch 406/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          5.46e-04   | Validate Fb Loss:            1.13e-03
+
+val_total: 1.303970e-03
+Epoch 407/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          4.79e-04   | Validate Fb Loss:            1.74e-03
+
+val_total: 1.914200e-03
+Epoch 408/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          6.13e-04   | Validate Fb Loss:            1.05e-03
+
+val_total: 1.227535e-03
+Epoch 409/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          6.10e-04   | Validate Fb Loss:            1.08e-03
+
+val_total: 1.255264e-03
+Epoch 410/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          6.37e-04   | Validate Fb Loss:            7.16e-04
+
+val_total: 8.931263e-04
+Epoch 411/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          3.95e-04   | Validate Fb Loss:            1.12e-03
+
+val_total: 1.293475e-03
+Epoch 412/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          6.03e-04   | Validate Fb Loss:            7.67e-04
+
+val_total: 9.444220e-04
+Epoch 413/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.28e-04   | Validate Fb Loss:            7.67e-04
+
+val_total: 9.442370e-04
+Epoch 414/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          3.78e-04   | Validate Fb Loss:            7.47e-04
+
+val_total: 9.244007e-04
+Epoch 415/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          3.58e-04   | Validate Fb Loss:            6.79e-04
+
+val_total: 8.565145e-04
+Epoch 416/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          4.71e-04   | Validate Fb Loss:            9.21e-04
+
+val_total: 1.097789e-03
+Epoch 417/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.40e-07   | Validate Distance Loss:      3.64e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.93e-04   | Validate Fb Loss:            5.43e-04
+
+val_total: 7.207639e-04
+Epoch 418/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.08e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.40e-07   | Validate Distance Loss:      3.63e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.44e-04   | Validate Fb Loss:            1.08e-03
+
+val_total: 1.259294e-03
+Epoch 419/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.38e-07   | Validate Distance Loss:      3.63e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          5.53e-04   | Validate Fb Loss:            1.10e-03
+
+val_total: 1.281435e-03
+Epoch 420/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.37e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.17e-04   | Validate Fb Loss:            1.02e-03
+
+val_total: 1.192894e-03
+Epoch 421/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.40e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          5.79e-04   | Validate Fb Loss:            1.70e-03
+
+val_total: 1.875764e-03
+Epoch 422/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.41e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.90e-04   | Validate Fb Loss:            9.40e-04
+
+val_total: 1.117425e-03
+Epoch 423/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.41e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.26e-04   | Validate Fb Loss:            3.91e-04
+
+val_total: 5.680995e-04
+Epoch 424/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.39e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.11e-04   | Validate Fb Loss:            4.01e-04
+
+val_total: 5.784077e-04
+Epoch 425/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.41e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.96e-04   | Validate Fb Loss:            3.24e-04
+
+val_total: 5.007839e-04
+Epoch 426/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          4.93e-04   | Validate Fb Loss:            9.35e-04
+
+val_total: 1.111527e-03
+Epoch 427/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.30e-04   | Validate Fb Loss:            1.29e-03
+
+val_total: 1.462100e-03
+Epoch 428/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.29e-04   | Validate Fb Loss:            6.65e-04
+
+val_total: 8.420799e-04
+Epoch 429/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.96e-04   | Validate Fb Loss:            3.62e-04
+
+val_total: 5.391371e-04
+Epoch 430/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          4.36e-04   | Validate Fb Loss:            7.97e-04
+
+val_total: 9.740296e-04
+Epoch 431/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          4.44e-04   | Validate Fb Loss:            5.66e-04
+
+val_total: 7.424682e-04
+Epoch 432/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          5.37e-04   | Validate Fb Loss:            1.12e-03
+
+val_total: 1.292478e-03
+Epoch 433/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          5.93e-04   | Validate Fb Loss:            1.07e-03
+
+val_total: 1.244940e-03
+Epoch 434/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.80e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          4.89e-04   | Validate Fb Loss:            1.12e-03
+
+val_total: 1.292068e-03
+Epoch 435/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.80e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          3.75e-04   | Validate Fb Loss:            1.03e-03
+
+val_total: 1.203698e-03
+Epoch 436/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.37e-05
+  Fb Loss:          4.94e-04   | Validate Fb Loss:            1.11e-03
+
+val_total: 1.283069e-03
+Epoch 437/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.25e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          4.28e-04   | Validate Fb Loss:            8.61e-04
+
+val_total: 1.037827e-03
+Epoch 438/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.36e-05
+  Fb Loss:          4.87e-04   | Validate Fb Loss:            1.12e-03
+
+val_total: 1.292520e-03
+Epoch 439/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          4.41e-04   | Validate Fb Loss:            1.10e-03
+
+val_total: 1.275924e-03
+Epoch 440/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          5.55e-04   | Validate Fb Loss:            6.31e-04
+
+val_total: 8.078352e-04
+Epoch 441/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.80e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          5.77e-04   | Validate Fb Loss:            5.49e-04
+
+val_total: 7.258472e-04
+Epoch 442/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.79e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.38e-05
+  Fb Loss:          4.67e-04   | Validate Fb Loss:            8.01e-04
+
+val_total: 9.773652e-04
+Epoch 443/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.80e-06
+  Distance Loss:    2.41e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          4.51e-04   | Validate Fb Loss:            1.28e-03
+
+val_total: 1.452933e-03
+Epoch 444/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.40e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          4.20e-04   | Validate Fb Loss:            5.29e-04
+
+val_total: 7.056012e-04
+Epoch 445/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.80e-06
+  Distance Loss:    2.41e-07   | Validate Distance Loss:      3.63e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          5.11e-04   | Validate Fb Loss:            1.13e-03
+
+val_total: 1.302200e-03
+Epoch 446/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.80e-06
+  Distance Loss:    2.39e-07   | Validate Distance Loss:      3.64e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.39e-05
+  Fb Loss:          5.65e-04   | Validate Fb Loss:            1.15e-03
+
+val_total: 1.324595e-03
+Epoch 447/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.07e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.38e-07   | Validate Distance Loss:      3.63e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.85e-04   | Validate Fb Loss:            1.44e-03
+
+val_total: 1.617044e-03
+Epoch 448/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.40e-07   | Validate Distance Loss:      3.64e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.60e-04   | Validate Fb Loss:            9.38e-04
+
+val_total: 1.115518e-03
+Epoch 449/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.20e-04   | Validate Fb Loss:            1.07e-03
+
+val_total: 1.243703e-03
+Epoch 450/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          5.61e-04   | Validate Fb Loss:            9.76e-04
+
+val_total: 1.153134e-03
+Epoch 451/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.64e-04   | Validate Fb Loss:            1.06e-03
+
+val_total: 1.232408e-03
+Epoch 452/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.40e-07   | Validate Distance Loss:      3.62e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          3.49e-04   | Validate Fb Loss:            8.72e-04
+
+val_total: 1.049478e-03
+Epoch 453/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          4.18e-04   | Validate Fb Loss:            4.90e-04
+
+val_total: 6.663497e-04
+Epoch 454/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.80e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          5.78e-04   | Validate Fb Loss:            6.92e-04
+
+val_total: 8.686518e-04
+Epoch 455/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          5.02e-04   | Validate Fb Loss:            5.79e-04
+
+val_total: 7.555355e-04
+Epoch 456/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.81e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.62e-04   | Validate Fb Loss:            1.34e-03
+
+val_total: 1.516183e-03
+Epoch 457/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.06e-06   | Validate Mu Loss:            8.82e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          7.01e-04   | Validate Fb Loss:            3.84e-04
+
+val_total: 5.615325e-04
+Epoch 458/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.18e-04   | Validate Fb Loss:            9.81e-04
+
+val_total: 1.158421e-03
+Epoch 459/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.24e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          6.30e-04   | Validate Fb Loss:            8.99e-04
+
+val_total: 1.075921e-03
+Epoch 460/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          4.87e-04   | Validate Fb Loss:            3.05e-04
+
+val_total: 4.822355e-04
+Epoch 461/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.50e-07   | Validate Distance Loss:      3.78e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          4.36e-04   | Validate Fb Loss:            1.04e-03
+
+val_total: 1.212435e-03
+Epoch 462/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          5.44e-04   | Validate Fb Loss:            6.04e-04
+
+val_total: 7.808789e-04
+Epoch 463/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.16e-04   | Validate Fb Loss:            7.82e-04
+
+val_total: 9.597428e-04
+Epoch 464/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          4.47e-04   | Validate Fb Loss:            1.00e-03
+
+val_total: 1.180995e-03
+Epoch 465/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.08e-04   | Validate Fb Loss:            1.00e-03
+
+val_total: 1.178485e-03
+Epoch 466/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.15e-04   | Validate Fb Loss:            3.94e-04
+
+val_total: 5.714249e-04
+Epoch 467/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.44e-05
+  Fb Loss:          4.43e-04   | Validate Fb Loss:            8.84e-04
+
+val_total: 1.061108e-03
+Epoch 468/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          5.21e-04   | Validate Fb Loss:            6.97e-04
+
+val_total: 8.748754e-04
+Epoch 469/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.10e-04   | Validate Fb Loss:            1.26e-03
+
+val_total: 1.432560e-03
+Epoch 470/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          5.25e-04   | Validate Fb Loss:            1.65e-03
+
+val_total: 1.824157e-03
+Epoch 471/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.03e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.79e-04   | Validate Fb Loss:            8.90e-04
+
+val_total: 1.067225e-03
+Epoch 472/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.03e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.19e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          3.69e-04   | Validate Fb Loss:            1.13e-03
+
+val_total: 1.306165e-03
+Epoch 473/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.74e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.22e-04   | Validate Fb Loss:            1.22e-03
+
+val_total: 1.394570e-03
+Epoch 474/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.47e-07   | Validate Distance Loss:      3.73e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          4.32e-04   | Validate Fb Loss:            6.06e-04
+
+val_total: 7.837920e-04
+Epoch 475/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.46e-07   | Validate Distance Loss:      3.76e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          4.79e-04   | Validate Fb Loss:            1.15e-03
+
+val_total: 1.332038e-03
+Epoch 476/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.75e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.77e-04   | Validate Fb Loss:            9.88e-04
+
+val_total: 1.165639e-03
+Epoch 477/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.19e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          5.39e-04   | Validate Fb Loss:            1.28e-03
+
+val_total: 1.457049e-03
+Epoch 478/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          5.93e-04   | Validate Fb Loss:            1.40e-03
+
+val_total: 1.580109e-03
+Epoch 479/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.19e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          4.91e-04   | Validate Fb Loss:            4.26e-04
+
+val_total: 6.033941e-04
+Epoch 480/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.69e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          5.04e-04   | Validate Fb Loss:            5.45e-04
+
+val_total: 7.228685e-04
+Epoch 481/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.87e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.71e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          4.75e-04   | Validate Fb Loss:            1.43e-03
+
+val_total: 1.607733e-03
+Epoch 482/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.48e-07   | Validate Distance Loss:      3.72e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.68e-04   | Validate Fb Loss:            7.20e-04
+
+val_total: 8.978222e-04
+Epoch 483/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.70e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.91e-04   | Validate Fb Loss:            5.69e-04
+
+val_total: 7.465659e-04
+Epoch 484/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.80e-04   | Validate Fb Loss:            5.36e-04
+
+val_total: 7.138154e-04
+Epoch 485/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.39e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.63e-04   | Validate Fb Loss:            1.27e-03
+
+val_total: 1.449268e-03
+Epoch 486/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.86e-06
+  Distance Loss:    2.40e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.46e-05
+  Fb Loss:          4.72e-04   | Validate Fb Loss:            3.57e-04
+
+val_total: 5.345354e-04
+Epoch 487/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          6.06e-04   | Validate Fb Loss:            4.68e-04
+
+val_total: 6.448444e-04
+Epoch 488/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.40e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          3.92e-04   | Validate Fb Loss:            1.10e-03
+
+val_total: 1.278660e-03
+Epoch 489/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.03e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.18e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          5.09e-04   | Validate Fb Loss:            7.86e-04
+
+val_total: 9.631861e-04
+Epoch 490/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.41e-07   | Validate Distance Loss:      3.63e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.19e-04   | Validate Fb Loss:            7.44e-04
+
+val_total: 9.212856e-04
+Epoch 491/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          4.20e-04   | Validate Fb Loss:            1.21e-03
+
+val_total: 1.383117e-03
+Epoch 492/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.49e-05
+  Fb Loss:          4.57e-04   | Validate Fb Loss:            1.54e-03
+
+val_total: 1.714149e-03
+Epoch 493/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.85e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.22e-05   | Validate Fa Loss:            7.47e-05
+  Fb Loss:          4.26e-04   | Validate Fb Loss:            9.37e-04
+
+val_total: 1.114794e-03
+Epoch 494/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.45e-07   | Validate Distance Loss:      3.67e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.45e-05
+  Fb Loss:          6.42e-04   | Validate Fb Loss:            1.35e-03
+
+val_total: 1.531686e-03
+Epoch 495/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.43e-07   | Validate Distance Loss:      3.64e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.48e-05
+  Fb Loss:          5.56e-04   | Validate Fb Loss:            4.06e-04
+
+val_total: 5.838037e-04
+Epoch 496/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.42e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.20e-05   | Validate Fa Loss:            7.42e-05
+  Fb Loss:          3.97e-04   | Validate Fb Loss:            1.19e-03
+
+val_total: 1.367508e-03
+Epoch 497/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.05e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.68e-07
+  Fa Loss:          4.23e-05   | Validate Fa Loss:            7.41e-05
+  Fb Loss:          6.97e-04   | Validate Fb Loss:            6.57e-04
+
+val_total: 8.336397e-04
+Epoch 498/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.84e-06
+  Distance Loss:    2.44e-07   | Validate Distance Loss:      3.65e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.73e-04   | Validate Fb Loss:            4.63e-04
+
+val_total: 6.401519e-04
+Epoch 499/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.41e-07   | Validate Distance Loss:      3.62e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.43e-05
+  Fb Loss:          4.92e-04   | Validate Fb Loss:            1.40e-03
+
+val_total: 1.577056e-03
+Epoch 500/500 learning rate 2.5e-06 
+---------------------------------
+Losses:
+  Mu Loss:          4.04e-06   | Validate Mu Loss:            8.83e-06
+  Distance Loss:    2.38e-07   | Validate Distance Loss:      3.66e-07
+  Fa Loss:          4.21e-05   | Validate Fa Loss:            7.40e-05
+  Fb Loss:          5.11e-04   | Validate Fb Loss:            9.40e-04
+
+val_total: 1.116614e-03
