@@ -134,7 +134,7 @@ $$
 根据Farkas引理及强对偶定理，点 $\mathbf{p}_i$ 到凸多边形 $\mathcal{R}(\mathbf{x})$ 的距离等价于以下对偶优化问题的最优值：
 
 $$
-d(\mathbf{x}, \mathbf{p}_i) = \max_{\mu, \lambda} \left( -\mathbf{g}(\mathbf{x})^\top \mu + \mathbf{p}_i^\top \lambda \right)
+d(\mathbf{x}, \mathbf{p}_i) = \max_{\mu, \lambda} \left( -\mathbf{g}(\mathbf{x})^\top \mu - \mathbf{p}_i^\top \lambda \right)
 $$
 
 $$
@@ -157,7 +157,7 @@ $$
 \begin{aligned}
 \min_{\mathbf{X}, \mathbf{U}, \boldsymbol{\mu}, \boldsymbol{\lambda}} \quad & \sum_{k=0}^{H-1} \ell(\mathbf{x}_k, \mathbf{u}_k) + \ell_N(\mathbf{x}_H) \\
 \text{s.t.} \quad & \mathbf{x}_{k+1} = \Phi(\mathbf{x}_k, \mathbf{u}_k), \\
-& -\mathbf{g}(\mathbf{x}_k)^\top \mu_{i,k} + \mathbf{p}_i^\top \lambda_{i,k} \geq d_{safe}, \quad \forall i \in \mathcal{O}_{active} \\
+& -\mathbf{g}(\mathbf{x}_k)^\top \mu_{i,k} - \mathbf{p}_i^\top \lambda_{i,k} \geq d_{safe}, \quad \forall i \in \mathcal{O}_{active} \\
 & (\mu_{i,k}, \lambda_{i,k}) = \mathcal{F}_{\theta}(\mathbf{p}_i, \mathbf{x}_k) \quad \text{// 神经网络预测}
 \end{aligned}
 $$
@@ -244,7 +244,7 @@ $$
 
 **理论分析**：
 该硬投影层具有两个重要性质：
-1.  **严格可行性**：无论前序网络的输出如何发散，经过该层后的 $\mu^*$ 恒定满足 $\mu^* \in \mathcal{C}_{dual}$。这意味着网络输出的距离估计 $d(\mathbf{x}) = -\mathbf{g}^\top \mu^* + \mathbf{p}^\top \lambda^*$ **始终是一个合法的安全下界**。
+1.  **严格可行性**：无论前序网络的输出如何发散，经过该层后的 $\mu^*$ 恒定满足 $\mu^* \in \mathcal{C}_{dual}$。这意味着网络输出的距离估计 $d(\mathbf{x}) = -\mathbf{g}^\top \mu^* - \mathbf{p}^\top \lambda^*$ **始终是一个合法的安全下界**。
 2.  **梯度保真性**：投影操作是分段线性和平滑的（除边界外），允许梯度在反向传播时无损地流回前面的展开层，指导网络学习如何生成“由于已经在可行域内而不需要被投影截断”的优质解。
 
 ## 4.5 高效推理：行优先并行计算
@@ -524,7 +524,7 @@ $$
 
 回顾第3章的对偶重构，对于给定的障碍物点 $\mathbf{p} \in \mathbb{R}^2$ 和机器人几何 $(\mathbf{G}, \mathbf{g})$，我们需要求解：
 $$
-\max_{\mu, \lambda} \left( -\mathbf{g}^\top \mu + \mathbf{p}^\top \lambda \right) \quad \text{s.t.} \quad \mathbf{G}^\top \mu + \lambda = \mathbf{0}, \quad \|\lambda\|_2 \leq 1, \quad \mu \geq \mathbf{0}
+\max_{\mu, \lambda} \left( -\mathbf{g}^\top \mu - \mathbf{p}^\top \lambda \right) \quad \text{s.t.} \quad \mathbf{G}^\top \mu + \lambda = \mathbf{0}, \quad \|\lambda\|_2 \leq 1, \quad \mu \geq \mathbf{0}
 $$
 
 利用 $\lambda = -\mathbf{G}^\top \mu$ 消元，并将约束 $\|\mathbf{G}^\top \mu\|_2 \leq 1$ 通过拉格朗日对偶松弛，该问题可等价地写成以下**鞍点问题（Saddle-Point Problem）**：
@@ -740,13 +740,13 @@ $$
 
 **定理 7.4（安全距离的保守性）**：设 $\mu^*$ 为硬投影层的输出，$\lambda^* = -\mathbf{G}^\top \mu^*$。则由对偶变量计算的距离估计：
 $$
-\hat{d} = -\mathbf{g}^\top \mu^* + \mathbf{p}^\top \lambda^*
+\hat{d} = -\mathbf{g}^\top \mu^* - \mathbf{p}^\top \lambda^*
 $$
 满足 $\hat{d} \leq d^*$，其中 $d^*$ 为点 $\mathbf{p}$ 到机器人的真实距离。
 
 *证明*：由于 $\mu^* \in \mathcal{C}_{dual}$，它是对偶问题的一个**可行解**（未必最优）。对偶问题是一个最大化问题，任何可行解的目标值不超过最优值：
 $$
-\hat{d} = -\mathbf{g}^\top \mu^* + \mathbf{p}^\top (-\mathbf{G}^\top \mu^*) \leq \max_{\mu \in \mathcal{C}_{dual}} \left( -\mathbf{g}^\top \mu + \mathbf{p}^\top (-\mathbf{G}^\top \mu) \right) = d^*
+\hat{d} = -\mathbf{g}^\top \mu^* - \mathbf{p}^\top (-\mathbf{G}^\top \mu^*) \leq \max_{\mu \in \mathcal{C}_{dual}} \left( -\mathbf{g}^\top \mu - \mathbf{p}^\top (-\mathbf{G}^\top \mu) \right) = d^*
 $$
 $\square$
 

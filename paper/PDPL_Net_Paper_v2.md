@@ -127,14 +127,14 @@ $$
 为了克服上述困难，我们引入凸分析中的对偶原理对碰撞约束进行重构。根据支撑函数理论和强对偶定理，点$\mathbf{p}_i$到凸多边形$\mathcal{R}(\mathbf{x})$的距离可以等价地表示为以下对偶优化问题的最优值：
 
 $$
-d(\mathbf{x}, \mathbf{p}_i) = \max_{\mu, \lambda} \left( -\mathbf{g}(\mathbf{x})^\top \mu + \mathbf{p}_i^\top \lambda \right)
+d(\mathbf{x}, \mathbf{p}_i) = \max_{\mu, \lambda} \left( -\mathbf{g}(\mathbf{x})^\top \mu - \mathbf{p}_i^\top \lambda \right)
 $$
 
 $$
 \text{s.t.} \quad \mathbf{G}(\mathbf{x})^\top \mu + \lambda = \mathbf{0}, \quad \| \lambda \|_2 \leq 1, \quad \mu \geq \mathbf{0}
 $$
 
-其中，$\mu \in \mathbb{R}^E$和$\lambda \in \mathbb{R}^2$是引入的对偶变量。$\mu$可以理解为各边界约束的拉格朗日乘子，而$\lambda$表示从机器人边界到障碍物点的单位方向向量。约束$\|\lambda\|_2 \leq 1$确保方向向量的范数有界，$\mu \geq 0$反映了拉格朗日乘子的非负性要求。
+其中，$\mu \in \mathbb{R}^E$和$\lambda \in \mathbb{R}^2$是引入的对偶变量。$\mu$可以理解为各边界约束的拉格朗日乘子，而$\lambda = -\mathbf{G}(\mathbf{x})^\top \mu$对应从障碍物点指向机器人最近点的单位方向向量。约束$\|\lambda\|_2 \leq 1$确保方向向量的范数有界，$\mu \geq 0$反映了拉格朗日乘子的非负性要求。
 
 这种对偶重构带来了深刻的物理意义和计算优势。首先是**双凸性质（Biconvexity）**：该对偶形式在固定$(\mu, \lambda)$时关于$\mathbf{x}$是线性的，从而保持了MPC问题的凸性；而在固定$\mathbf{x}$时关于$(\mu, \lambda)$也是凸的。这使得我们可以通过交替优化（Alternating Minimization）来高效求解。其次是**可微性（Differentiability）**：最优对偶变量$\mu^*$直接提供了距离函数关于$\mathbf{g}(\mathbf{x})$的梯度信息，为MPC优化提供了高质量的一阶导数。最后是**并行性**：不同障碍物点的对偶问题相互独立，可以高效并行求解。因此，问题的核心转化为：**如何快速、准确地求解上述对偶问题，并获得满足约束的$\mu^*$？** 这正是本文PDPL-Net要解决的关键子问题。
 
@@ -151,7 +151,7 @@ $$
 \min_{\mathbf{X}, \mathbf{U}} \quad & \sum_{k=0}^{H-1} \left[ q_s \|\mathbf{x}_k - \mathbf{x}_k^{ref}\|^2 + p_u \|\mathbf{u}_k - \mathbf{u}_k^{nom}\|^2 \right] + q_N \|\mathbf{x}_H - \mathbf{x}_H^{ref}\|^2 \\
 \text{s.t.} \quad & \mathbf{x}_{k+1} = \mathbf{A}_k \mathbf{x}_k + \mathbf{B}_k \mathbf{u}_k + \mathbf{c}_k, \quad k = 0, \dots, H-1 \\
 & \mathbf{u}_{min} \leq \mathbf{u}_k \leq \mathbf{u}_{max}, \quad k = 0, \dots, H-1 \\
-& -\mathbf{g}(\mathbf{x}_k)^\top \mu_i + \mathbf{p}_i^\top \lambda_i \geq d_{safe}, \quad \forall i \in \mathcal{O}_{active}, \forall k
+& -\mathbf{g}(\mathbf{x}_k)^\top \mu_i - \mathbf{p}_i^\top \lambda_i \geq d_{safe}, \quad \forall i \in \mathcal{O}_{active}, \forall k
 \end{aligned}
 $$
 
@@ -693,7 +693,7 @@ PDPL-Net的对偶可行域定义为$\mathcal{C}_{dual} = \{ \mu \in \mathbb{R}^E
 
 ### 6.4.2 安全距离下界的保守性
 
-**定理6.4（安全距离的保守性）**。设$\mu^*$为硬投影层的输出，$\lambda^* = -\mathbf{G}^\top \mu^*$。则由对偶变量计算的距离估计$\hat{d} = -\mathbf{g}^\top \mu^* + \mathbf{p}^\top \lambda^*$满足$\hat{d} \leq d^*$，其中$d^*$为点$\mathbf{p}$到机器人的真实距离。
+**定理6.4（安全距离的保守性）**。设$\mu^*$为硬投影层的输出，$\lambda^* = -\mathbf{G}^\top \mu^*$。则由对偶变量计算的距离估计$\hat{d} = -\mathbf{g}^\top \mu^* - \mathbf{p}^\top \lambda^*$满足$\hat{d} \leq d^*$，其中$d^*$为点$\mathbf{p}$到机器人的真实距离。
 
 **证明**。由于$\mu^* \in \mathcal{C}_{dual}$，它是对偶问题的一个可行解。对偶问题是最大化问题，任何可行解的目标值不超过最优值，故$\hat{d} \leq d^*$。
 

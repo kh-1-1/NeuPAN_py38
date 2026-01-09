@@ -90,7 +90,7 @@ PDPL-Net的对偶可行域定义为$\mathcal{C}_{dual} = \{ \mu \in \mathbb{R}^E
 
 ### 6.4.2 安全距离下界的保守性
 
-**定理6.4（安全距离的保守性）**。设$\mu^*$为硬投影层的输出，$\lambda^* = -\mathbf{G}^\top \mu^*$。则由对偶变量计算的距离估计$\hat{d} = -\mathbf{g}^\top \mu^* + \mathbf{p}^\top \lambda^*$满足$\hat{d} \leq d^*$，其中$d^*$为点$\mathbf{p}$到机器人的真实距离。
+**定理6.4（安全距离的保守性）**。设$\mu^*$为硬投影层的输出，$\lambda^* = -\mathbf{G}^\top \mu^*$。则由对偶变量计算的距离估计$\hat{d} = -\mathbf{g}^\top \mu^* - \mathbf{p}^\top \lambda^*$满足$\hat{d} \leq d^*$，其中$d^*$为点$\mathbf{p}$到机器人的真实距离。
 
 **证明**。由于$\mu^* \in \mathcal{C}_{dual}$，它是对偶问题的一个可行解。对偶问题是最大化问题，任何可行解的目标值不超过最优值，故$\hat{d} \leq d^*$。
 

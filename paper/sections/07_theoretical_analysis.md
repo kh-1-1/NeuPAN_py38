@@ -15,7 +15,7 @@ $$
 
 回顾第3章的对偶重构，对于给定的障碍物点 $\mathbf{p} \in \mathbb{R}^2$ 和机器人几何 $(\mathbf{G}, \mathbf{g})$，我们需要求解：
 $$
-\max_{\mu, \lambda} \left( -\mathbf{g}^\top \mu + \mathbf{p}^\top \lambda \right) \quad \text{s.t.} \quad \mathbf{G}^\top \mu + \lambda = \mathbf{0}, \quad \|\lambda\|_2 \leq 1, \quad \mu \geq \mathbf{0}
+\max_{\mu, \lambda} \left( -\mathbf{g}^\top \mu - \mathbf{p}^\top \lambda \right) \quad \text{s.t.} \quad \mathbf{G}^\top \mu + \lambda = \mathbf{0}, \quad \|\lambda\|_2 \leq 1, \quad \mu \geq \mathbf{0}
 $$
 
 利用 $\lambda = -\mathbf{G}^\top \mu$ 消元，并将约束 $\|\mathbf{G}^\top \mu\|_2 \leq 1$ 通过拉格朗日对偶松弛，该问题可等价地写成以下**鞍点问题（Saddle-Point Problem）**：
@@ -231,13 +231,13 @@ $$
 
 **定理 7.4（安全距离的保守性）**：设 $\mu^*$ 为硬投影层的输出，$\lambda^* = -\mathbf{G}^\top \mu^*$。则由对偶变量计算的距离估计：
 $$
-\hat{d} = -\mathbf{g}^\top \mu^* + \mathbf{p}^\top \lambda^*
+\hat{d} = -\mathbf{g}^\top \mu^* - \mathbf{p}^\top \lambda^*
 $$
 满足 $\hat{d} \leq d^*$，其中 $d^*$ 为点 $\mathbf{p}$ 到机器人的真实距离。
 
 *证明*：由于 $\mu^* \in \mathcal{C}_{dual}$，它是对偶问题的一个**可行解**（未必最优）。对偶问题是一个最大化问题，任何可行解的目标值不超过最优值：
 $$
-\hat{d} = -\mathbf{g}^\top \mu^* + \mathbf{p}^\top (-\mathbf{G}^\top \mu^*) \leq \max_{\mu \in \mathcal{C}_{dual}} \left( -\mathbf{g}^\top \mu + \mathbf{p}^\top (-\mathbf{G}^\top \mu) \right) = d^*
+\hat{d} = -\mathbf{g}^\top \mu^* - \mathbf{p}^\top (-\mathbf{G}^\top \mu^*) \leq \max_{\mu \in \mathcal{C}_{dual}} \left( -\mathbf{g}^\top \mu - \mathbf{p}^\top (-\mathbf{G}^\top \mu) \right) = d^*
 $$
 $\square$
 

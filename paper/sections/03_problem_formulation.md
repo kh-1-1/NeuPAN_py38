@@ -39,7 +39,7 @@ $$
 根据Farkas引理及强对偶定理，点 $\mathbf{p}_i$ 到凸多边形 $\mathcal{R}(\mathbf{x})$ 的距离等价于以下对偶优化问题的最优值：
 
 $$
-d(\mathbf{x}, \mathbf{p}_i) = \max_{\mu, \lambda} \left( -\mathbf{g}(\mathbf{x})^\top \mu + \mathbf{p}_i^\top \lambda \right)
+d(\mathbf{x}, \mathbf{p}_i) = \max_{\mu, \lambda} \left( -\mathbf{g}(\mathbf{x})^\top \mu - \mathbf{p}_i^\top \lambda \right)
 $$
 
 $$
@@ -62,7 +62,7 @@ $$
 \begin{aligned}
 \min_{\mathbf{X}, \mathbf{U}, \boldsymbol{\mu}, \boldsymbol{\lambda}} \quad & \sum_{k=0}^{H-1} \ell(\mathbf{x}_k, \mathbf{u}_k) + \ell_N(\mathbf{x}_H) \\
 \text{s.t.} \quad & \mathbf{x}_{k+1} = \Phi(\mathbf{x}_k, \mathbf{u}_k), \\
-& -\mathbf{g}(\mathbf{x}_k)^\top \mu_{i,k} + \mathbf{p}_i^\top \lambda_{i,k} \geq d_{safe}, \quad \forall i \in \mathcal{O}_{active} \\
+& -\mathbf{g}(\mathbf{x}_k)^\top \mu_{i,k} - \mathbf{p}_i^\top \lambda_{i,k} \geq d_{safe}, \quad \forall i \in \mathcal{O}_{active} \\
 & (\mu_{i,k}, \lambda_{i,k}) = \mathcal{F}_{\theta}(\mathbf{p}_i, \mathbf{x}_k) \quad \text{// 神经网络预测}
 \end{aligned}
 $$

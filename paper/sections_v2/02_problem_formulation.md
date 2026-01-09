@@ -1,6 +1,6 @@
 # 2. 问题建模
 
-本章建立移动机器人导航的数学模型框架。我们首先给出机器人的运动学描述，随后深入分析传统基于距离的避障约束的非凸性本质，并引出基于对偶变量的凸重构形式。这种重构不仅是数学上的技巧，更是本文能够实现快速且严格约束求解的理论基石。最后，我们将问题纳入模型预测控制（MPC）框架，并讨论传统方法面临的计算瓶颈。
+本章建立移动机器人导航的数学模型框架。我们首先给出机器人的运动学描述，随后深入分析传统基于距离的避障约束的非凸性本质，并引出基于对偶变量的凸重构形式。这种重构不仅是数学上的技巧，更是本文能够实现快速且严格约束求解的理论基石。最后，我们将问题纳入模型预测控制（MPC）框架，并讨论传统方法面临的计算瓶颈。需要强调的是：在系统/算法层面，我们沿用NeuPAN的MPC/NRMP整体框架，仅替换其深度展开神经编码器（DUNE）为PDPL-Net；本文的问题建模与NeuPAN在“问题陈述（Problem Statement）”中的核心思想一致，差异主要来自符号选择与展开程度（本文进一步给出Ackermann运动学线性化、对偶形式及其在MPC中的嵌入），因此呈现形式会与NeuPAN的写法略有不同。
 
 ## 2.1 移动机器人运动学模型
 
@@ -16,7 +16,13 @@ $$
 
 ### 2.1.2 线性化与离散化
 
-为了适应数字控制系统的需求并利用成熟的凸优化工具，我们需要对上述非线性系统进行线性化和离散化处理。在参考轨迹点$(\mathbf{x}_k^{ref}, \mathbf{u}_k^{ref})$处进行一阶泰勒展开，可得到线性时变（Linear Time-Varying, LTV）模型：
+为了适应数字控制系统的需求并利用成熟的凸优化工具，我们需要对上述非线性系统进行离散化与线性化处理。给定采样周期$\Delta t$，对连续时间模型进行前向欧拉离散化可得：
+
+$$
+\mathbf{x}_{k+1} = \mathbf{x}_k + \mathbf{f}(\mathbf{x}_k, \mathbf{u}_k)\Delta t
+$$
+
+在参考轨迹点$(\mathbf{x}_k^{ref}, \mathbf{u}_k^{ref})$处进行一阶泰勒展开，可得到线性时变（Linear Time-Varying, LTV）模型：
 
 $$
 \mathbf{x}_{k+1} = \mathbf{A}_k \mathbf{x}_k + \mathbf{B}_k \mathbf{u}_k + \mathbf{c}_k
@@ -24,17 +30,49 @@ $$
 
 其中，$\mathbf{A}_k = \mathbf{I} + \Delta t \cdot \frac{\partial \mathbf{f}}{\partial \mathbf{x}}\big|_{(\mathbf{x}_k^{ref}, \mathbf{u}_k^{ref})}$为状态转移矩阵，$\mathbf{B}_k = \Delta t \cdot \frac{\partial \mathbf{f}}{\partial \mathbf{u}}\big|_{(\mathbf{x}_k^{ref}, \mathbf{u}_k^{ref})}$为控制输入矩阵，$\mathbf{c}_k$为线性化产生的常数项，$\Delta t$为离散采样时间间隔。这种线性化处理使得我们能够利用成熟的凸优化求解器（如OSQP、ECOS、CLARABEL）来高效处理动力学约束。然而，需要注意的是线性化引入了近似误差，这种误差在曲率变化剧烈的轨迹段会更加显著。在MPC框架中，由于每个控制周期都会根据实际状态重新线性化并求解优化问题，线性化误差能够得到有效抑制。
 
+### 2.1.3 控制约束与可行域
+
+考虑执行器饱和与控制平滑性，控制输入$\mathbf{u}_k$通常需要同时满足幅值约束与变化率约束（逐元素不等式）：
+
+$$
+\mathbf{u}_{min} \preceq \mathbf{u}_k \preceq \mathbf{u}_{max}, \qquad \Delta \mathbf{u}_{min} \preceq \mathbf{u}_{k+1} - \mathbf{u}_k \preceq \Delta \mathbf{u}_{max}
+$$
+
+在MPC框架下，初始状态$\mathbf{x}_0$由里程计或定位系统提供，随后在滚动时域内迭代求解受上述动力学与控制约束限制的最优控制序列。
+
 ## 2.2 点级碰撞避障约束
 
 ### 2.2.1 机器人几何表示
 
-精确的碰撞检测需要对机器人的几何形状进行数学建模。本文将机器人近似为凸多边形（如矩形），这是实际应用中最常见的情形。凸多边形可以表示为一组线性不等式的交集：
+精确的碰撞检测需要对机器人的几何形状进行数学建模。本文将机器人在车体坐标系下近似为凸多边形（如矩形），这是实际应用中最常见的情形。设车体坐标系下的紧致凸集为：
 
 $$
-\mathcal{R}(\mathbf{x}) = \{ \mathbf{z} \in \mathbb{R}^2 \mid \mathbf{G}(\mathbf{x}) \mathbf{z} \leq \mathbf{g}(\mathbf{x}) \}
+\mathcal{C} = \{ \mathbf{c} \in \mathbb{R}^2 \mid \mathbf{G}\mathbf{c} \leq \mathbf{g} \}
 $$
 
-其中，$\mathbf{G}(\mathbf{x}) \in \mathbb{R}^{E \times 2}$为边界法向量矩阵，$\mathbf{g}(\mathbf{x}) \in \mathbb{R}^E$为边界偏移向量，$E$为多边形的边数（对于矩形机器人，$E=4$）。矩阵$\mathbf{G}$的每一行$\mathbf{g}_i^\top$表示第$i$条边的外法向量，$g_i$表示该边到机器人局部坐标系原点的有符号距离。这种表示方法的优点在于其简洁性和计算效率：判断一个点是否在多边形内只需进行$E$次线性不等式检验，复杂度为$O(E)$。
+其中，$\mathbf{G} \in \mathbb{R}^{E \times 2}$为边界法向量矩阵，$\mathbf{g} \in \mathbb{R}^E$为边界偏移向量，$E$为多边形的边数（对于矩形机器人，$E=4$）。矩阵$\mathbf{G}$的第$i$行记为$\mathbf{G}_i^\top$，表示第$i$条边的外法向量；$g_i$表示该边到车体坐标系原点的有符号距离。
+
+给定状态$\mathbf{x} = [x, y, \theta, v, \delta]^\top$，机器人在世界坐标系下的占据空间可写为SE(2)刚体变换下的像：
+
+$$
+\mathcal{R}(\mathbf{x}) = \{ \mathbf{R}(\theta)\mathbf{c} + \mathbf{t}(\mathbf{x}) \mid \mathbf{c} \in \mathcal{C} \}
+$$
+
+其中旋转与平移为
+
+$$
+\mathbf{R}(\theta)=\begin{bmatrix}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{bmatrix}, \qquad \mathbf{t}(\mathbf{x})=\begin{bmatrix}x\\y\end{bmatrix}.
+$$
+
+等价地，$\mathcal{R}(\mathbf{x})$也可以写成随姿态变化的H-表示形式：
+
+$$
+\mathcal{R}(\mathbf{x}) = \{ \mathbf{z} \in \mathbb{R}^2 \mid \mathbf{G}(\mathbf{x}) \mathbf{z} \leq \mathbf{g}(\mathbf{x}) \}, \quad
+\mathbf{G}(\mathbf{x}) = \mathbf{G}\mathbf{R}(\theta)^\top,\quad
+\mathbf{g}(\mathbf{x}) = \mathbf{g} + \mathbf{G}\mathbf{R}(\theta)^\top \mathbf{t}(\mathbf{x})
+$$
+
+这种表示方法的优点在于其简洁性和计算效率：判断一个点是否在多边形内只需进行$E$次线性不等式检验，复杂度为$O(E)$。
 
 ### 2.2.2 障碍物点云表示
 
@@ -51,14 +89,14 @@ $$
 为了克服上述困难，我们引入凸分析中的对偶原理对碰撞约束进行重构。根据支撑函数理论和强对偶定理，点$\mathbf{p}_i$到凸多边形$\mathcal{R}(\mathbf{x})$的距离可以等价地表示为以下对偶优化问题的最优值：
 
 $$
-d(\mathbf{x}, \mathbf{p}_i) = \max_{\mu, \lambda} \left( -\mathbf{g}(\mathbf{x})^\top \mu + \mathbf{p}_i^\top \lambda \right)
+d(\mathbf{x}, \mathbf{p}_i) = \max_{\mu, \lambda} \left( -\mathbf{g}(\mathbf{x})^\top \mu - \mathbf{p}_i^\top \lambda \right)
 $$
 
 $$
 \text{s.t.} \quad \mathbf{G}(\mathbf{x})^\top \mu + \lambda = \mathbf{0}, \quad \| \lambda \|_2 \leq 1, \quad \mu \geq \mathbf{0}
 $$
 
-其中，$\mu \in \mathbb{R}^E$和$\lambda \in \mathbb{R}^2$是引入的对偶变量。$\mu$可以理解为各边界约束的拉格朗日乘子，而$\lambda$表示从机器人边界到障碍物点的单位方向向量。约束$\|\lambda\|_2 \leq 1$确保方向向量的范数有界，$\mu \geq 0$反映了拉格朗日乘子的非负性要求。
+其中，$\mu \in \mathbb{R}^E$和$\lambda \in \mathbb{R}^2$是引入的对偶变量。$\mu$可以理解为各边界约束的拉格朗日乘子，而$\lambda = -\mathbf{G}(\mathbf{x})^\top \mu$对应从障碍物点指向机器人最近点的单位方向向量（与NeuPAN中最小平移向量$\mathbf{e}$的方向相反）。约束$\|\lambda\|_2 \leq 1$确保方向向量的范数有界，$\mu \geq 0$反映了拉格朗日乘子的非负性要求。
 
 这种对偶重构带来了深刻的物理意义和计算优势。首先是**双凸性质（Biconvexity）**：该对偶形式在固定$(\mu, \lambda)$时关于$\mathbf{x}$是线性的，从而保持了MPC问题的凸性；而在固定$\mathbf{x}$时关于$(\mu, \lambda)$也是凸的。这使得我们可以通过交替优化（Alternating Minimization）来高效求解。其次是**可微性（Differentiability）**：最优对偶变量$\mu^*$直接提供了距离函数关于$\mathbf{g}(\mathbf{x})$的梯度信息，为MPC优化提供了高质量的一阶导数。最后是**并行性**：不同障碍物点的对偶问题相互独立，可以高效并行求解。因此，问题的核心转化为：**如何快速、准确地求解上述对偶问题，并获得满足约束的$\mu^*$？** 这正是本文PDPL-Net要解决的关键子问题。
 
@@ -72,10 +110,12 @@ $$
 
 $$
 \begin{aligned}
-\min_{\mathbf{X}, \mathbf{U}} \quad & \sum_{k=0}^{H-1} \left[ q_s \|\mathbf{x}_k - \mathbf{x}_k^{ref}\|^2 + p_u \|\mathbf{u}_k - \mathbf{u}_k^{nom}\|^2 \right] + q_N \|\mathbf{x}_H - \mathbf{x}_H^{ref}\|^2 \\
+\min_{\mathbf{X}, \mathbf{U}, \boldsymbol{\mu}, \boldsymbol{\lambda}} \quad & \sum_{k=0}^{H-1} \left[ q_s \|\mathbf{x}_k - \mathbf{x}_k^{ref}\|^2 + p_u \|\mathbf{u}_k - \mathbf{u}_k^{nom}\|^2 \right] + q_N \|\mathbf{x}_H - \mathbf{x}_H^{ref}\|^2 \\
 \text{s.t.} \quad & \mathbf{x}_{k+1} = \mathbf{A}_k \mathbf{x}_k + \mathbf{B}_k \mathbf{u}_k + \mathbf{c}_k, \quad k = 0, \dots, H-1 \\
 & \mathbf{u}_{min} \leq \mathbf{u}_k \leq \mathbf{u}_{max}, \quad k = 0, \dots, H-1 \\
-& -\mathbf{g}(\mathbf{x}_k)^\top \mu_i + \mathbf{p}_i^\top \lambda_i \geq d_{safe}, \quad \forall i \in \mathcal{O}_{active}, \forall k
+& \Delta \mathbf{u}_{min} \leq \mathbf{u}_{k+1} - \mathbf{u}_k \leq \Delta \mathbf{u}_{max}, \quad k = 0, \dots, H-2 \\
+& -\mathbf{g}(\mathbf{x}_k)^\top \mu_{i,k} - \mathbf{p}_i^\top \lambda_{i,k} \geq d_{safe}, \quad \forall i \in \mathcal{O}_{active}, \forall k \\
+& \mathbf{G}(\mathbf{x}_k)^\top \mu_{i,k} + \lambda_{i,k} = \mathbf{0}, \quad \|\lambda_{i,k}\|_2 \leq 1, \quad \mu_{i,k} \geq \mathbf{0}, \quad \forall i \in \mathcal{O}_{active}, \forall k
 \end{aligned}
 $$
 
