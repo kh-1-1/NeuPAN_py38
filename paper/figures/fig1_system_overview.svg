@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420">
+  <defs>
+    <style>
+      .title { font: 18px 'Arial','Helvetica','Microsoft YaHei','PingFang SC','Noto Sans CJK SC',sans-serif; font-weight: 700; fill: #111827; }
+      .label { font: 14px 'Arial','Helvetica','Microsoft YaHei','PingFang SC','Noto Sans CJK SC',sans-serif; fill: #111827; }
+      .small { font: 12px 'Arial','Helvetica','Microsoft YaHei','PingFang SC','Noto Sans CJK SC',sans-serif; fill: #374151; }
+      .box { fill: #ffffff; stroke: #111827; stroke-width: 2; rx: 10; }
+      .box-soft { fill: #f9fafb; stroke: #111827; stroke-width: 2; rx: 10; }
+      .box-strong { fill: #fff7ed; stroke: #ea580c; stroke-width: 2.5; rx: 10; }
+      .outer { fill: none; stroke: #6b7280; stroke-width: 2; stroke-dasharray: 6 6; rx: 12; }
+      .arrow { stroke: #111827; stroke-width: 2.5; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto">
+      <path d="M 0 0 L 10 4 L 0 8 z" fill="#111827"/>
+    </marker>
+  </defs>
+
+  <text x="600" y="36" text-anchor="middle" class="title">Figure 1. System Overview of NeuPAN + PDPL-Net (Drop-in Front-end Replacement)</text>
+
+  <!-- Inputs -->
+  <rect x="30" y="70" width="270" height="180" class="outer"/>
+  <text x="45" y="95" class="label">Inputs</text>
+
+  <rect x="55" y="110" width="220" height="55" class="box-soft"/>
+  <text x="165" y="143" text-anchor="middle" class="label">LiDAR Point Cloud  P<tspan baseline-shift="sub">t</tspan></text>
+
+  <rect x="55" y="180" width="220" height="55" class="box-soft"/>
+  <text x="165" y="205" text-anchor="middle" class="label">Reference Path / Speed</text>
+  <text x="165" y="226" text-anchor="middle" class="small">(x<tspan baseline-shift="sub">ref</tspan>, u<tspan baseline-shift="sub">nom</tspan>)</text>
+
+  <!-- PDPL-Net -->
+  <rect x="340" y="80" width="380" height="160" class="box"/>
+  <text x="530" y="106" text-anchor="middle" class="label">PDPL-Net Front-end (replaces DUNE)</text>
+
+  <rect x="360" y="122" width="105" height="90" class="box-soft"/>
+  <text x="412.5" y="154" text-anchor="middle" class="label">Feature</text>
+  <text x="412.5" y="174" text-anchor="middle" class="label">Encoder</text>
+
+  <rect x="478" y="122" width="145" height="90" class="box-soft"/>
+  <text x="550.5" y="154" text-anchor="middle" class="label">Unrolled PDHG</text>
+  <text x="550.5" y="174" text-anchor="middle" class="small">J layers + learned prox</text>
+
+  <rect x="635" y="122" width="70" height="90" class="box-strong"/>
+  <text x="670" y="150" text-anchor="middle" class="label">Hard</text>
+  <text x="670" y="170" text-anchor="middle" class="label">Proj.</text>
+  <text x="670" y="196" text-anchor="middle" class="small">μ≥0</text>
+  <text x="670" y="214" text-anchor="middle" class="small">‖Gᵀμ‖≤1</text>
+
+  <!-- Dual variables -->
+  <rect x="750" y="105" width="200" height="110" class="box"/>
+  <text x="850" y="135" text-anchor="middle" class="label">Dual Variables</text>
+  <text x="850" y="160" text-anchor="middle" class="label">(μ<tspan baseline-shift="sub">i</tspan>, λ<tspan baseline-shift="sub">i</tspan>) / LDF</text>
+  <text x="850" y="185" text-anchor="middle" class="small">for each obstacle point</text>
+
+  <!-- Backend -->
+  <rect x="980" y="80" width="200" height="160" class="box"/>
+  <text x="1080" y="106" text-anchor="middle" class="label">NeuPAN Back-end</text>
+  <text x="1080" y="132" text-anchor="middle" class="label">NRMP + MPC</text>
+  <text x="1080" y="156" text-anchor="middle" class="small">receding horizon optimization</text>
+  <text x="1080" y="184" text-anchor="middle" class="label">Control  u<tspan baseline-shift="sub">t</tspan></text>
+
+  <!-- Arrows -->
+  <path d="M 300 160 L 340 160" class="arrow"/>
+  <path d="M 720 160 L 750 160" class="arrow"/>
+  <path d="M 950 160 L 980 160" class="arrow"/>
+
+  <!-- Note -->
+  <text x="600" y="320" text-anchor="middle" class="small">Key idea: keep NeuPAN NRMP/MPC pipeline unchanged; replace only the front-end encoder with a constraint-guaranteed unrolled network.</text>
+</svg>
+

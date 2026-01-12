@@ -1,2 +1,0 @@
-example,kin,config,runs,success,stop,steps,path_length,min_distance,avg_step_ms,avg_forward_ms,total_time_s,max_v,avg_v,roi_n_in,roi_n_roi,roi_ratio
-corridor,acker,flex_learned,10,1.0,0.0,209.0,67.68539459183808,0.18152926862239838,72.442070239404,72.04,15.14,5.527981758117676,3.2385356264037375,,,

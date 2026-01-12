@@ -1,2 +1,0 @@
-baseline,samples,total_points,mse_mu,mse_lam,kkt_primal_mse,kkt_rel_mean,constraint_rate,norm_violation_mean,mu_neg_rate,objective_gap_mean,avg_ms_per_sample,avg_ms_per_point,device
-dune,2000,1073148,2.2350201113889105e-06,2.5570491440489724e-05,1.7639041930711253e-20,0.9363362187089088,0.34433181630119986,0.00015801569214610541,0.0,0.002189053951336607,3.024245301145129,0.005636212901007371,cuda

@@ -434,7 +434,7 @@ class DUNE(torch.nn.Module):
                 state = torch.load(
                     self.abs_checkpoint_path,
                     map_location=torch.device('cpu'),
-                    weights_only=True,
+                    weights_only=False,
                 )
             except TypeError:
                 state = torch.load(self.abs_checkpoint_path, map_location=torch.device('cpu'))

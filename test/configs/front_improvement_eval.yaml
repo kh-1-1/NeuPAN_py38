@@ -9,6 +9,9 @@
 # Run with:
 #   python -m test.batch_core_modules_evaluation --config-file test/configs/front_improvement_eval.yaml -r 5
 #
+# RDA对比需要单独运行（使用物体级信息，非点云）：
+#   python test/compare_neupan_vs_rda.py
+#
 
 ## Global Parameters
 device: cpu
@@ -26,19 +29,65 @@ save_media: true
 save_gif: true
 save_png: false
 
-# No random obstacles
+# 随机障碍物"动态注入"（每次run生成一份派生env.yaml，不改原始文件）
+# - enabled: true 才启用
+# - apply_to: 逗号分隔场景名（corridor和narrow_gap不适合随机化）
+# - replace: true替换原障碍物，false在原障碍物基础上追加
 random_obstacles:
-  enabled: false
+  enabled: true
+  seed: 0
+  apply_to: convex_obs,non_obs,dyna_non_obs  # corridor/narrow_gap保持原结构，dyna_obs已有动态障碍
+  replace: true                # true: 替换原障碍物；false: 追加
 
-## Scenarios
-examples: corridor,convex_obs,dyna_obs
+  # 采样范围（全局坐标）
+  x_range: [5.0, 45.0]
+
+  # 路径中心线：null=自动从waypoints提取
+  path_y: null
+
+  # 起点/终点附近不放障碍物
+  goal_margin: 5.0
+  start_margin: 3.0
+
+  # 最小间隔（避免障碍物重叠）
+  buffer: 2.5
+
+  # 路径两侧障碍物
+  side:
+    count: 20         # 两侧总数
+    gap: 1.0          # 中心线两侧的空走廊宽度
+    width: 8.0        # 侧向带宽
+
+  # 路径上的障碍物（更"卡路"）
+  path:
+    count: 5
+    half_width: 0.5
+
+## Scenarios (可挑选使用，注释掉不需要的)
+# 可用场景：
+#   - non_obs: 无障碍物（基准测试）
+#   - convex_obs: 静态凸障碍物
+#   - corridor: 走廊场景（狭窄通道）
+#   - dyna_obs: 动态障碍物（15个移动障碍）
+#   - dyna_non_obs: 动态但无障碍物
+#   - dense_forest: 密集森林（高密度障碍）
+#   - narrow_gap: 窄缝场景（极限通过）
+#   - pf_obs: 势场+障碍物
+#   - pf: 势场场景
+#   - reverse: 倒车场景
+#   - polygon_robot: 多边形机器人
+examples: corridor,convex_obs,dyna_obs,dyna_non_obs,non_obs
 kinematics: acker
 
-## Override pan parameters
+## Override pan parameters (统一覆盖，无需修改各场景planner.yaml)
 pan_overrides:
   nrmp_max_num: 30
   dune_max_num: 200
-  iter_num: 3
+  iter_num: 1          # 单次迭代，逼前端"一次做对"
+
+## Override adjust parameters
+adjust_overrides:
+  d_min: 0.05          # 极限安全距离，放大前端精度差异
 
 ## Configuration matrix
 configurations:

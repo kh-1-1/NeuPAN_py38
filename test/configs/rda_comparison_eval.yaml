@@ -1,0 +1,98 @@
+## NeuPAN vs RDA Comparison Config
+#
+# Purpose: Compare point-level NeuPAN against object-level RDA planner
+#
+# Note: RDA uses ground-truth obstacle geometry (object-level),
+#       while NeuPAN only uses point cloud from LiDAR (point-level).
+#       This comparison highlights NeuPAN's ability to achieve similar
+#       performance without explicit obstacle information.
+#
+# Run with:
+#   python test/compare_neupan_vs_rda.py --config test/configs/rda_comparison_eval.yaml
+#
+
+## Global Parameters
+runs: 100
+max_steps: 600
+quiet: false
+output_dir: test/results/rda_comparison
+
+## Scenarios (可挑选使用，注释掉不需要的)
+# 可用场景：
+#   - non_obs: 无障碍物（基准测试）
+#   - convex_obs: 静态凸障碍物
+#   - corridor: 走廊场景（狭窄通道）
+#   - dyna_obs: 动态障碍物（15个移动障碍）
+#   - dyna_non_obs: 动态但无障碍物
+#   - dense_forest: 密集森林（高密度障碍）
+#   - narrow_gap: 窄缝场景（极限通过）
+#   - pf_obs: 势场+障碍物
+#   - pf: 势场场景
+#   - reverse: 倒车场景
+#   - polygon_robot: 多边形机器人
+examples: corridor,convex_obs,dyna_obs,dyna_non_obs,non_obs
+kinematics: acker
+
+## Override pan parameters (统一覆盖，与front_improvement_eval.yaml一致)
+pan_overrides:
+  nrmp_max_num: 30
+  dune_max_num: 200
+  iter_num: 1          # 单次迭代，逼前端"一次做对"
+
+## Override adjust parameters
+adjust_overrides:
+  d_min: 0.05          # 极限安全距离，放大前端精度差异
+
+## NeuPAN前端配置（使用PDPL-Net J=2）
+neupan:
+  front_type: flex_pdhg
+  front_learned: true
+  front_J: 2
+  projection: hard
+  ckpt_diff: ""
+  ckpt_acker: example/model/acker_flex_pdhg-2_robot/model_5000.pth
+
+# 随机障碍物"动态注入"（与front_improvement_eval.yaml一致）
+# - enabled: true 才启用
+# - apply_to: 逗号分隔场景名（corridor和narrow_gap不适合随机化）
+# - replace: true替换原障碍物，false在原障碍物基础上追加
+random_obstacles:
+  enabled: true
+  seed: 0
+  apply_to: convex_obs,non_obs,dyna_non_obs  # corridor/narrow_gap保持原结构，dyna_obs已有动态障碍
+  replace: true
+
+  # 采样范围（全局坐标）
+  x_range: [5.0, 45.0]
+
+  # 路径中心线：null=自动从waypoints提取
+  path_y: null
+
+  # 起点/终点附近不放障碍物
+  goal_margin: 5.0
+  start_margin: 3.0
+
+  # 最小间隔（避免障碍物重叠）
+  buffer: 2.5
+
+  # 路径两侧障碍物
+  side:
+    count: 20
+    gap: 1.0
+    width: 8.0
+
+  # 路径上的障碍物
+  path:
+    count: 5
+    half_width: 0.5
+
+## RDA-specific parameters
+rda:
+  receding: 10
+  iter_num: 1
+  max_edge_num: 4
+  max_obs_num: 30
+  min_sd: 0.1
+  wu: 0.2
+  ws: 1.0
+  ref_speed: 4.0
