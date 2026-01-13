@@ -1,0 +1,2 @@
+example,kinematics,runs,neupan_success_rate,neupan_collision_rate,neupan_avg_time_ms,neupan_std_time_ms,neupan_avg_path_length,rda_success_rate,rda_collision_rate,rda_avg_time_ms,rda_std_time_ms,rda_avg_path_length
+corridor,acker,1,0.0,1.0,2266.672138894339,1077.9420240933803,10.390958774089812,0.0,0.0,150.32631724810926,113.13048107358604,9.319987777050516

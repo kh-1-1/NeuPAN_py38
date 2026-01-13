@@ -12,8 +12,9 @@
 #
 
 ## Global Parameters
-runs: 100
-max_steps: 600
+runs: 1
+max_steps: 400
+display: true  # 可视化界面显示（true=显示，false=后台运行）
 quiet: false
 output_dir: test/results/rda_comparison
 
@@ -37,11 +38,11 @@ kinematics: acker
 pan_overrides:
   nrmp_max_num: 30
   dune_max_num: 200
-  iter_num: 1          # 单次迭代，逼前端"一次做对"
+  iter_num: 1          # 单次迭代，配合 J=2 前端
 
 ## Override adjust parameters
 adjust_overrides:
-  d_min: 0.05          # 极限安全距离，放大前端精度差异
+  d_min: 0.1           # 安全距离（不要太小，否则优化可能失败）
 
 ## NeuPAN前端配置（使用PDPL-Net J=2）
 neupan:

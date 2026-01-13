@@ -11,8 +11,8 @@ Usage:
     # Multiple scenarios (batch)
     python test/compare_neupan_vs_rda.py -e corridor,convex_obs,dyna_obs -k acker -r 20
 
-    # With parameter overrides (match front_improvement_eval.yaml)
-    python test/compare_neupan_vs_rda.py -e corridor,convex_obs,dyna_obs -k acker -r 100 --iter-num 1 --d-min 0.05
+    # With config file
+    python test/compare_neupan_vs_rda.py --config test/configs/rda_comparison_eval.yaml
 """
 
 import argparse
@@ -20,6 +20,7 @@ import csv
 import sys
 import os
 import time
+import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
@@ -47,6 +48,45 @@ except ImportError:
 Car = namedtuple('car', 'G h cone_type wheelbase max_speed max_acce dynamics')
 
 
+def _draw_and_render(env, planner, step_idx: int, config: Dict[str, Any]) -> None:
+    """Draw and render the visualization (from batch_core_modules_evaluation.py)"""
+    # Draw ROI region visualization first (底层 - 浅蓝色点和绿色圆锥边界)
+    try:
+        if bool(config.get('roi_enabled', False)):
+            planner.visualize_roi_region(env)
+    except Exception:
+        pass
+
+    # Draw DUNE and NRMP points on top (上层 - 绿色和红色点)
+    try:
+        env.draw_points(planner.dune_points, s=25, c='g', refresh=True)
+        env.draw_points(planner.nrmp_points, s=13, c='r', refresh=True)
+    except Exception:
+        pass
+
+    # draw optimized and reference trajectories
+    try:
+        env.draw_trajectory(planner.opt_trajectory, 'r', refresh=True)
+        env.draw_trajectory(planner.ref_trajectory, 'b', refresh=True)
+    except Exception:
+        pass
+
+    # draw initial path once (mimic run_exp behavior)
+    if step_idx == 0:
+        try:
+            env.draw_trajectory(planner.initial_path, traj_type='-k', show_direction=False)
+        except Exception:
+            try:
+                env.draw_trajectory(planner.initial_path, '-k', refresh=True)
+            except Exception:
+                pass
+
+    try:
+        env.render()
+    except Exception:
+        pass
+
+
 def run_neupan(
     env,
     planner_file: str,
@@ -56,9 +96,15 @@ def run_neupan(
     adjust_overrides: Optional[Dict] = None,
     neupan_cfg: Optional[Dict] = None,
     kinematics: str = 'acker',
-    quiet: bool = False
+    quiet: bool = False,
+    no_display: bool = False,
+    save_ani: bool = False,
+    save_gif: bool = False,
+    save_png: bool = False,
+    results_dir: Optional[Path] = None,
+    run_idx: Optional[int] = None,
 ) -> Tuple[int, int, float, float, float]:
-    """Run NeuPAN evaluation."""
+    """Run NeuPAN evaluation with full visualization support."""
     if not quiet:
         print(f"\n>>> Running NeuPAN (Point-level) for {runs} runs...")
 
@@ -98,9 +144,9 @@ def run_neupan(
 
     planner = neupan.init_from_yaml(planner_file, **init_kwargs)
     if not quiet:
-        print(f"NeuPAN Config: nrmp_max_num={planner.pan_net.nrmp_max_num}, "
-              f"dune_max_num={planner.pan_net.dune_max_num}, "
-              f"iter_num={planner.pan_net.iter_num}")
+        print(f"NeuPAN Config: nrmp_max_num={planner.pan.nrmp_layer.max_num}, "
+              f"dune_max_num={planner.pan.dune_layer.max_num}, "
+              f"iter_num={planner.pan.iter_num}")
     planner.set_env_reference(env)
 
     success_count = 0
@@ -108,6 +154,9 @@ def run_neupan(
     timeout_count = 0
     all_times = []
     path_lengths = []
+
+    need_frames = bool(save_ani and (save_gif or save_png))
+    render_each_step = (not no_display) or (need_frames and save_gif)
 
     for i in range(runs):
         env.reset()
@@ -144,6 +193,10 @@ def run_neupan(
                 path_length += float(np.linalg.norm(cur_pos - prev_pos))
             prev_pos = cur_pos
 
+            # Render visualization
+            if render_each_step:
+                _draw_and_render(env, planner, step, neupan_cfg or {})
+
             env.step(action)
 
             if info.get('arrive', False):
@@ -159,6 +212,98 @@ def run_neupan(
         else:
             # Max steps reached without termination
             timeout_count += 1
+
+        # Final render to ensure at least one frame exists
+        if need_frames:
+            try:
+                _draw_and_render(env, planner, max(0, len(run_times) - 1), neupan_cfg or {})
+            except Exception:
+                pass
+
+        # Handle animation saving
+        gif_target = None
+        ani_basename = None
+
+        if need_frames:
+            ani_suffix = f"_run{run_idx}" if run_idx is not None else ""
+            ani_basename = f"neupan_{ani_suffix}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+            try:
+                env.end(0 if no_display else 3, ani_name=ani_basename)
+            except ValueError as e:
+                msg = str(e)
+                if ("all input arrays must have the same shape" in msg) or ("need at least one array to stack" in msg):
+                    if not quiet:
+                        print("Warning: Animation save failed (no frames or inconsistent frames). Skipping media save.")
+                    try:
+                        env.end(0)
+                    except Exception:
+                        pass
+                    try:
+                        import matplotlib.pyplot as plt
+                        plt.close('all')
+                    except Exception:
+                        pass
+                    ani_basename = None
+                else:
+                    raise
+
+            # Process GIF if animation was saved
+            if ani_basename is not None:
+                generated_gif = Path('animation') / f"{ani_basename}.gif"
+                if results_dir is not None:
+                    frames_dir = Path(results_dir) / 'frames'
+                    frames_dir.mkdir(parents=True, exist_ok=True)
+                    gif_target = frames_dir / generated_gif.name
+                    if generated_gif.exists():
+                        try:
+                            shutil.move(str(generated_gif), gif_target)
+                        except Exception:
+                            gif_target = None
+                    else:
+                        gif_target = None
+                else:
+                    gif_target = generated_gif if generated_gif.exists() else None
+        else:
+            # No media saving: avoid unnecessary waiting
+            try:
+                env.end(0 if no_display else 3)
+            except Exception:
+                try:
+                    env.end()
+                except Exception:
+                    pass
+
+        # Extract PNG if requested
+        if save_png and gif_target is not None:
+            try:
+                from PIL import Image, ImageSequence
+
+                with Image.open(gif_target) as im:
+                    last_frame = None
+                    for frame in ImageSequence.Iterator(im):
+                        last_frame = frame.copy()
+                    if last_frame is not None:
+                        out_dir = Path(results_dir) / 'frames' if results_dir else gif_target.parent
+                        out_dir.mkdir(parents=True, exist_ok=True)
+                        png_path = out_dir / f"{gif_target.stem}_last.png"
+                        last_frame.convert('RGB').save(png_path, format='PNG')
+            except Exception:
+                pass
+
+        # Remove GIF if only PNG wanted
+        if (not save_gif) and gif_target is not None:
+            try:
+                gif_target.unlink(missing_ok=True)
+            except Exception:
+                pass
+
+        # Clean up matplotlib figures
+        try:
+            import matplotlib.pyplot as plt
+            plt.close('all')
+        except Exception:
+            pass
 
         all_times.extend(run_times)
         path_lengths.append(path_length)
@@ -180,9 +325,10 @@ def run_rda(
     runs: int,
     max_steps: int,
     kinematics: str = 'diff',
-    quiet: bool = False
+    quiet: bool = False,
+    no_display: bool = False,
 ) -> Tuple[int, int, float, float, float]:
-    """Run RDA evaluation."""
+    """Run RDA evaluation with visualization support."""
     if not quiet:
         print(f"\n>>> Running RDA (Object-level) for {runs} runs...")
 
@@ -237,6 +383,8 @@ def run_rda(
     all_times = []
     path_lengths = []
 
+    render_each_step = not no_display
+
     for i in range(runs):
         env.reset()
         mpc_opt.reset()
@@ -269,6 +417,13 @@ def run_rda(
                 path_length += float(np.linalg.norm(cur_pos - prev_pos))
             prev_pos = cur_pos
 
+            # Render visualization
+            if render_each_step:
+                try:
+                    env.render()
+                except Exception:
+                    pass
+
             env.step(action)
 
             if env.done():
@@ -283,6 +438,15 @@ def run_rda(
                 break
         else:
             timeout_count += 1
+
+        # Clean up environment
+        try:
+            env.end(0 if no_display else 3)
+        except Exception:
+            try:
+                env.end()
+            except Exception:
+                pass
 
         all_times.extend(run_times)
         path_lengths.append(path_length)
@@ -306,7 +470,12 @@ def evaluate_scenario(
     pan_overrides: Optional[Dict] = None,
     adjust_overrides: Optional[Dict] = None,
     neupan_cfg: Optional[Dict] = None,
-    quiet: bool = False
+    display: bool = True,
+    quiet: bool = False,
+    save_media: bool = False,
+    save_gif: bool = False,
+    save_png: bool = False,
+    results_dir: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """Evaluate both NeuPAN and RDA on a single scenario."""
     planner_file = f"example/{example}/{kinematics}/planner.yaml"
@@ -316,29 +485,54 @@ def evaluate_scenario(
         print(f"Skipping {example}/{kinematics}: files not found")
         return {}
 
-    env = irsim.make(env_file, save_ani=False, full=False, display=False)
-
     if not quiet:
         print(f"\n{'='*60}")
         print(f"Scenario: {example}/{kinematics}")
         print(f"Runs: {runs}, Max Steps: {max_steps}")
         print(f"{'='*60}")
 
-    # Run NeuPAN
+    no_display = not display
+
+    # Run NeuPAN (create new environment)
+    need_frames = bool(save_media and (save_gif or save_png))
+    env_neupan = irsim.make(env_file, save_ani=need_frames, full=False, display=display)
     n_succ, n_coll, n_time_avg, n_time_std, n_path = run_neupan(
-        env, planner_file, runs, max_steps, pan_overrides, adjust_overrides,
-        neupan_cfg, kinematics, quiet
+        env_neupan, planner_file, runs, max_steps, pan_overrides, adjust_overrides,
+        neupan_cfg, kinematics, quiet, no_display,
+        save_ani=save_media, save_gif=save_gif, save_png=save_png,
+        results_dir=results_dir, run_idx=1
     )
 
-    # Run RDA
-    r_succ, r_coll, r_time_avg, r_time_std, r_path = run_rda(
-        env, planner_file, runs, max_steps, kinematics, quiet
-    )
-
-    # Close environment
+    # Close NeuPAN environment
     try:
-        env.end(0)
+        env_neupan.end(0)
     except:
+        pass
+
+    # Clean up matplotlib before creating new environment
+    try:
+        import matplotlib.pyplot as plt
+        plt.close('all')
+    except Exception:
+        pass
+
+    # Run RDA (create fresh environment)
+    env_rda = irsim.make(env_file, save_ani=False, full=False, display=display)
+    r_succ, r_coll, r_time_avg, r_time_std, r_path = run_rda(
+        env_rda, planner_file, runs, max_steps, kinematics, quiet, no_display
+    )
+
+    # Close RDA environment
+    try:
+        env_rda.end(0)
+    except:
+        pass
+
+    # Final matplotlib cleanup
+    try:
+        import matplotlib.pyplot as plt
+        plt.close('all')
+    except Exception:
         pass
 
     result = {
@@ -396,8 +590,16 @@ def main():
                         help='Override nrmp_max_num in pan config')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='Suppress progress output')
+    parser.add_argument('-nd', '--no-display', action='store_true',
+                        help='Disable visualization display')
     parser.add_argument('-o', '--output', type=str, default='',
                         help='Output CSV path (overrides config)')
+    parser.add_argument('--save-media', action='store_true',
+                        help='Save animation media (GIF/PNG)')
+    parser.add_argument('--save-gif', action='store_true',
+                        help='Save GIF animation')
+    parser.add_argument('--save-png', action='store_true',
+                        help='Save PNG snapshot')
     args = parser.parse_args()
 
     # Load config file if provided
@@ -413,7 +615,13 @@ def main():
     runs = args.runs if args.runs is not None else cfg.get('runs', 20)
     max_steps = args.max_steps if args.max_steps is not None else cfg.get('max_steps', 600)
     quiet = args.quiet or cfg.get('quiet', False)
+    display = not args.no_display if args.no_display else cfg.get('display', True)
     output = args.output or cfg.get('output_dir', '')
+
+    # Media saving options
+    save_media = args.save_media or cfg.get('save_media', False)
+    save_gif = args.save_gif or cfg.get('save_gif', False)
+    save_png = args.save_png or cfg.get('save_png', False)
 
     # Build overrides from config + CLI
     pan_overrides = dict(cfg.get('pan_overrides', {}) or {})
@@ -429,6 +637,20 @@ def main():
     # Load neupan front-end config
     neupan_cfg = cfg.get('neupan', {}) or {}
 
+    # Setup results directory
+    results_dir = None
+    if save_media or output:
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        if output:
+            if os.path.isdir(output) or output.endswith('/') or output.endswith('\\'):
+                results_dir = Path(output)
+                results_dir.mkdir(parents=True, exist_ok=True)
+            elif os.path.basename(output):
+                results_dir = Path(output).parent
+        if results_dir is None:
+            results_dir = Path('test/results/rda_comparison')
+        results_dir.mkdir(parents=True, exist_ok=True)
+
     if not quiet:
         print("=" * 60)
         print("NeuPAN vs RDA Comparison")
@@ -438,6 +660,9 @@ def main():
         print(f"Examples: {examples}")
         print(f"Kinematics: {kinematics}")
         print(f"Runs: {runs}, Max Steps: {max_steps}")
+        print(f"Display: {display}")
+        if save_media:
+            print(f"Save Media: GIF={save_gif}, PNG={save_png}")
         if pan_overrides:
             print(f"PAN Overrides: {pan_overrides}")
         if adjust_overrides:
@@ -457,7 +682,12 @@ def main():
             pan_overrides=pan_overrides if pan_overrides else None,
             adjust_overrides=adjust_overrides if adjust_overrides else None,
             neupan_cfg=neupan_cfg if neupan_cfg else None,
-            quiet=quiet
+            display=display,
+            quiet=quiet,
+            save_media=save_media,
+            save_gif=save_gif,
+            save_png=save_png,
+            results_dir=results_dir,
         )
         if result:
             results.append(result)
@@ -465,14 +695,14 @@ def main():
     # Save results
     if results:
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        if output:
-            if os.path.isdir(output) or output.endswith('/') or output.endswith('\\'):
-                os.makedirs(output, exist_ok=True)
-                output_path = os.path.join(output, f'neupan_vs_rda_{timestamp}.csv')
-            else:
-                output_path = output
+        if output and not os.path.isdir(output) and not output.endswith('/') and not output.endswith('\\'):
+            output_path = output
         else:
-            output_path = f'test/results/neupan_vs_rda_{timestamp}.csv'
+            if results_dir:
+                output_path = results_dir / f'neupan_vs_rda_{timestamp}.csv'
+            else:
+                output_path = f'test/results/neupan_vs_rda_{timestamp}.csv'
+
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
         fieldnames = list(results[0].keys())
